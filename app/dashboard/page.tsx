@@ -47,7 +47,7 @@ export default function DashboardPage() {
       if (currentUser.fullName === 'Alex Patel' || currentUser.fullName === 'Alex') {
         currentUser.fullName = 'Kirthik';
         currentUser.email = 'kirthik@example.com';
-        repository.updateUserProfile(currentUser);
+        repository.saveCurrentUser(currentUser);
         setUserName('Kirthik');
       } else {
         setUserName(currentUser.fullName.split(' ')[0]);
