@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Bot,
@@ -17,16 +17,19 @@ import {
   Building2,
   CheckCircle2,
   Phone,
+  MapPin,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { useAccessibility } from '@/hooks/use-accessibility';
 import { aiService } from '@/lib/ai/service';
-import { AIMessage, AIStructuredResponse } from '@/types';
+import { repository } from '@/lib/data/repository';
+import { AIMessage, AIStructuredResponse, UserProfile } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 function AssistantPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const initialCategory = searchParams.get('category') || '';
@@ -38,12 +41,13 @@ function AssistantPageContent() {
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [messages, setMessages] = useState<AIMessage[]>([
     {
       id: 'welcome-01',
       role: 'assistant',
       content:
-        'Hello. I am the CarePath AI navigation assistant. I can help guide you to the appropriate medical service category, find verified facilities, and prepare questions for your doctor. How can I guide you today?',
+        'Namaste. I am CarePath AI, your healthcare navigation guide for India. I can guide you to appropriate medical specialists, accredited hospitals across Indian cities, Ayushman Bharat & Jan Aushadhi resources, and prepare practical questions for your doctor. How may I guide you today?',
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -51,12 +55,18 @@ function AssistantPageContent() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const user = repository.getCurrentUser();
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
+    setCurrentUser(user);
     if (typeof window !== 'undefined') {
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       setSpeechSupported(!!SpeechRecognition);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,7 +100,7 @@ function AssistantPageContent() {
       const botMsg: AIMessage = {
         id: `bot-${Date.now()}`,
         role: 'assistant',
-        content: `I have analyzed your request regarding "${queryText}". Below is your structured healthcare navigation plan.`,
+        content: `I have evaluated your query regarding "${queryText}". Below is your structured Indian healthcare navigation plan.`,
         structuredResponse: response,
         timestamp: new Date().toISOString(),
       };
@@ -112,7 +122,7 @@ function AssistantPageContent() {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
+    recognition.lang = 'en-IN';
     recognition.interimResults = false;
 
     setIsListening(true);
@@ -140,34 +150,41 @@ function AssistantPageContent() {
         id: `welcome-${Date.now()}`,
         role: 'assistant',
         content:
-          'Conversation cleared. I am ready to guide you to the right healthcare setting. What care are you looking for?',
+          'Conversation reset. I am ready to guide you to the right healthcare facility in India. What care or department are you looking for?',
         timestamp: new Date().toISOString(),
       },
     ]);
   };
 
   const guidedQueries = [
-    { label: t.assistant.optProvider, query: 'I need to find a primary care doctor for an annual health checkup.' },
-    { label: t.assistant.optSpecialist, query: 'I am experiencing persistent knee joint pain and need a specialist.' },
-    { label: t.assistant.optHospital, query: 'I have a high fever with sudden deep pain and need urgent care.' },
-    { label: t.assistant.optDiagnostic, query: 'Where can I get a comprehensive blood test and MRI scan?' },
-    { label: t.assistant.optPrepare, query: 'How do I prepare for my first appointment with a cardiologist?' },
+    { label: '🩺 General OPD Visit', query: 'I have a high fever, body ache, and need an OPD general physician consultation.' },
+    { label: '🦴 Joint / Ortho Care', query: 'I have persistent knee joint swelling and want to consult an orthopaedic specialist.' },
+    { label: '🚨 Chest Pain (Emergency)', query: 'Severe sudden crushing chest pain and shortness of breath.' },
+    { label: '🔬 Blood Test (NABL)', query: 'Where can I get a comprehensive fasting blood sugar and lipid profile test?' },
+    { label: '💊 Jan Aushadhi Stores', query: 'How can I find affordable generic medicine equivalents through Jan Aushadhi?' },
   ];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex flex-col h-[calc(100vh-5rem)]">
       {/* Top Controls Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200 shrink-0">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-teal-700 text-white flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-2xl bg-teal-700 dark:bg-teal-600 text-white flex items-center justify-center shadow-xs">
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-slate-900 leading-tight">
-              {t.assistant.title}
+            <h1 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+              {t.assistant.title} (India Navigator)
             </h1>
-            <p className="text-xs text-slate-500">
-              Structured Healthcare Guidance & Triage
+            <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center">
+              <span>Non-diagnostic triage</span>
+              {currentUser?.city && (
+                <>
+                  <span className="mx-1">•</span>
+                  <MapPin className="w-3 h-3 text-teal-600 mr-0.5 inline" />
+                  <span>Personalized for {currentUser.city}</span>
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -175,7 +192,7 @@ function AssistantPageContent() {
         <div className="flex items-center space-x-2">
           <button
             onClick={handleResetChat}
-            className="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition"
+            className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
           >
             <RotateCcw className="w-3.5 h-3.5 mr-1" />
             New Chat
@@ -193,7 +210,7 @@ function AssistantPageContent() {
             }`}
           >
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 flex items-center justify-center shrink-0 mt-1">
                 <Bot className="w-4 h-4" />
               </div>
             )}
@@ -202,7 +219,7 @@ function AssistantPageContent() {
               className={`max-w-2xl rounded-3xl p-5 shadow-xs space-y-4 ${
                 msg.role === 'user'
                   ? 'bg-teal-700 text-white rounded-tr-xs'
-                  : 'bg-white border border-slate-200 text-slate-900 rounded-tl-xs'
+                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-tl-xs'
               }`}
             >
               <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -211,7 +228,7 @@ function AssistantPageContent() {
 
               {/* Structured AI Navigation Cards */}
               {msg.structuredResponse && (
-                <div className="space-y-4 pt-2 border-t border-slate-100 text-slate-900">
+                <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white">
                   {/* Emergency Alert Banner if red-flag detected */}
                   {msg.structuredResponse.isEmergency && (
                     <div className="p-4 rounded-2xl bg-red-600 text-white space-y-2 shadow-md animate-pulse">
@@ -222,38 +239,44 @@ function AssistantPageContent() {
                       <p className="text-xs text-red-100 leading-relaxed">
                         {msg.structuredResponse.importantSafetyMessage}
                       </p>
-                      <div className="pt-1">
+                      <div className="pt-2 flex flex-wrap gap-2">
                         <a
-                          href="tel:112"
+                          href="tel:108"
                           className="inline-flex items-center px-4 py-2 bg-white text-red-700 font-bold text-xs rounded-xl shadow"
                         >
                           <Phone className="w-4 h-4 mr-1.5" />
-                          {t.assistant.callEmergencyNow}
+                          Call Ambulance (108)
+                        </a>
+                        <a
+                          href="tel:112"
+                          className="inline-flex items-center px-4 py-2 bg-red-800 text-white font-bold text-xs rounded-xl shadow"
+                        >
+                          National Emergency (112)
                         </a>
                       </div>
                     </div>
                   )}
 
                   {/* 1. Understanding Card */}
-                  <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                  <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
                       {t.assistant.understanding}
                     </span>
-                    <p className="text-xs text-slate-700 leading-relaxed">
+                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
                       {msg.structuredResponse.understanding}
                     </p>
                   </div>
 
                   {/* 2. Possible Healthcare Service Category */}
-                  <div className="p-3.5 bg-teal-50/70 rounded-2xl border border-teal-100 flex items-start justify-between">
+                  <div className="p-3.5 bg-teal-50/70 dark:bg-teal-950/40 rounded-2xl border border-teal-100 dark:border-teal-900 flex items-start justify-between">
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 block mb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 block mb-1">
                         {t.assistant.possibleService}
                       </span>
-                      <p className="text-sm font-bold text-teal-950">
+                      <p className="text-sm font-bold text-teal-950 dark:text-teal-100">
                         {msg.structuredResponse.possibleServiceCategory}
                       </p>
-                      <p className="text-xs text-teal-800 mt-1">
+                      <p className="text-xs text-teal-800 dark:text-teal-300 mt-1">
                         {msg.structuredResponse.why}
                       </p>
                     </div>
@@ -271,16 +294,16 @@ function AssistantPageContent() {
 
                   {/* 3. Practical Next Steps */}
                   <div className="space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                       {t.assistant.nextSteps}
                     </span>
                     <div className="space-y-1.5">
                       {msg.structuredResponse.nextSteps.map((step, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start space-x-2 text-xs text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100"
+                          className="flex items-start space-x-2 text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800"
                         >
-                          <span className="w-4 h-4 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[10px]">
+                          <span className="w-4 h-4 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[10px]">
                             {idx + 1}
                           </span>
                           <span>{step}</span>
@@ -291,11 +314,11 @@ function AssistantPageContent() {
 
                   {/* 4. Questions to Ask Doctor */}
                   {msg.structuredResponse.suggestedQuestions && (
-                    <div className="p-3.5 bg-indigo-50/60 rounded-2xl border border-indigo-100 space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 block">
-                        Suggested Questions for Your Healthcare Visit
+                    <div className="p-3.5 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 dark:text-indigo-300 block">
+                        Suggested Questions for Your Healthcare Visit (OPD)
                       </span>
-                      <ul className="list-disc list-inside text-xs text-indigo-950 space-y-1">
+                      <ul className="list-disc list-inside text-xs text-indigo-950 dark:text-indigo-200 space-y-1">
                         {msg.structuredResponse.suggestedQuestions.map((q, i) => (
                           <li key={i}>{q}</li>
                         ))}
@@ -304,8 +327,8 @@ function AssistantPageContent() {
                   )}
 
                   {/* 5. Non-Diagnostic Medical Disclaimer Notice */}
-                  <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80 flex items-start space-x-2 text-[11px] text-amber-900 leading-snug">
-                    <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                  <div className="p-3 bg-amber-50/70 dark:bg-amber-950/40 rounded-xl border border-amber-200/80 dark:border-amber-800/60 flex items-start space-x-2 text-[11px] text-amber-900 dark:text-amber-200 leading-snug">
+                    <ShieldCheck className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
                     <span>{msg.structuredResponse.importantSafetyMessage}</span>
                   </div>
                 </div>
@@ -313,7 +336,7 @@ function AssistantPageContent() {
             </div>
 
             {msg.role === 'user' && (
-              <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 mt-1">
                 <User className="w-4 h-4" />
               </div>
             )}
@@ -323,7 +346,7 @@ function AssistantPageContent() {
         {isTyping && (
           <div className="flex items-center space-x-2 text-slate-400 text-xs pl-11">
             <Sparkles className="w-4 h-4 animate-spin text-teal-600" />
-            <span>CarePath AI is evaluating navigation guidance...</span>
+            <span>CarePath AI is preparing Indian healthcare navigation guidance...</span>
           </div>
         )}
 
@@ -333,7 +356,7 @@ function AssistantPageContent() {
       {/* Guided Chips (If few messages) */}
       {messages.length <= 2 && (
         <div className="py-2 space-y-2 shrink-0">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
             {t.assistant.guidedTitle}
           </span>
           <div className="flex flex-wrap gap-2">
@@ -341,7 +364,7 @@ function AssistantPageContent() {
               <button
                 key={idx}
                 onClick={() => handleSendMessage(g.query)}
-                className="text-xs bg-white hover:bg-teal-50 hover:border-teal-300 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 transition font-medium"
+                className="text-xs bg-white dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 transition font-medium"
               >
                 {g.label}
               </button>
@@ -356,16 +379,16 @@ function AssistantPageContent() {
           e.preventDefault();
           handleSendMessage(input);
         }}
-        className="pt-3 border-t border-slate-200 flex items-center space-x-2 shrink-0"
+        className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2 shrink-0"
       >
         <button
           type="button"
           onClick={handleVoiceInput}
-          title="Voice input"
+          title="Voice input (English/Hindi)"
           className={`p-3 rounded-2xl border transition ${
             isListening
               ? 'bg-red-500 text-white border-red-500 animate-pulse'
-              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
           }`}
         >
           {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -376,9 +399,9 @@ function AssistantPageContent() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
-            isListening ? t.assistant.speakListening : t.assistant.inputPlaceholder
+            isListening ? t.assistant.speakListening : 'Ask about hospital departments, OPD tokens, Jan Aushadhi, or symptoms...'
           }
-          className={`flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/20 shadow-xs ${
+          className={`flex-1 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/20 shadow-xs ${
             easyMode ? 'text-lg py-4' : ''
           }`}
         />

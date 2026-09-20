@@ -13,19 +13,23 @@ import {
   AlertCircle,
   FolderLock,
   Download,
+  Lock,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/use-language';
 import { repository } from '@/lib/data/repository';
 import { aiService } from '@/lib/ai/service';
 import { validateFileUpload } from '@/lib/security';
-import { DocumentItem } from '@/types';
+import { DocumentItem, UserProfile } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Modal } from '@/components/ui/modal';
 
 export default function DocumentsPage() {
+  const router = useRouter();
   const { t } = useLanguage();
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [search, setSearch] = useState('');
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
@@ -38,8 +42,14 @@ export default function DocumentsPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
-    setDocuments(repository.getDocuments());
-  }, []);
+    const user = repository.getCurrentUser();
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
+    setCurrentUser(user);
+    setDocuments(repository.getDocuments(user.id));
+  }, [router]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
@@ -53,30 +63,34 @@ export default function DocumentsPage() {
     });
 
     if (!validation.valid) {
-      setUploadError(validation.error || 'Invalid file.');
+      setUploadError(validation.error || 'Invalid file format or size exceeds 10MB.');
       return;
     }
 
+    const currentUserId = currentUser?.id || 'usr-default-001';
+
     const newDoc: DocumentItem = {
       id: `doc-${Date.now()}`,
-      userId: 'usr-default-001',
+      userId: currentUserId,
       categoryId: 'lab_reports',
       categoryName: 'Patient Uploaded Record',
       title: file.name.replace(/\.[^/.]+$/, ''),
-      filePath: `/secure_vault/${file.name}`,
+      filePath: `/secure_vault/${currentUserId}/${file.name}`,
       fileSizeBytes: file.size,
       mimeType: file.type || 'application/pdf',
       createdAt: new Date().toISOString(),
     };
 
     repository.addDocument(newDoc);
-    setDocuments(repository.getDocuments());
+    setDocuments(repository.getDocuments(currentUserId));
     e.target.value = '';
   };
 
   const handleDelete = (docId: string) => {
     repository.deleteDocument(docId);
-    setDocuments(repository.getDocuments());
+    if (currentUser) {
+      setDocuments(repository.getDocuments(currentUser.id));
+    }
     if (selectedDoc?.id === docId) {
       setSelectedDoc(null);
       setExplainedData(null);
@@ -109,27 +123,34 @@ export default function DocumentsPage() {
       {/* Header */}
       <div>
         <div className="flex items-center space-x-2">
-          <Badge variant="default">Encrypted Storage</Badge>
+          <Badge variant="default" className="text-xs">
+            🔒 Client-Isolated Encrypted Vault
+          </Badge>
+          {currentUser?.fullName && (
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              Vault Owner: {currentUser.fullName}
+            </span>
+          )}
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
           {t.documents.title}
         </h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           {t.documents.subtitle}
         </p>
       </div>
 
       {/* Upload Zone */}
-      <Card className="border-2 border-dashed border-slate-300 hover:border-teal-500 transition-colors p-8 text-center bg-white/70">
+      <Card className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-400 transition-colors p-8 text-center bg-white/70 dark:bg-slate-900/70 rounded-3xl">
         <div className="max-w-md mx-auto space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center mx-auto shadow-xs">
             <Upload className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
               {t.documents.uploadBtn}
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               {t.documents.dragDropText}
             </p>
           </div>
@@ -147,7 +168,7 @@ export default function DocumentsPage() {
           </label>
 
           {uploadError && (
-            <div className="p-2.5 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5">
+            <div className="p-2.5 bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5">
               <AlertCircle className="w-4 h-4" />
               <span>{uploadError}</span>
             </div>
@@ -158,8 +179,8 @@ export default function DocumentsPage() {
       {/* Documents List */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-slate-900">
-            Stored Documents ({filteredDocs.length})
+          <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            Stored Documents in Your Vault ({filteredDocs.length})
           </h2>
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
@@ -167,8 +188,8 @@ export default function DocumentsPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search documents..."
-              className="w-full text-xs pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white"
+              placeholder="Search your documents..."
+              className="w-full text-xs pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-teal-700"
             />
           </div>
         </div>
@@ -178,11 +199,11 @@ export default function DocumentsPage() {
             {filteredDocs.map((doc) => (
               <Card
                 key={doc.id}
-                className="p-5 flex flex-col justify-between hover:border-slate-300 transition"
+                className="p-5 flex flex-col justify-between border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-teal-300 dark:hover:border-teal-700 transition rounded-3xl"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md">
                       {doc.categoryName}
                     </span>
                     <span className="text-[11px] text-slate-400">
@@ -190,36 +211,34 @@ export default function DocumentsPage() {
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 text-sm">{doc.title}</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">{doc.title}</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Size: {(doc.fileSizeBytes / 1024).toFixed(1)} KB • Type: {doc.mimeType}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <button
                     onClick={() => handleExplainWithAI(doc)}
-                    className="inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-800 bg-teal-50 px-2.5 py-1.5 rounded-xl border border-teal-200 transition"
+                    className="inline-flex items-center text-xs font-bold text-teal-700 dark:text-teal-400 hover:text-teal-800 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1.5 rounded-xl border border-teal-200 dark:border-teal-800 transition"
                   >
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     {t.documents.explainWithAI}
                   </button>
 
-                  <div className="flex items-center space-x-1">
-                    <button
-                      onClick={() => handleDelete(doc.id)}
-                      className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg"
-                      title="Delete document"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleDelete(doc.id)}
+                    className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg"
+                    title="Delete document"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </Card>
             ))}
           </div>
         ) : (
-          <Card className="p-8 text-center text-slate-500 text-xs">
+          <Card className="p-8 text-center text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-3xl text-xs">
             {t.documents.noDocs}
           </Card>
         )}
@@ -239,38 +258,38 @@ export default function DocumentsPage() {
           </div>
         ) : explainedData ? (
           <div className="space-y-4 text-xs">
-            {/* Plain English Summary */}
-            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1">
-              <span className="font-bold text-slate-900 block">Plain English Summary:</span>
-              <p className="text-slate-700 leading-relaxed">{explainedData.summary}</p>
+            {/* Plain Summary */}
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
+              <span className="font-bold text-slate-900 dark:text-white block">Plain Summary:</span>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{explainedData.summary}</p>
             </div>
 
             {/* Terminology */}
             <div className="space-y-2">
-              <span className="font-bold text-slate-900 block">
+              <span className="font-bold text-slate-900 dark:text-white block">
                 {t.documents.terminology}
               </span>
               {explainedData.terminology.map((term, i) => (
-                <div key={i} className="p-2.5 bg-white border border-slate-200 rounded-xl space-y-0.5">
-                  <span className="font-bold text-teal-800">{term.term}</span>
-                  <p className="text-slate-600">{term.explanation}</p>
+                <div key={i} className="p-2.5 bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl space-y-0.5">
+                  <span className="font-bold text-teal-800 dark:text-teal-300">{term.term}</span>
+                  <p className="text-slate-600 dark:text-slate-400">{term.explanation}</p>
                 </div>
               ))}
             </div>
 
             {/* Questions to ask doctor */}
-            <div className="p-3.5 bg-indigo-50/60 rounded-2xl border border-indigo-100 space-y-1.5">
-              <span className="font-bold text-indigo-950 block">
+            <div className="p-3.5 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900 space-y-1.5">
+              <span className="font-bold text-indigo-950 dark:text-indigo-200 block">
                 {t.documents.questionsForDoctor}
               </span>
-              <ul className="list-disc list-inside space-y-1 text-indigo-900">
+              <ul className="list-disc list-inside space-y-1 text-indigo-900 dark:text-indigo-300">
                 {explainedData.questionsForDoctor.map((q, i) => (
                   <li key={i}>{q}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-100">
+            <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
               Disclaimer: This AI summary is for health literacy. It does not replace professional pathology review.
             </div>
           </div>

@@ -22,13 +22,17 @@ const EMERGENCY_RED_FLAGS = [
   'unconscious',
   'loss of consciousness',
   'seizure',
+  'fits',
   'overdose',
+  'poisoning',
+  'snake bite',
   'severe allergic reaction',
   'anaphylaxis',
   'swollen tongue and throat',
   'sudden loss of vision',
   'coughing up blood',
   'severe head trauma',
+  'accident',
   'suicidal',
 ];
 
@@ -48,22 +52,22 @@ export function checkEmergencyTriage(input: string): TriageResult {
   if (matchedFlags.length > 0) {
     return {
       isEmergency: true,
-      emergencyCategory: 'Acute Emergency Medical Escalation',
+      emergencyCategory: 'Acute Emergency Medical Escalation (India 112 / 108)',
       recommendedAction:
-        'Call national emergency dispatch immediately (112 / 911 / 108) or proceed to the nearest Emergency Department.',
+        'Call national emergency ambulance immediately (Dial 108 or 112) or proceed to the nearest 24/7 Hospital Casualty / Emergency Department.',
       flaggedKeywords: matchedFlags,
     };
   }
 
   return {
     isEmergency: false,
-    recommendedAction: 'Standard healthcare navigation workflow',
+    recommendedAction: 'Standard Indian healthcare navigation workflow',
     flaggedKeywords: [],
   };
 }
 
 /**
- * Maps natural language user inputs to appropriate healthcare service categories
+ * Maps natural language user inputs to appropriate Indian healthcare service categories
  */
 export function mapQueryToCategory(query: string): {
   categoryId: string;
@@ -72,6 +76,7 @@ export function mapQueryToCategory(query: string): {
 } {
   const q = query.toLowerCase();
 
+  // Emergency / Trauma
   if (
     q.includes('chest') ||
     q.includes('unconscious') ||
@@ -79,74 +84,262 @@ export function mapQueryToCategory(query: string): {
     q.includes('bleed') ||
     q.includes('emergency') ||
     q.includes('ambulance') ||
-    q.includes('severe burn')
+    q.includes('severe burn') ||
+    q.includes('casualty') ||
+    q.includes('trauma') ||
+    q.includes('accident') ||
+    q.includes('snake bite')
   ) {
     return {
-      categoryId: 'hospitals',
-      categoryName: 'Hospitals & Emergency Trauma Care',
+      categoryId: 'emergency_trauma',
+      categoryName: 'Emergency & Trauma Care (24/7 Casualty)',
       urgency: 'emergency',
     };
   }
 
-  if (
-    q.includes('urgent') ||
-    q.includes('sprain') ||
-    q.includes('cut') ||
-    q.includes('fever') ||
-    q.includes('mild burn') ||
-    q.includes('walk in') ||
-    q.includes('today') ||
-    q.includes('flu')
-  ) {
-    return {
-      categoryId: 'urgent_care',
-      categoryName: 'Urgent Care & Walk-in Clinics',
-      urgency: 'urgent',
-    };
-  }
-
-  if (
-    q.includes('skin') ||
-    q.includes('rash') ||
-    q.includes('derma') ||
-    q.includes('eczema') ||
-    q.includes('acne')
-  ) {
-    return {
-      categoryId: 'specialists',
-      categoryName: 'Dermatology & Skin Specialists',
-      urgency: 'routine',
-    };
-  }
-
+  // Cardiology
   if (
     q.includes('heart') ||
     q.includes('palpitation') ||
     q.includes('cardio') ||
     q.includes('hypertension') ||
-    q.includes('blood pressure')
+    q.includes('blood pressure') ||
+    q.includes('bp') ||
+    q.includes('cholesterol')
   ) {
     return {
-      categoryId: 'specialists',
-      categoryName: 'Cardiology & Heart Specialists',
+      categoryId: 'cardiology',
+      categoryName: 'Cardiology & Heart Care',
+      urgency: 'urgent',
+    };
+  }
+
+  // Oncology
+  if (
+    q.includes('cancer') ||
+    q.includes('tumor') ||
+    q.includes('tumour') ||
+    q.includes('oncology') ||
+    q.includes('chemo') ||
+    q.includes('radiation') ||
+    q.includes('biopsy')
+  ) {
+    return {
+      categoryId: 'oncology',
+      categoryName: 'Oncology & Cancer Care',
       urgency: 'routine',
     };
   }
 
+  // Neurology
+  if (
+    q.includes('headache') ||
+    q.includes('migraine') ||
+    q.includes('neuro') ||
+    q.includes('seizure') ||
+    q.includes('vertigo') ||
+    q.includes('spine') ||
+    q.includes('paralysis') ||
+    q.includes('nerve')
+  ) {
+    return {
+      categoryId: 'neurology',
+      categoryName: 'Neurology & Neurosurgery',
+      urgency: 'routine',
+    };
+  }
+
+  // Orthopaedics
+  if (
+    q.includes('bone') ||
+    q.includes('fracture') ||
+    q.includes('joint') ||
+    q.includes('knee') ||
+    q.includes('ortho') ||
+    q.includes('back pain') ||
+    q.includes('shoulder') ||
+    q.includes('ligament') ||
+    q.includes('sprain')
+  ) {
+    return {
+      categoryId: 'orthopaedics',
+      categoryName: 'Orthopaedics & Joint Care',
+      urgency: 'routine',
+    };
+  }
+
+  // Paediatrics
+  if (
+    q.includes('child') ||
+    q.includes('baby') ||
+    q.includes('pediatric') ||
+    q.includes('paediatric') ||
+    q.includes('infant') ||
+    q.includes('kid') ||
+    q.includes('vaccine for child')
+  ) {
+    return {
+      categoryId: 'paediatrics',
+      categoryName: 'Paediatrics & Child Health',
+      urgency: 'routine',
+    };
+  }
+
+  // Maternity & Women's Health
+  if (
+    q.includes('pregnant') ||
+    q.includes('pregnancy') ||
+    q.includes('maternity') ||
+    q.includes('gynecol') ||
+    q.includes('prenatal') ||
+    q.includes('delivery') ||
+    q.includes('women') ||
+    q.includes('pcos') ||
+    q.includes('period')
+  ) {
+    return {
+      categoryId: 'maternity_womens',
+      categoryName: 'Maternity, Obstetrics & Gynaecology',
+      urgency: 'routine',
+    };
+  }
+
+  // Ophthalmology / Eye Care
+  if (
+    q.includes('eye') ||
+    q.includes('vision') ||
+    q.includes('cataract') ||
+    q.includes('glasses') ||
+    q.includes('ophthalm') ||
+    q.includes('blind') ||
+    q.includes('spectacle')
+  ) {
+    return {
+      categoryId: 'ophthalmology',
+      categoryName: 'Ophthalmology & Eye Care',
+      urgency: 'routine',
+    };
+  }
+
+  // ENT
+  if (
+    q.includes('ear') ||
+    q.includes('nose') ||
+    q.includes('throat') ||
+    q.includes('ent') ||
+    q.includes('sinus') ||
+    q.includes('hearing') ||
+    q.includes('tonsil')
+  ) {
+    return {
+      categoryId: 'ent',
+      categoryName: 'ENT (Ear, Nose & Throat)',
+      urgency: 'routine',
+    };
+  }
+
+  // Dermatology
+  if (
+    q.includes('skin') ||
+    q.includes('rash') ||
+    q.includes('derma') ||
+    q.includes('itching') ||
+    q.includes('allergy on skin') ||
+    q.includes('acne') ||
+    q.includes('pimples')
+  ) {
+    return {
+      categoryId: 'dermatology',
+      categoryName: 'Dermatology & Skin Care',
+      urgency: 'routine',
+    };
+  }
+
+  // Dental
   if (
     q.includes('tooth') ||
     q.includes('teeth') ||
     q.includes('dental') ||
     q.includes('gum') ||
-    q.includes('dentist')
+    q.includes('dentist') ||
+    q.includes('root canal') ||
+    q.includes('cavity')
   ) {
     return {
-      categoryId: 'dental_care',
-      categoryName: 'Dental Care & Oral Health',
+      categoryId: 'dental',
+      categoryName: 'Dental & Oral Health Clinics',
       urgency: 'routine',
     };
   }
 
+  // Psychiatry / Mental Health
+  if (
+    q.includes('mental') ||
+    q.includes('stress') ||
+    q.includes('anxiety') ||
+    q.includes('depression') ||
+    q.includes('therapy') ||
+    q.includes('psychiatrist') ||
+    q.includes('counselor') ||
+    q.includes('tele-manas')
+  ) {
+    return {
+      categoryId: 'psychiatry',
+      categoryName: 'Psychiatry & Mental Healthcare (Tele-MANAS)',
+      urgency: 'routine',
+    };
+  }
+
+  // Nephrology & Dialysis
+  if (
+    q.includes('kidney') ||
+    q.includes('dialysis') ||
+    q.includes('nephro') ||
+    q.includes('creatinine') ||
+    q.includes('urea')
+  ) {
+    return {
+      categoryId: 'nephrology',
+      categoryName: 'Nephrology & Dialysis Care',
+      urgency: 'urgent',
+    };
+  }
+
+  // Urology
+  if (
+    q.includes('stone') ||
+    q.includes('kidney stone') ||
+    q.includes('urine') ||
+    q.includes('uti') ||
+    q.includes('prostate') ||
+    q.includes('uro')
+  ) {
+    return {
+      categoryId: 'urology',
+      categoryName: 'Urology & Men’s Health',
+      urgency: 'routine',
+    };
+  }
+
+  // Pulmonology
+  if (
+    q.includes('cough') ||
+    q.includes('asthma') ||
+    q.includes('breath') ||
+    q.includes('wheezing') ||
+    q.includes('lung') ||
+    q.includes('pulmon') ||
+    q.includes('tb') ||
+    q.includes('tuberculosis')
+  ) {
+    return {
+      categoryId: 'pulmonology',
+      categoryName: 'Pulmonology & Respiratory Medicine',
+      urgency: 'routine',
+    };
+  }
+
+  // Diagnostic Labs & Imaging
   if (
     q.includes('lab') ||
     q.includes('blood test') ||
@@ -156,175 +349,151 @@ export function mapQueryToCategory(query: string): {
     q.includes('xray') ||
     q.includes('scan') ||
     q.includes('ultrasound') ||
-    q.includes('diagnostic')
+    q.includes('diagnostic') ||
+    q.includes('pathology') ||
+    q.includes('nabl')
   ) {
     return {
       categoryId: 'diagnostics',
-      categoryName: 'Diagnostic Labs & Imaging Centers',
+      categoryName: 'Diagnostic Centres & NABL Labs',
       urgency: 'routine',
     };
   }
 
-  if (
-    q.includes('mental') ||
-    q.includes('stress') ||
-    q.includes('anxiety') ||
-    q.includes('depression') ||
-    q.includes('therapy') ||
-    q.includes('psychiatrist') ||
-    q.includes('counselor')
-  ) {
-    return {
-      categoryId: 'mental_health',
-      categoryName: 'Mental Health & Behavioral Therapy',
-      urgency: 'routine',
-    };
-  }
-
-  if (
-    q.includes('pregnant') ||
-    q.includes('pregnancy') ||
-    q.includes('maternity') ||
-    q.includes('gynecol') ||
-    q.includes('prenatal') ||
-    q.includes('women')
-  ) {
-    return {
-      categoryId: 'womens_health',
-      categoryName: 'Women’s Health & Maternity',
-      urgency: 'routine',
-    };
-  }
-
-  if (
-    q.includes('child') ||
-    q.includes('baby') ||
-    q.includes('pediatric') ||
-    q.includes('infant') ||
-    q.includes('vaccine for baby')
-  ) {
-    return {
-      categoryId: 'child_health',
-      categoryName: 'Pediatrics & Child Care',
-      urgency: 'routine',
-    };
-  }
-
-  if (
-    q.includes('elder') ||
-    q.includes('senior') ||
-    q.includes('geriatric') ||
-    q.includes('dementia') ||
-    q.includes('fall')
-  ) {
-    return {
-      categoryId: 'elder_care',
-      categoryName: 'Geriatrics & Elder Care',
-      urgency: 'routine',
-    };
-  }
-
-  if (
-    q.includes('physio') ||
-    q.includes('rehab') ||
-    q.includes('physical therapy') ||
-    q.includes('post surgery recovery')
-  ) {
-    return {
-      categoryId: 'rehabilitation',
-      categoryName: 'Physical Therapy & Rehabilitation',
-      urgency: 'routine',
-    };
-  }
-
+  // Pharmacies
   if (
     q.includes('pharmacy') ||
     q.includes('medicine') ||
-    q.includes('prescription refill') ||
     q.includes('chemist') ||
-    q.includes('drugs')
+    q.includes('jan aushadhi') ||
+    q.includes('generic') ||
+    q.includes('tablets')
   ) {
     return {
       categoryId: 'pharmacies',
-      categoryName: 'Pharmacies & Prescriptions',
+      categoryName: 'Pharmacies & Jan Aushadhi Kendras',
       urgency: 'routine',
     };
   }
 
+  // Blood Banks
   if (
-    q.includes('online') ||
-    q.includes('video call') ||
-    q.includes('telehealth') ||
-    q.includes('virtual')
+    q.includes('blood bank') ||
+    q.includes('donate blood') ||
+    q.includes('plasma') ||
+    q.includes('platelet')
   ) {
     return {
-      categoryId: 'telehealth',
-      categoryName: 'Telehealth & Virtual Care',
+      categoryId: 'blood_banks',
+      categoryName: 'Blood Banks & Plasma Donation Centers',
+      urgency: 'emergency',
+    };
+  }
+
+  // Ambulance
+  if (
+    q.includes('108') ||
+    q.includes('102') ||
+    q.includes('call ambulance')
+  ) {
+    return {
+      categoryId: 'ambulance_services',
+      categoryName: 'Ambulance & Emergency Dispatch (108 / 112)',
+      urgency: 'emergency',
+    };
+  }
+
+  // Government Hospitals
+  if (
+    q.includes('government') ||
+    q.includes('govt') ||
+    q.includes('gh') ||
+    q.includes('civil hospital') ||
+    q.includes('ayushman') ||
+    q.includes('pmjay')
+  ) {
+    return {
+      categoryId: 'government_hospitals',
+      categoryName: 'Government & District Civil Hospitals',
       urgency: 'routine',
     };
   }
 
-  // Default fallback
+  // Default: General Medicine & Family Physicians
   return {
-    categoryId: 'primary_care',
-    categoryName: 'Primary Care & General Practice',
+    categoryId: 'general_medicine',
+    categoryName: 'General Medicine & Family Physicians',
     urgency: 'routine',
   };
 }
 
 /**
- * Creates structured clinical navigation responses strictly conforming to product constraints
+ * Creates structured clinical navigation responses strictly conforming to Indian healthcare constraints
  */
 export function generateStructuredNavigationResponse(
-  userQuery: string
+  userQuery: string,
+  userProfile?: { fullName?: string; city?: string; healthConditions?: string }
 ): AIStructuredResponse {
   const triage = checkEmergencyTriage(userQuery);
 
   if (triage.isEmergency) {
     return {
-      understanding: `You have mentioned acute symptoms indicating possible immediate medical distress (${triage.flaggedKeywords.join(
+      understanding: `You have described acute medical symptoms (${triage.flaggedKeywords.join(
         ', '
-      )}).`,
-      possibleServiceCategory: 'Emergency Medical Department / Trauma Center',
-      categoryId: 'hospitals',
-      why: 'Acute, sudden, or severe symptoms require physical, immediate hospital-grade intervention and vital stabilization.',
+      )}) that indicate a potential life-threatening emergency.`,
+      possibleServiceCategory: 'Emergency & Trauma Care (24/7 Casualty)',
+      categoryId: 'emergency_trauma',
+      why: 'Acute, sudden, or severe trauma symptoms require immediate emergency hospital casualty stabilization with oxygen, monitoring, and trained trauma physicians.',
       nextSteps: [
-        'Immediately dial national emergency services (112 / 911 / 108).',
-        'Have someone nearby stay with you and keep your airway clear.',
-        'Do not drive yourself if you are feeling dizzy, faint, or experiencing chest discomfort.',
-        'Locate the nearest open 24/7 Hospital Emergency Trauma Center.',
+        'Immediately call National Emergency Ambulance Dispatch (Dial 108 or 112).',
+        'If safe and conscious, have a family member or neighbor escort you to the nearest 24/7 Hospital Casualty / Trauma Center.',
+        'Keep the patient sitting or resting with clear airway; do not attempt to drive alone.',
+        'Inform the casualty triage nurse immediately upon arrival for priority attention.',
       ],
       importantSafetyMessage:
-        'CRITICAL: This platform is not an emergency response provider. Please do not delay seeking professional emergency services.',
+        'CRITICAL SAFETY NOTICE: CarePath AI is an educational navigation platform and NEVER replaces emergency healthcare services. In medical distress, call 108 or 112 without delay.',
       isEmergency: true,
-      emergencyHotline: '112 / 911 / 108',
+      emergencyHotline: '108 / 112',
       suggestedQuestions: [
-        'What is your estimated ambulance arrival time?',
-        'Which hospital emergency room has immediate cardiac/trauma capacity?',
+        'What is the estimated ambulance arrival time to my current location?',
+        'Which nearby tertiary hospital has immediate cardiac and ICU bed availability?',
       ],
     };
   }
 
   const mapped = mapQueryToCategory(userQuery);
+  const cityMention = userProfile?.city ? ` in ${userProfile.city}` : ' in your city';
+  const nameGreeting = userProfile?.fullName ? `Hello ${userProfile.fullName.split(' ')[0]}, you` : 'You';
+
+  const personalizedNextSteps = [
+    `Locate an accredited hospital or clinic${cityMention} matching your healthcare needs.`,
+    'Confirm OPD (Outpatient Department) consultation hours or book an appointment token.',
+    'Carry your previous medical records, current prescriptions, and government photo ID / Ayushman Bharat card.',
+  ];
+
+  if (userProfile?.healthConditions) {
+    personalizedNextSteps.push(
+      `Mention your active health background (${userProfile.healthConditions}) to the attending doctor for comprehensive evaluation.`
+    );
+  } else {
+    personalizedNextSteps.push(
+      'Consult a licensed medical specialist for thorough clinical evaluation and treatment.'
+    );
+  }
 
   return {
-    understanding: `You are looking for assistance regarding: "${userQuery}". You appear to need navigation guidance to the appropriate care setting.`,
+    understanding: `${nameGreeting} are seeking healthcare guidance regarding "${userQuery}". This corresponds to outpatient or specialized care${cityMention}.`,
     possibleServiceCategory: mapped.categoryName,
     categoryId: mapped.categoryId,
-    why: `Based on your request, ${mapped.categoryName} specializes in evaluating, diagnosing, and coordinating treatment for these specific concerns.`,
-    nextSteps: [
-      'Find an appropriate verified facility matching your location and accessibility needs.',
-      'Check available clinic hours and whether walk-ins or scheduled appointments are preferred.',
-      'Prepare relevant medical history, previous test results, and current medication list.',
-      'Contact the qualified healthcare professional at the selected facility for an in-person assessment.',
-    ],
+    why: `For these symptoms, ${mapped.categoryName} provides verified clinical evaluation, diagnostic tests, and tailored care protocols.`,
+    nextSteps: personalizedNextSteps,
     importantSafetyMessage:
-      'CarePath AI provides navigation information only and does not offer clinical diagnoses or medical advice. Always consult a licensed healthcare professional for medical concerns.',
+      'CarePath AI is an educational navigation platform. It does not provide medical diagnoses, write prescriptions, or replace consultation with a qualified doctor. Always seek professional healthcare advice.',
     isEmergency: false,
     suggestedQuestions: [
-      'What symptoms or changes should I observe and write down before my visit?',
-      'Are there any pre-visit requirements such as fasting or stopping specific supplements?',
-      'What documents or previous test records should I bring along?',
+      'What symptoms or triggers should I track in a notebook before my OPD visit?',
+      'Are there any fasting or laboratory prerequisites before visiting the doctor?',
+      'Can I request cost-effective generic medicine equivalents (Jan Aushadhi) for this condition?',
     ],
   };
 }

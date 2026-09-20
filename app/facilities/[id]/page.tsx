@@ -19,6 +19,9 @@ import {
   Accessibility,
   Languages,
   CalendarCheck,
+  ExternalLink,
+  HeartPulse,
+  Share2,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { repository } from '@/lib/data/repository';
@@ -46,8 +49,14 @@ export default function FacilityDetailPage() {
 
   const [facility, setFacility] = useState<Facility | null>(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   useEffect(() => {
+    const user = repository.getCurrentUser();
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
     if (id) {
       const fac = repository.getFacilityById(id);
       if (fac) {
@@ -56,15 +65,15 @@ export default function FacilityDetailPage() {
         setIsSaved(saved.includes(id));
       }
     }
-  }, [id]);
+  }, [id, router]);
 
   if (!facility) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-        <Building2 className="w-12 h-12 text-slate-300 mx-auto" />
-        <h2 className="text-xl font-bold text-slate-800">Facility Not Found</h2>
-        <p className="text-xs text-slate-500">
-          The requested healthcare facility does not exist or has been deactivated.
+        <Building2 className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto" />
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white">Facility Not Found</h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          The requested Indian healthcare institution does not exist or has been updated.
         </p>
         <Link href="/facilities">
           <Button variant="outline" size="sm">
@@ -84,41 +93,66 @@ export default function FacilityDetailPage() {
     router.push(`/journey?facilityId=${facility.id}`);
   };
 
+  const handleShare = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Back Button */}
-      <Link
-        href="/facilities"
-        className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-800 transition"
-      >
-        <ArrowLeft className="w-4 h-4 mr-1" />
-        Back to Facilities Directory
-      </Link>
+      {/* Back Button & Share */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/facilities"
+          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back to Facilities Directory
+        </Link>
+
+        <button
+          onClick={handleShare}
+          className="inline-flex items-center text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
+        >
+          <Share2 className="w-3.5 h-3.5 mr-1" />
+          {copiedLink ? 'Link Copied!' : 'Share Facility Profile'}
+        </button>
+      </div>
 
       {/* Main Header Banner */}
-      <Card className="p-6 sm:p-8 border-slate-200 shadow-sm space-y-4">
+      <Card className="p-6 sm:p-8 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-5 rounded-3xl">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
+          <div className="space-y-2.5">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline">{facility.facilityType}</Badge>
               {facility.verified && (
-                <span className="inline-flex items-center text-xs text-teal-800 font-bold bg-teal-50 px-2 py-0.5 rounded-md">
-                  <ShieldCheck className="w-4 h-4 mr-1 text-teal-700" />
-                  Verified Healthcare Provider
+                <span className="inline-flex items-center text-xs text-teal-800 dark:text-teal-300 font-bold bg-teal-50 dark:bg-teal-950/60 px-2.5 py-0.5 rounded-md">
+                  <ShieldCheck className="w-4 h-4 mr-1 text-teal-700 dark:text-teal-400" />
+                  Verified Healthcare Provider (India)
                 </span>
               )}
               {facility.emergencyAvailable && (
-                <Badge variant="danger">24/7 Emergency Services</Badge>
+                <Badge variant="danger">24/7 Casualty & Trauma Unit</Badge>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               {facility.name}
             </h1>
 
-            <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
               {facility.description}
             </p>
+
+            <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 pt-1">
+              <MapPin className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400 shrink-0" />
+              <span>
+                {facility.location.addressLine1}, {facility.location.city}, {facility.location.state} - {facility.location.postalCode}
+              </span>
+            </div>
           </div>
 
           <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0">
@@ -145,16 +179,16 @@ export default function FacilityDetailPage() {
               onClick={handleStartJourney}
               variant="secondary"
               size="sm"
-              className="w-full"
+              className="w-full text-xs"
             >
-              <CalendarCheck className="w-4 h-4 mr-1.5 text-teal-700" />
-              Navigate Care Journey
+              <CalendarCheck className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400" />
+              Prepare Appointment
             </Button>
           </div>
         </div>
 
         {/* Action Buttons Bar */}
-        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-3">
           <a
             href={`tel:${facility.phone}`}
             className="inline-flex items-center px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs rounded-xl shadow-xs transition"
@@ -167,10 +201,10 @@ export default function FacilityDetailPage() {
             href={`https://www.google.com/maps/dir/?api=1&destination=${facility.location.latitude},${facility.location.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl transition"
+            className="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs rounded-xl transition"
           >
-            <Navigation className="w-3.5 h-3.5 mr-1.5 text-teal-700" />
-            Get Driving Directions
+            <Navigation className="w-3.5 h-3.5 mr-1.5 text-teal-700 dark:text-teal-400" />
+            Get Google Maps Directions
           </a>
 
           {facility.website && (
@@ -178,139 +212,141 @@ export default function FacilityDetailPage() {
               href={facility.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl transition"
+              className="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition"
             >
               <Globe className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
-              Official Website
+              Official Portal
+              <ExternalLink className="w-3 h-3 ml-1 text-slate-400" />
             </a>
           )}
         </div>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column: Services & Guidance */}
+        {/* Left Column: Departments & Guidance */}
         <div className="md:col-span-2 space-y-6">
-          {/* Services Offered */}
-          <Card className="p-6 space-y-4">
-            <h2 className="text-base font-bold text-slate-900">
-              {t.facilities.servicesOffered}
+          {/* Departments & Specialities Offered */}
+          <Card className="p-6 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center">
+              <HeartPulse className="w-4 h-4 mr-2 text-teal-700 dark:text-teal-400" />
+              Specialities & Departments
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {facility.services?.map((service) => (
                 <div
                   key={service}
-                  className="flex items-center space-x-2 text-xs font-medium text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100"
+                  className="flex items-center space-x-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-slate-100 dark:border-slate-800"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>{service}</span>
                 </div>
               ))}
             </div>
           </Card>
 
-          {/* Before You Visit Guidance */}
-          <Card className="p-6 space-y-4">
-            <h2 className="text-base font-bold text-slate-900">
-              {t.facilities.beforeYouVisit}
+          {/* Before You Visit Guidance for Indian Hospitals */}
+          <Card className="p-6 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+              {t.facilities.beforeYouVisit} (Indian Healthcare Workflow)
             </h2>
-            <ul className="space-y-3 text-xs text-slate-600">
+            <ul className="space-y-3 text-xs text-slate-600 dark:text-slate-400">
               <li className="flex items-start space-x-2.5">
-                <span className="w-5 h-5 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
+                <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
                   1
                 </span>
                 <span>
-                  <strong>Photo Identification & Insurance Cards:</strong> Bring a government-issued photo ID and current healthcare coverage documents or copay payment method.
+                  <strong>Government ID & Health Cards:</strong> Carry your Aadhaar card, Voter ID, or Ayushman Bharat PM-JAY card along with cashless TPA insurance policy number.
                 </span>
               </li>
               <li className="flex items-start space-x-2.5">
-                <span className="w-5 h-5 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
+                <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
                   2
                 </span>
                 <span>
-                  <strong>Current Medication List:</strong> Bring all active prescription bottles or a documented list of dosages and supplements.
+                  <strong>OPD Registration Token:</strong> For government hospitals (AIIMS, PGIMER, KEM), arrive early for OPD counter registration or book an online appointment via e-Hospital / ORS portal.
                 </span>
               </li>
               <li className="flex items-start space-x-2.5">
-                <span className="w-5 h-5 rounded-full bg-teal-100 text-teal-800 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
+                <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
                   3
                 </span>
                 <span>
-                  <strong>Previous Records & Imaging:</strong> If visiting for a specialist consultation, upload or bring previous MRI/CT discs or laboratory reports.
+                  <strong>Previous Test Records:</strong> Carry all previous diagnostic scans, blood tests (CBC, Blood Sugar), discharge summaries, and currently active doctor prescriptions.
                 </span>
               </li>
             </ul>
           </Card>
         </div>
 
-        {/* Right Column: Location, Hours & Accessibility */}
+        {/* Right Column: Location, Operating Hours & Accessibility */}
         <div className="space-y-6">
           {/* Location & Parking */}
-          <Card className="p-5 space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
-              Location & Address
+          <Card className="p-5 space-y-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Hospital Location & Address
             </h2>
-            <div className="text-xs text-slate-700 space-y-1">
-              <div className="font-semibold text-slate-900 text-sm">
+            <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
+              <div className="font-semibold text-slate-900 dark:text-white text-sm">
                 {facility.location.addressLine1}
               </div>
               <div>
-                {facility.location.city}, {facility.location.state} {facility.location.postalCode}
+                {facility.location.city}, {facility.location.state} - {facility.location.postalCode}
               </div>
-              <div className="text-slate-400">{facility.location.country}</div>
+              <div className="text-slate-400 dark:text-slate-500">{facility.location.country}</div>
             </div>
 
             {facility.location.parkingInfo && (
-              <div className="mt-3 pt-3 border-t border-slate-100 flex items-start space-x-2 text-xs text-slate-600">
+              <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-start space-x-2 text-xs text-slate-600 dark:text-slate-400">
                 <Car className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <span>{facility.location.parkingInfo}</span>
               </div>
             )}
           </Card>
 
-          {/* Opening Hours */}
-          <Card className="p-5 space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center">
-              <Clock className="w-4 h-4 mr-1.5 text-teal-700" />
+          {/* Operating Hours */}
+          <Card className="p-5 space-y-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center">
+              <Clock className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400" />
               {t.facilities.openingHours}
             </h2>
             <div className="space-y-1.5 text-xs">
               {facility.hours ? (
                 facility.hours.map((h) => (
-                  <div key={h.dayOfWeek} className="flex justify-between py-1 border-b border-slate-50">
-                    <span className="font-medium text-slate-600">
+                  <div key={h.dayOfWeek} className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                    <span className="font-medium text-slate-600 dark:text-slate-400">
                       {DAYS_OF_WEEK[h.dayOfWeek]}
                     </span>
-                    <span className="font-semibold text-slate-900">
-                      {h.is24Hours ? '24 Hours Open' : `${h.openTime} - ${h.closeTime}`}
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      {h.is24Hours ? '24 Hours Emergency' : `${h.openTime} - ${h.closeTime}`}
                     </span>
                   </div>
                 ))
               ) : (
-                <div className="text-slate-500">
-                  Standard Hours: Mon-Fri 08:00 - 18:00. Call facility for holiday schedule.
+                <div className="text-slate-500 dark:text-slate-400">
+                  OPD Hours: Mon - Sat 08:30 - 17:00. 24/7 Casualty available for acute medical emergencies.
                 </div>
               )}
             </div>
           </Card>
 
-          {/* Accessibility & Languages */}
-          <Card className="p-5 space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
-              Facility Features
+          {/* Languages & Accessibility */}
+          <Card className="p-5 space-y-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Languages & Accessibility
             </h2>
             <div className="space-y-2 text-xs">
-              <div className="flex items-center space-x-2 text-slate-700">
-                <Accessibility className="w-4 h-4 text-teal-700" />
+              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
+                <Accessibility className="w-4 h-4 text-teal-700 dark:text-teal-400" />
                 <span>
                   {facility.wheelchairAccessible
-                    ? 'Full ADA Wheelchair Accessibility'
-                    : 'Contact facility for accessibility options'}
+                    ? 'Wheelchair Ramp & Stretcher Lifts Available'
+                    : 'Contact hospital helpdesk for wheelchair assistance'}
                 </span>
               </div>
-              <div className="flex items-center space-x-2 text-slate-700">
-                <Languages className="w-4 h-4 text-teal-700" />
+              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
+                <Languages className="w-4 h-4 text-teal-700 dark:text-teal-400" />
                 <span>
-                  Languages: {facility.languagesSupported.join(', ')}
+                  Supported: {facility.languagesSupported.join(', ')}
                 </span>
               </div>
             </div>

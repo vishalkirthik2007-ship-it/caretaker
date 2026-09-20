@@ -8,7 +8,15 @@ export interface UserProfile {
   fullName: string;
   phoneNumber?: string;
   dateOfBirth?: string;
+  age?: number;
+  gender?: 'Male' | 'Female' | 'Non-Binary' | 'Prefer not to say' | string;
+  city?: string;
+  healthConditions?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  photoUrl?: string;
   preferredLanguage: LanguageCode;
+  theme?: 'light' | 'dark';
   easyModeEnabled: boolean;
   isAdmin: boolean;
   createdAt: string;

@@ -16,6 +16,7 @@ import { logAuditEvent } from '../security';
 // Browser-safe local storage keys
 const STORAGE_KEYS = {
   USER_PROFILE: 'carepath_user_profile',
+  REMEMBERED_PROFILES: 'carepath_remembered_profiles',
   SAVED_FACILITIES: 'carepath_saved_facilities',
   JOURNEYS: 'carepath_journeys',
   DOCUMENTS: 'carepath_documents',
@@ -23,6 +24,7 @@ const STORAGE_KEYS = {
   NOTIFICATIONS: 'carepath_notifications',
   EASY_MODE: 'carepath_easy_mode',
   LANGUAGE: 'carepath_language',
+  THEME: 'carepath_theme',
 };
 
 export class CarePathRepository {
@@ -47,41 +49,63 @@ export class CarePathRepository {
 
   // --- 1. USER & AUTH ---
   getCurrentUser(): UserProfile | null {
-    return this.getStorage<UserProfile | null>(STORAGE_KEYS.USER_PROFILE, {
-      id: 'usr-default-001',
-      email: 'kirthik@example.com',
-      fullName: 'Kirthik',
-      phoneNumber: '+1 (555) 234-5678',
-      preferredLanguage: 'en',
-      easyModeEnabled: false,
-      isAdmin: false,
-      createdAt: '2026-01-15T09:00:00Z',
-      preferences: {
-        highContrast: false,
-        reducedMotion: false,
-        fontSize: 'default',
-        locationEnabled: true,
-        lastKnownLatitude: 40.7128,
-        lastKnownLongitude: -74.006,
-        shareAnonymousAnalytics: true,
-      },
-    });
+    return this.getStorage<UserProfile | null>(STORAGE_KEYS.USER_PROFILE, null);
+  }
+
+  isAuthenticated(): boolean {
+    return this.getCurrentUser() !== null;
   }
 
   saveCurrentUser(user: UserProfile): void {
     this.setStorage(STORAGE_KEYS.USER_PROFILE, user);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('carepath_auth_change'));
+    }
+    // Also store in remembered profiles registry so returning user is remembered on logout
+    const remembered = this.getRememberedProfiles();
+    const existingIdx = remembered.findIndex((p) => p.email.toLowerCase() === user.email.toLowerCase());
+    if (existingIdx >= 0) {
+      remembered[existingIdx] = user;
+    } else {
+      remembered.unshift(user);
+    }
+    this.setStorage(STORAGE_KEYS.REMEMBERED_PROFILES, remembered);
+
     logAuditEvent({
       userId: user.id,
       action: 'UPDATE_PROFILE',
       entityType: 'profile',
       entityId: user.id,
-      details: { email: user.email, language: user.preferredLanguage },
+      details: { email: user.email, language: user.preferredLanguage, city: user.city },
     });
+  }
+
+  getRememberedProfiles(): UserProfile[] {
+    return this.getStorage<UserProfile[]>(STORAGE_KEYS.REMEMBERED_PROFILES, []);
+  }
+
+  getRememberedUser(email?: string): UserProfile | null {
+    const list = this.getRememberedProfiles();
+    if (email) {
+      return list.find((p) => p.email.toLowerCase() === email.toLowerCase()) || null;
+    }
+    return list.length > 0 ? list[0] : null;
+  }
+
+  updateProfilePhoto(photoDataUrl: string | null): UserProfile | null {
+    const user = this.getCurrentUser();
+    if (user) {
+      user.photoUrl = photoDataUrl || undefined;
+      this.saveCurrentUser(user);
+      return user;
+    }
+    return null;
   }
 
   logout(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+      window.dispatchEvent(new Event('carepath_auth_change'));
     }
   }
 
@@ -259,13 +283,14 @@ export class CarePathRepository {
   }
 
   // --- 5. DOCUMENT VAULT ---
-  getDocuments(): DocumentItem[] {
+  getDocuments(userId?: string): DocumentItem[] {
+    const currentUserId = userId || this.getCurrentUser()?.id || 'usr-default-001';
     const initialDocs: DocumentItem[] = [
       {
         id: 'doc-001',
         userId: 'usr-default-001',
         categoryId: 'lab_reports',
-        categoryName: 'Laboratory & Blood Tests',
+        categoryName: 'Laboratory & Blood Tests (NABL)',
         title: 'Comprehensive Metabolic Panel & Lipid Profile',
         filePath: '/secure_vault/usr-default-001/metabolic_panel_2026.pdf',
         fileSizeBytes: 245000,
@@ -273,7 +298,7 @@ export class CarePathRepository {
         createdAt: '2026-08-20T10:14:00Z',
         aiExplanation: {
           summary:
-            'Standard outpatient metabolic panel evaluating kidney function, blood glucose, electrolytes, and lipid lipid proteins.',
+            'Standard outpatient metabolic panel evaluating kidney function, blood glucose, electrolytes, and lipid proteins.',
           terminology: [
             {
               term: 'Serum Glucose',
@@ -307,13 +332,16 @@ export class CarePathRepository {
       },
     ];
 
-    return this.getStorage<DocumentItem[]>(STORAGE_KEYS.DOCUMENTS, initialDocs);
+    const allDocs = this.getStorage<DocumentItem[]>(STORAGE_KEYS.DOCUMENTS, initialDocs);
+    return allDocs.filter((d) => d.userId === currentUserId);
   }
 
   addDocument(doc: DocumentItem): void {
-    const docs = this.getDocuments();
-    docs.unshift(doc);
-    this.setStorage(STORAGE_KEYS.DOCUMENTS, docs);
+    const currentUserId = this.getCurrentUser()?.id || 'usr-default-001';
+    doc.userId = currentUserId;
+    const allDocs = this.getStorage<DocumentItem[]>(STORAGE_KEYS.DOCUMENTS, []);
+    allDocs.unshift(doc);
+    this.setStorage(STORAGE_KEYS.DOCUMENTS, allDocs);
     logAuditEvent({
       userId: doc.userId,
       action: 'UPLOAD_DOCUMENT',
@@ -324,10 +352,12 @@ export class CarePathRepository {
   }
 
   deleteDocument(docId: string): void {
-    let docs = this.getDocuments();
-    docs = docs.filter((d) => d.id !== docId);
-    this.setStorage(STORAGE_KEYS.DOCUMENTS, docs);
+    const currentUserId = this.getCurrentUser()?.id || 'usr-default-001';
+    let allDocs = this.getStorage<DocumentItem[]>(STORAGE_KEYS.DOCUMENTS, []);
+    allDocs = allDocs.filter((d) => !(d.id === docId && d.userId === currentUserId));
+    this.setStorage(STORAGE_KEYS.DOCUMENTS, allDocs);
     logAuditEvent({
+      userId: currentUserId,
       action: 'DELETE_DOCUMENT',
       entityType: 'document',
       entityId: docId,

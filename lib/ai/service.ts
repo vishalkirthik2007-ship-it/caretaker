@@ -1,5 +1,6 @@
 import { AIStructuredResponse } from '@/types';
 import { generateStructuredNavigationResponse, checkEmergencyTriage } from './safety';
+import { repository } from '../data/repository';
 
 export interface AIServiceInterface {
   navigateHealthcare(query: string, history?: any[]): Promise<AIStructuredResponse>;
@@ -33,10 +34,15 @@ class AIService implements AIServiceInterface {
   }
 
   async navigateHealthcare(query: string, history?: any[]): Promise<AIStructuredResponse> {
+    const user = repository.getCurrentUser();
+    const userProfileContext = user
+      ? { fullName: user.fullName, city: user.city, healthConditions: user.healthConditions }
+      : undefined;
+
     // 1. Mandatory Safety Pre-flight: Immediate Emergency Triage Check
     const emergencyTriage = checkEmergencyTriage(query);
     if (emergencyTriage.isEmergency) {
-      return generateStructuredNavigationResponse(query);
+      return generateStructuredNavigationResponse(query, userProfileContext);
     }
 
     // 2. If external API is configured, attempt call with safety prompt
@@ -52,9 +58,10 @@ class AIService implements AIServiceInterface {
                 {
                   parts: [
                     {
-                      text: `You are CarePath AI, a healthcare navigation engine. You NEVER diagnose illnesses, NEVER prescribe drugs, and NEVER claim to replace doctors.
+                      text: `You are CarePath AI, a healthcare navigation engine for India. You NEVER diagnose illnesses, NEVER prescribe drugs, and NEVER claim to replace doctors.
 Your task is ONLY to help the user identify the right healthcare service category, explain why, provide 4 next steps, and state safety disclaimers.
 User request: "${query}"
+User Profile Context: Name: ${userProfileContext?.fullName || 'User'}, City: ${userProfileContext?.city || 'India'}, Health Background: ${userProfileContext?.healthConditions || 'None reported'}
 
 Return JSON matching:
 {
@@ -96,7 +103,7 @@ Return JSON matching:
     }
 
     // 3. Resilient Deterministic Clinical Navigation Engine
-    return generateStructuredNavigationResponse(query);
+    return generateStructuredNavigationResponse(query, userProfileContext);
   }
 
   async generateQuestions(concern: string, categoryName: string = 'General Health'): Promise<{

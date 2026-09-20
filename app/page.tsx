@@ -1,98 +1,38 @@
-import Link from 'next/link';
-import {
-  Compass,
-  ArrowRight,
-  ShieldCheck,
-  Search,
-  Building2,
-  FileCheck,
-  HeartHandshake,
-  Bot,
-  AlertTriangle,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+'use client';
 
-export default function HomePage() {
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { repository } from '@/lib/data/repository';
+import { Compass } from 'lucide-react';
+
+export default function RootEntryPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Detect existing saved login/session
+    const currentUser = repository.getCurrentUser();
+    if (currentUser) {
+      // Returning user with active session -> Enter Main Application directly
+      router.replace('/dashboard');
+    } else {
+      // New user or logged out -> Go to Separate Login/Onboarding Page
+      router.replace('/login');
+    }
+  }, [router]);
+
   return (
-    <div className="relative isolate overflow-hidden">
-      {/* Hero Section */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-20 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center space-y-6">
-          {/* Tagline Badge */}
-          <div className="inline-flex items-center space-x-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-semibold text-teal-800 border border-teal-200/80 shadow-xs">
-            <Compass className="w-3.5 h-3.5 text-teal-700" />
-            <span>Healthcare Navigation & Information Platform</span>
-          </div>
-
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl leading-[1.15]">
-            Find the right care.{' '}
-            <span className="text-teal-700 block mt-1">Take the right next step.</span>
-          </h1>
-
-          <p className="text-lg text-slate-600 sm:text-xl max-w-2xl mx-auto leading-relaxed">
-            CarePath AI understands your healthcare-navigation questions and guides you
-            toward appropriate verified facilities, specialist services, and practical appointment preparation.
-          </p>
-
-          {/* Core CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Link href="/dashboard" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto px-8 shadow-md">
-                <span>Enter Navigation Dashboard</span>
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <Link href="/assistant" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                <Bot className="w-5 h-5 mr-2 text-teal-700" />
-                <span>Ask CarePath AI</span>
-              </Button>
-            </Link>
-          </div>
-
-          {/* Crucial Ethical Boundary Notice */}
-          <div className="rounded-2xl bg-amber-50/80 border border-amber-200/80 p-4 text-left flex items-start space-x-3 text-amber-900 text-xs sm:text-sm max-w-2xl mx-auto mt-6">
-            <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <span className="font-bold block">Care Navigation Disclaimer</span>
-              <p className="text-amber-800 leading-relaxed text-xs">
-                CarePath AI is an educational navigation system. It does not provide medical diagnoses, write prescriptions, or replace consultation with licensed healthcare professionals. In life-threatening emergencies, dial 112, 911, or 108 immediately.
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4">
+      <div className="flex flex-col items-center space-y-4 text-center">
+        <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-teal-700 to-emerald-600 text-white flex items-center justify-center shadow-xl shadow-teal-700/20 animate-pulse">
+          <Compass className="w-9 h-9 animate-spin" style={{ animationDuration: '3.5s' }} />
         </div>
-
-        {/* Feature Highlights Grid */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="rounded-3xl bg-white p-7 border border-slate-200/80 shadow-xs hover:shadow-md transition">
-            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mb-5">
-              <Search className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Smart Service Finder</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Search naturally using everyday language. CarePath maps symptoms and needs to verified medical categories—from primary clinics to specialized imaging labs.
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-7 border border-slate-200/80 shadow-xs hover:shadow-md transition">
-            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mb-5">
-              <Building2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Verified Facility Directory</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Find nearby hospitals, urgent care centers, and clinics with verified opening hours, accessibility notes, languages supported, and direct contact details.
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-7 border border-slate-200/80 shadow-xs hover:shadow-md transition">
-            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mb-5">
-              <FileCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Guided Care Journeys</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Step-by-step checklists, doctor question generators, and a client-encrypted document vault so you walk into appointments confident and organized.
-            </p>
-          </div>
+        <div className="space-y-1">
+          <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+            CarePath<span className="text-teal-700 dark:text-teal-400">AI</span>
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Initializing secure healthcare navigation session...
+          </p>
         </div>
       </div>
     </div>
