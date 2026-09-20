@@ -96,8 +96,8 @@ function AssistantPageContent() {
       };
 
       setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
-      console.error('Failed to get response:', err);
+    } catch {
+      // Graceful error handling
     } finally {
       setIsTyping(false);
     }

@@ -56,8 +56,8 @@ function MapPageContent() {
           });
           setLocating(false);
         },
-        (err) => {
-          console.warn('Geolocation denied or failed, using default coordinates:', err);
+        () => {
+          // Geolocation unavailable; continue with default coordinates
           setLocating(false);
         }
       );

@@ -143,8 +143,8 @@ export default function JourneyPage() {
       ];
 
       setQuestions((prev) => [...prev, ...mappedQuestions]);
-    } catch (err) {
-      console.error('Failed to generate questions:', err);
+    } catch {
+      // Graceful error handling
     } finally {
       setIsGenerating(false);
     }

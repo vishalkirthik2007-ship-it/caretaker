@@ -40,8 +40,8 @@ export class CarePathRepository {
     if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      console.warn('LocalStorage write failed:', e);
+    } catch {
+      // Safe fallback when storage quota is restricted
     }
   }
 

@@ -90,8 +90,8 @@ Return JSON matching:
             return parsed;
           }
         }
-      } catch (err) {
-        console.warn('External AI call failed, engaging CarePath safety fallback:', err);
+      } catch {
+        // Fallback safely to CarePath deterministic clinical navigation
       }
     }
 

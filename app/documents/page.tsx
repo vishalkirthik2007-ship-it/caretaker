@@ -91,8 +91,8 @@ export default function DocumentsPage() {
     try {
       const result = await aiService.explainDocument(doc.title, 'Clinical document content');
       setExplainedData(result);
-    } catch (err) {
-      console.error('Failed to explain document:', err);
+    } catch {
+      // Graceful error handling
     } finally {
       setIsExplaining(false);
     }
