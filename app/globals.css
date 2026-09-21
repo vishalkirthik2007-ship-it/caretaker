@@ -199,6 +199,19 @@ body {
   animation: float-particle 6s ease-in-out infinite;
 }
 
+@keyframes subtle-drift {
+  0%, 100% {
+    transform: scale(1.04) translate(0px, 0px);
+  }
+  50% {
+    transform: scale(1.07) translate(-6px, -4px);
+  }
+}
+
+.animate-subtle-drift {
+  animation: subtle-drift 24s ease-in-out infinite alternate;
+}
+
 /* Accessibility: Easy Mode overrides */
 html.easy-mode body {
   font-size: 1.15rem;

@@ -18,6 +18,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['var(--font-poppins)', 'Poppins', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'Playfair Display', 'Georgia', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
