@@ -10,6 +10,7 @@ import {
   Bot,
   HeartPulse,
   FileText,
+  Users,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -48,6 +49,7 @@ export function Sidebar() {
     { name: 'Ask Care', href: '/assistant', icon: Bot },
     { name: 'My Care Journey', href: '/journey', icon: HeartPulse },
     { name: 'Document Vault', href: '/documents', icon: FileText },
+    { name: 'Family Care', href: '/family', icon: Users },
   ];
 
   return (

@@ -181,12 +181,18 @@ export interface FamilyProfile {
   id: string;
   primaryUserId: string;
   fullName: string;
-  relationship: 'Child' | 'Parent' | 'Spouse' | 'Elder' | 'Other';
+  relationship: string;
+  phone?: string;
   dateOfBirth?: string;
+  gender?: string;
+  location?: string;
   emergencyContact?: string;
+  healthcareNotes?: string;
   canManageDocuments: boolean;
   canManageNavigation: boolean;
+  vaultIsolated?: boolean;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AuditLogEntry {
