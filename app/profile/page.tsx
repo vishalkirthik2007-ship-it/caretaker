@@ -16,30 +16,29 @@ import {
   CheckCircle2,
   Save,
   ArrowLeft,
-  Sparkles,
   Lock,
-  Trash2,
-  Activity,
   Heart,
+  Edit3,
+  X,
+  Upload,
 } from 'lucide-react';
 import { repository } from '@/lib/data/repository';
 import { UserProfile } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function ProfilePage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [gender, setGender] = useState('Male');
-  const [city, setCity] = useState('Chennai');
+  const [city, setCity] = useState('Chennai, Tamil Nadu');
   const [healthConditions, setHealthConditions] = useState('');
   const [emergencyContactName, setEmergencyContactName] = useState('');
   const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
@@ -55,13 +54,17 @@ export default function ProfilePage() {
       return;
     }
     setProfile(user);
-    setFullName(user.fullName || '');
-    setPhone(user.phoneNumber || '');
-    setEmail(user.email || '');
-    setDateOfBirth(user.dateOfBirth || '');
+    setFullName(user.fullName || 'Kirthik');
+    setPhone(user.phoneNumber || '+91 98765 43210');
+    setEmail(user.email || 'kirthik@gmail.com');
+    setDateOfBirth(user.dateOfBirth || '2005-08-15');
     if (user.gender) setGender(user.gender);
-    if (user.city) setCity(user.city);
-    setHealthConditions(user.healthConditions || '');
+    if (user.city) {
+      setCity(user.city.includes('Tamil Nadu') ? user.city : `${user.city}, Tamil Nadu`);
+    } else {
+      setCity('Chennai, Tamil Nadu');
+    }
+    setHealthConditions(user.healthConditions || 'None');
     setEmergencyContactName(user.emergencyContactName || '');
     setEmergencyContactPhone(user.emergencyContactPhone || '');
     setPhotoUrl(user.photoUrl || null);
@@ -93,15 +96,8 @@ export default function ProfilePage() {
     reader.readAsDataURL(file);
   };
 
-  const handleRemovePhoto = () => {
-    setPhotoUrl(null);
-    repository.updateProfilePhoto('');
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
-  };
-
-  const handleSaveProfile = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveProfile = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!profile) return;
 
     let calculatedAge = profile.age;
@@ -120,7 +116,7 @@ export default function ProfilePage() {
       dateOfBirth: dateOfBirth || undefined,
       age: calculatedAge,
       gender,
-      city,
+      city: city.replace(', Tamil Nadu', '').trim(),
       healthConditions: healthConditions.trim() || undefined,
       emergencyContactName: emergencyContactName.trim() || undefined,
       emergencyContactPhone: emergencyContactPhone.trim() || undefined,
@@ -129,305 +125,295 @@ export default function ProfilePage() {
 
     repository.saveCurrentUser(updated);
     setProfile(updated);
+    setIsEditing(false);
     setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 4000);
+    setTimeout(() => setSavedSuccess(false), 3500);
   };
 
-  const handleLogout = () => {
-    repository.logout();
-    router.replace('/login');
+  const calculateFormattedDOB = (dobStr: string) => {
+    if (!dobStr) return '15 Aug 2005 (20 years)';
+    try {
+      const d = new Date(dobStr);
+      if (isNaN(d.getTime())) return dobStr;
+      const formatted = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const age = Math.max(1, new Date().getFullYear() - d.getFullYear());
+      return `${formatted} (${age} years)`;
+    } catch {
+      return dobStr;
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2">
-            <Link
-              href="/dashboard"
-              className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-carenest-primary flex items-center transition"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              Dashboard
-            </Link>
-            <span className="text-slate-300 dark:text-slate-700">•</span>
-            <span className="text-xs text-carenest-primary font-bold">CareNest Profile</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
-            My Healthcare Profile
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Manage your personal healthcare identity, emergency contacts, and encrypted profile photo.
-          </p>
-        </div>
-
+    <div className="max-w-xl mx-auto px-4 sm:px-6 py-6 space-y-5 animate-in fade-in duration-300">
+      {/* 1. TOP HEADER matching Reference Poster */}
+      <div className="space-y-0.5">
         <div className="flex items-center space-x-2">
-          <ThemeToggle />
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            onClick={handleLogout}
-            className="text-xs rounded-xl shadow-xs"
+          <button
+            onClick={() => router.back()}
+            className="p-1 -ml-1 rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-800 text-slate-800 dark:text-white transition"
+            title="Go Back"
           >
-            <LogOut className="w-3.5 h-3.5 mr-1.5" />
-            Logout
-          </Button>
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            User Profile
+          </h1>
         </div>
+        <p className="text-xs text-slate-500 dark:text-slate-400 pl-6">
+          Manage your personal and health information
+        </p>
       </div>
 
       {savedSuccess && (
-        <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs rounded-2xl flex items-center space-x-2 shadow-xs animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-          <span className="font-semibold">Profile updates and encrypted records synchronized successfully!</span>
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs rounded-2xl flex items-center space-x-2 shadow-xs animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span className="font-semibold">Profile details saved successfully!</span>
         </div>
       )}
 
-      {/* Main Profile Card */}
-      <Card className="p-6 sm:p-8 border-white/60 dark:border-white/10 bg-white/85 dark:bg-[#10283B]/90 backdrop-blur-xl shadow-xl rounded-3xl space-y-8">
-        {/* Profile Picture Upload Section */}
-        <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-slate-100 dark:border-white/10">
-          <div className="relative group">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden p-1 bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] shadow-lg flex items-center justify-center">
-              <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-[#071827] flex items-center justify-center">
-                {photoUrl ? (
-                  <img
-                    src={photoUrl}
-                    alt={fullName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-carenest-primary font-black text-2xl sm:text-3xl">
-                    {fullName ? fullName.slice(0, 2).toUpperCase() : 'CN'}
-                  </div>
-                )}
+      {/* 2. PROFILE PHOTO SECTION matching Reference Poster */}
+      <div className="flex items-center space-x-4 pt-1">
+        <div className="relative">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800 border-2 border-white dark:border-[#10283B] shadow-md flex items-center justify-center">
+            {photoUrl ? (
+              <img
+                src={photoUrl}
+                alt={fullName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center font-bold text-xl sm:text-2xl">
+                {fullName ? fullName.slice(0, 1).toUpperCase() : 'K'}
               </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 p-2.5 rounded-full bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-md hover:scale-110 active:scale-95 transition-all cursor-pointer"
-              title="Upload new profile photo"
-            >
-              <Camera className="w-4 h-4" />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoUpload}
-              className="sr-only"
-            />
-          </div>
-
-          <div className="space-y-1.5 text-center sm:text-left flex-1">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                {fullName || 'CareNest Patient'}
-              </h2>
-              <Badge className="bg-carenest-primary/10 text-carenest-primary dark:text-cyan-300 border-carenest-primary/20 text-[10px] font-bold">
-                Verified Citizen ID
-              </Badge>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {email} • {city || 'Tamil Nadu, India'}
-            </p>
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-xs font-semibold text-carenest-primary dark:text-carenest-accent hover:underline cursor-pointer"
-              >
-                Change Photo
-              </button>
-              {photoUrl && (
-                <>
-                  <span className="text-slate-300 dark:text-slate-700">•</span>
-                  <button
-                    type="button"
-                    onClick={handleRemovePhoto}
-                    className="text-xs text-rose-500 hover:underline cursor-pointer"
-                  >
-                    Remove Photo
-                  </button>
-                </>
-              )}
-            </div>
-            {photoError && (
-              <p className="text-[11px] text-rose-500 mt-1">{photoError}</p>
             )}
           </div>
         </div>
 
-        {/* Profile Edit Form */}
-        <form onSubmit={handleSaveProfile} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-[#071827]/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
-                />
-              </div>
-            </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-[#0066FF] dark:text-[#42D9FF] hover:underline cursor-pointer"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            <span>Change Photo</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="sr-only"
+          />
+          {photoError && <p className="text-[11px] text-rose-500 mt-1">{photoError}</p>}
+        </div>
+      </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-[#071827]/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
-                />
-              </div>
-            </div>
+      {/* 3. INFORMATION ROWS in Glass Card matching Reference Poster */}
+      <div className="rounded-2xl bg-white/85 dark:bg-[#10283B]/85 border border-slate-200/80 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl space-y-4">
+        {/* Row 1: Name */}
+        <div className="flex items-start space-x-3.5 pb-3 border-b border-slate-100 dark:border-white/5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <User className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Name
+            </span>
+            {isEditing ? (
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {fullName}
+              </p>
+            )}
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Phone Number (+91)
-              </label>
-              <div className="relative">
-                <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                <input
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-[#071827]/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
-                />
-              </div>
-            </div>
+        {/* Row 2: Phone Number */}
+        <div className="flex items-start space-x-3.5 pb-3 border-b border-slate-100 dark:border-white/5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <Phone className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Phone Number
+            </span>
+            {isEditing ? (
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {phone}
+              </p>
+            )}
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                City / Region
-              </label>
-              <div className="relative">
-                <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-[#071827]/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
-                />
-              </div>
-            </div>
+        {/* Row 3: Email */}
+        <div className="flex items-start space-x-3.5 pb-3 border-b border-slate-100 dark:border-white/5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <Mail className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Email
+            </span>
+            {isEditing ? (
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {email}
+              </p>
+            )}
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Date of Birth
-              </label>
-              <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                <input
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-[#071827]/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
-                />
-              </div>
-            </div>
+        {/* Row 4: Date of Birth */}
+        <div className="flex items-start space-x-3.5 pb-3 border-b border-slate-100 dark:border-white/5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <Calendar className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Date of Birth
+            </span>
+            {isEditing ? (
+              <input
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {calculateFormattedDOB(dateOfBirth)}
+              </p>
+            )}
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Gender
-              </label>
+        {/* Row 5: Gender */}
+        <div className="flex items-start space-x-3.5 pb-3 border-b border-slate-100 dark:border-white/5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <User className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Gender
+            </span>
+            {isEditing ? (
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50/70 dark:bg-[#071827]/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Non-Binary">Non-Binary</option>
                 <option value="Prefer not to say">Prefer not to say</option>
               </select>
-            </div>
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {gender}
+              </p>
+            )}
           </div>
+        </div>
 
-          {/* Sensitive Health Info with Vault Badge */}
-          <div className="p-4 sm:p-5 rounded-2xl border border-carenest-primary/20 dark:border-carenest-primary/30 bg-carenest-primary/5 dark:bg-[#0866FF]/10 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-slate-900 dark:text-white">
-                <HeartPulse className="w-4 h-4 text-carenest-primary dark:text-carenest-accent" />
-                <span className="text-xs font-bold">Health Information & Chronic Conditions</span>
-              </div>
-              <Badge className="bg-carenest-primary/10 text-carenest-primary dark:text-cyan-300 border-carenest-primary/20 text-[10px] font-bold flex items-center space-x-1">
-                <Lock className="w-2.5 h-2.5 mr-1" />
-                <span>Encrypted Storage</span>
-              </Badge>
-            </div>
-            <textarea
-              value={healthConditions}
-              onChange={(e) => setHealthConditions(e.target.value)}
-              rows={2}
-              placeholder="e.g., Hypertension, Type-2 Diabetes, Penicillin allergy..."
-              className="w-full p-3 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#071827]/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-carenest-primary/30 focus:border-carenest-primary transition"
-            />
+        {/* Row 6: Location */}
+        <div className="flex items-start space-x-3.5 pb-3 border-b border-slate-100 dark:border-white/5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <MapPin className="w-4 h-4" />
           </div>
-
-          {/* Emergency Contact */}
-          <div className="p-4 sm:p-5 rounded-2xl border border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/10 space-y-4">
-            <div className="flex items-center space-x-2">
-              <Heart className="w-4 h-4 text-rose-500" />
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white">
-                Emergency Contact Details
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                  Contact Person Name
-                </label>
-                <input
-                  type="text"
-                  value={emergencyContactName}
-                  onChange={(e) => setEmergencyContactName(e.target.value)}
-                  placeholder="e.g. Spouse, Parent, Sibling"
-                  className="w-full px-3.5 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#071827]/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                  Emergency Phone Number
-                </label>
-                <input
-                  type="tel"
-                  value={emergencyContactPhone}
-                  onChange={(e) => setEmergencyContactPhone(e.target.value)}
-                  placeholder="+91 98765 43210"
-                  className="w-full px-3.5 py-2.5 text-xs rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#071827]/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition"
-                />
-              </div>
-            </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Location
+            </span>
+            {isEditing ? (
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {city}
+              </p>
+            )}
           </div>
+        </div>
 
-          <div className="pt-4 flex items-center justify-end space-x-3 border-t border-slate-100 dark:border-white/10">
-            <Button
-              type="submit"
-              className="btn-gradient-carenest flex items-center space-x-2 px-8 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all"
+        {/* Row 7: Health Conditions */}
+        <div className="flex items-start space-x-3.5">
+          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">
+            <HeartPulse className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Health Conditions
+            </span>
+            {isEditing ? (
+              <input
+                type="text"
+                value={healthConditions}
+                onChange={(e) => setHealthConditions(e.target.value)}
+                placeholder="None (or add if any)"
+                className="w-full mt-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0066FF]"
+              />
+            ) : (
+              <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                {healthConditions || 'None (or add if any)'}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 4. MAIN ACTION BUTTON matching Reference Poster: "Edit Profile" pill gradient button */}
+      <div className="pt-2">
+        {isEditing ? (
+          <div className="flex items-center space-x-2.5">
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="flex-1 py-3 rounded-full font-bold text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition"
             >
-              <Save className="w-4 h-4" />
-              <span>Save Profile Updates</span>
-            </Button>
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSaveProfile()}
+              className="flex-1 py-3 rounded-full font-bold text-xs bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-lg shadow-blue-500/25 hover:from-[#0052cc] hover:to-[#00acc1] transition"
+            >
+              Save Changes
+            </button>
           </div>
-        </form>
-      </Card>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsEditing(true)}
+            className="w-full py-3.5 rounded-full font-bold text-xs sm:text-sm bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-lg shadow-blue-500/25 hover:from-[#0052cc] hover:to-[#00acc1] transition active:scale-98"
+          >
+            Edit Profile
+          </button>
+        )}
+      </div>
     </div>
   );
 }

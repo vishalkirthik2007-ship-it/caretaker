@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard,
+  Home,
   Search,
   MapPin,
   Bot,
@@ -17,6 +17,7 @@ import {
   X,
   Building2,
   Users,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { repository } from '@/lib/data/repository';
@@ -32,11 +33,12 @@ export function BottomNav() {
     router.replace('/login');
   };
 
+  // 5 exact navigation items matching Reference Poster: Home, Find Care, Map, Ask Care, More
   const primaryItems = [
-    { name: 'Home', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Home', href: '/dashboard', icon: Home },
     { name: 'Find Care', href: '/find-care', icon: Search },
     { name: 'Map', href: '/map', icon: MapPin },
-    { name: 'Ask Care', href: '/assistant', icon: Bot, isCenter: true },
+    { name: 'Ask Care', href: '/assistant', icon: Bot },
   ];
 
   const moreItems = [
@@ -59,12 +61,12 @@ export function BottomNav() {
           onClick={() => setIsMoreOpen(false)}
         >
           <div
-            className="w-full max-w-lg mx-auto bg-white/95 dark:bg-[#071827]/95 backdrop-blur-2xl rounded-t-[2.5rem] border-t border-white/60 dark:border-[#48DFFF]/20 p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom-8 duration-300"
+            className="w-full max-w-lg mx-auto bg-white/95 dark:bg-[#071827]/95 backdrop-blur-2xl rounded-t-[2.5rem] border-t border-white/60 dark:border-[#42D9FF]/20 p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom-8 duration-300"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 dark:border-slate-800">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center font-bold text-xs">
                   CN
                 </div>
                 <div>
@@ -91,7 +93,7 @@ export function BottomNav() {
                     className={cn(
                       'flex items-center space-x-3 p-3 rounded-2xl border transition-all text-left',
                       isActive
-                        ? 'border-[#0866FF] bg-[#0866FF]/10 text-[#0866FF] dark:text-[#48DFFF] font-semibold shadow-xs'
+                        ? 'border-[#0066FF] bg-[#0066FF]/10 text-[#0066FF] dark:text-[#42D9FF] font-semibold shadow-xs'
                         : 'border-slate-200/70 dark:border-slate-800/70 glass-card hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-200'
                     )}
                   >
@@ -99,7 +101,7 @@ export function BottomNav() {
                       className={cn(
                         'w-10 h-10 rounded-xl flex items-center justify-center shrink-0',
                         isActive
-                          ? 'bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-sm'
+                          ? 'bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white shadow-sm'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                       )}
                     >
@@ -127,35 +129,11 @@ export function BottomNav() {
         </div>
       )}
 
-      {/* Main Floating Glass Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 block lg:hidden border-t border-white/50 dark:border-slate-800/80 bg-white/85 dark:bg-[#071827]/90 backdrop-blur-2xl pb-safe shadow-2xl">
-        <div className="flex h-16 items-center justify-around px-3 max-w-md mx-auto">
+      {/* Main Floating Glass Bottom Nav matching Reference Poster */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 block lg:hidden border-t border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#071827]/90 backdrop-blur-2xl pb-safe shadow-xl">
+        <div className="flex h-15 items-center justify-around px-2 max-w-md mx-auto">
           {primaryItems.map((item) => {
-            const isActive = pathname === item.href;
-            if (item.isCenter) {
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex flex-col items-center justify-center -mt-6 group focus:outline-none"
-                >
-                  <div
-                    className={cn(
-                      'w-13 h-13 rounded-2xl flex items-center justify-center transition-all duration-200 shadow-lg ring-4 ring-white/80 dark:ring-[#071827]',
-                      isActive
-                        ? 'bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-blue-500/40 scale-105'
-                        : 'bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-blue-500/25 group-hover:scale-105'
-                    )}
-                  >
-                    <item.icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-[#0866FF] dark:text-[#48DFFF] mt-1 tracking-tight">
-                    {item.name}
-                  </span>
-                </Link>
-              );
-            }
-
+            const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -163,11 +141,18 @@ export function BottomNav() {
                 className={cn(
                   'flex flex-col items-center justify-center min-w-[3.5rem] py-1 transition-all duration-200',
                   isActive
-                    ? 'text-[#0866FF] dark:text-[#48DFFF] font-bold scale-105'
-                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
+                    ? 'text-[#0066FF] dark:text-[#42D9FF] font-semibold scale-105'
+                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                 )}
               >
-                <item.icon className={cn('h-5 w-5 transition-transform', isActive ? 'stroke-[2.5]' : 'stroke-2')} />
+                <div
+                  className={cn(
+                    'p-1 rounded-xl transition-colors',
+                    isActive ? 'bg-[#0066FF]/10 dark:bg-[#0066FF]/20 text-[#0066FF] dark:text-[#42D9FF]' : ''
+                  )}
+                >
+                  <item.icon className={cn('h-5 w-5', isActive ? 'stroke-[2.2]' : 'stroke-2')} />
+                </div>
                 <span className="text-[10px] mt-0.5 truncate font-medium">
                   {item.name}
                 </span>
@@ -175,20 +160,25 @@ export function BottomNav() {
             );
           })}
 
-          {/* Dedicated "More" Tab */}
+          {/* Dedicated "More" Tab matching Reference Poster */}
           <button
             onClick={() => setIsMoreOpen(true)}
             className={cn(
               'flex flex-col items-center justify-center min-w-[3.5rem] py-1 transition-all duration-200 focus:outline-none',
               isMoreActive || isMoreOpen
-                ? 'text-[#0866FF] dark:text-[#48DFFF] font-bold scale-105'
-                : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
+                ? 'text-[#0066FF] dark:text-[#42D9FF] font-semibold scale-105'
+                : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
             )}
           >
-            <div className="relative">
+            <div
+              className={cn(
+                'p-1 rounded-xl transition-colors relative',
+                isMoreActive || isMoreOpen ? 'bg-[#0066FF]/10 dark:bg-[#0066FF]/20 text-[#0066FF] dark:text-[#42D9FF]' : ''
+              )}
+            >
               <MoreHorizontal className="h-5 w-5 stroke-2" />
               {isMoreActive && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#0866FF] dark:bg-[#48DFFF]" />
+                <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#0066FF] dark:bg-[#42D9FF]" />
               )}
             </div>
             <span className="text-[10px] mt-0.5 font-medium">More</span>

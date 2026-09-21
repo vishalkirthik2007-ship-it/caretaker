@@ -6,20 +6,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Search,
-  Building2,
   MapPin,
   Bot,
-  Compass,
+  HeartPulse,
   FileText,
-  Users,
   Settings,
-  ShieldCheck,
-  AlertTriangle,
-  User,
   LogOut,
 } from 'lucide-react';
-import { useLanguage } from '@/hooks/use-language';
-import { useAccessibility } from '@/hooks/use-accessibility';
 import { repository } from '@/lib/data/repository';
 import { UserProfile } from '@/types';
 import { cn } from '@/lib/utils';
@@ -27,8 +20,6 @@ import { cn } from '@/lib/utils';
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { t } = useLanguage();
-  const { easyMode } = useAccessibility();
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
@@ -51,39 +42,35 @@ export function Sidebar() {
   };
 
   const navigation = [
-    { name: 'Home', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Find Care', href: '/find-care', icon: Search },
-    { name: 'Hospital Map', href: '/map', icon: MapPin },
-    { name: 'Ask Care AI', href: '/assistant', icon: Bot, highlight: true },
-    { name: 'My Care Journey', href: '/journey', icon: Compass },
+    { name: 'Map View', href: '/map', icon: MapPin },
+    { name: 'Ask Care', href: '/assistant', icon: Bot },
+    { name: 'My Care Journey', href: '/journey', icon: HeartPulse },
     { name: 'Document Vault', href: '/documents', icon: FileText },
-    { name: 'Directory', href: '/facilities', icon: Building2 },
-    { name: 'Family Care', href: '/family', icon: Users },
   ];
 
   return (
-    <aside
-      className={cn(
-        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-white/50 dark:lg:border-slate-800/60 bg-white/70 dark:bg-[#071827]/80 backdrop-blur-2xl p-4 shrink-0 transition-all duration-200 shadow-xl',
-        easyMode ? 'lg:w-72' : ''
-      )}
-    >
+    <aside className="hidden lg:flex lg:w-64 lg:flex-col bg-[#071827] text-white border-r border-white/10 shrink-0 transition-all duration-300 shadow-2xl">
       {/* Sidebar Brand Header */}
-      <div className="flex items-center space-x-3 px-2 py-3 mb-3 border-b border-slate-200/60 dark:border-slate-800/60">
-        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/25">
-          <Compass className="h-5 w-5" />
+      <div className="flex items-center space-x-3 px-5 py-6">
+        <div className="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] p-[1px] shadow-md shadow-cyan-500/25 flex items-center justify-center">
+          <div className="w-full h-full rounded-[11px] bg-white/20 backdrop-blur-md flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              <path d="M3.22 12H7l2.5-4 3 8 2.5-4h4.78" strokeWidth="2.2" />
+            </svg>
+          </div>
         </div>
-        <div>
-          <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none block">
-            Care<span className="text-[#0866FF] dark:text-[#48DFFF]">Nest</span>
-          </span>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-            Healthcare Platform
+        <div className="flex items-center">
+          <span className="text-xl font-black tracking-tight text-white">
+            CareNest
           </span>
         </div>
       </div>
 
-      <nav className="flex flex-1 flex-col space-y-1.5">
+      {/* Main Navigation Links */}
+      <nav className="flex-1 px-3 space-y-1.5 pt-2">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -93,27 +80,17 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'group flex items-center rounded-2xl font-medium transition-all duration-200',
-                easyMode ? 'px-4 py-3 text-base' : 'px-3.5 py-2.5 text-xs',
+                'group flex items-center px-4 py-3 rounded-2xl text-xs font-semibold transition-all duration-200',
                 isActive
-                  ? 'bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/30 font-semibold scale-[1.02]'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50/70 dark:hover:bg-[#10283B]/80 hover:text-[#0866FF] dark:hover:text-[#48DFFF]',
-                item.highlight && !isActive
-                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-[#0866FF] dark:text-[#48DFFF] border border-blue-200/60 dark:border-blue-800/60'
-                  : ''
+                  ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-lg shadow-cyan-500/30 font-bold'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
               )}
             >
               <item.icon
                 className={cn(
-                  'shrink-0 transition-colors',
-                  easyMode ? 'mr-4 h-5 w-5' : 'mr-3 h-4 w-4',
-                  isActive
-                    ? 'text-white'
-                    : item.highlight
-                    ? 'text-[#0866FF] dark:text-[#48DFFF]'
-                    : 'text-slate-400 dark:text-slate-400 group-hover:text-[#0866FF] dark:group-hover:text-[#48DFFF]'
+                  'w-4 h-4 mr-3 shrink-0 transition-colors',
+                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-cyan-300'
                 )}
-                aria-hidden="true"
               />
               <span className="truncate">{item.name}</span>
             </Link>
@@ -121,78 +98,43 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* User Section at bottom of Sidebar */}
-      <div className="mt-auto space-y-2 pt-3 border-t border-slate-200/80 dark:border-slate-800/80">
-        <div className="flex items-center space-x-1 px-1">
-          <Link
-            href="/profile"
-            className={cn(
-              'flex-1 flex items-center space-x-2 px-2.5 py-2 rounded-xl text-xs font-medium transition',
-              pathname === '/profile'
-                ? 'bg-[#0866FF]/15 text-[#0866FF] dark:text-[#48DFFF] font-semibold'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
-            )}
-          >
-            <User className="w-3.5 h-3.5" />
-            <span>Profile</span>
-          </Link>
+      {/* Bottom Area: Settings + Logout + Mountain Vignette Card */}
+      <div className="p-3 space-y-3 mt-auto">
+        <div className="space-y-1">
           <Link
             href="/settings"
             className={cn(
-              'flex-1 flex items-center space-x-2 px-2.5 py-2 rounded-xl text-xs font-medium transition',
+              'flex items-center px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all',
               pathname === '/settings'
-                ? 'bg-[#0866FF]/15 text-[#0866FF] dark:text-[#48DFFF] font-semibold'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
+                ? 'bg-white/15 text-white font-bold'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
             )}
           >
-            <Settings className="w-3.5 h-3.5" />
+            <Settings className="w-4 h-4 mr-3 text-slate-400" />
             <span>Settings</span>
-          </Link>
-        </div>
-
-        <div className="p-2.5 rounded-2xl glass-card flex items-center justify-between shadow-xs">
-          <Link href="/profile" className="flex items-center space-x-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-100 to-cyan-100 dark:from-slate-800 dark:to-slate-700 text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center font-bold text-xs shrink-0 border border-blue-200 dark:border-slate-700">
-              {currentUser?.photoUrl ? (
-                <img
-                  src={currentUser.photoUrl}
-                  alt={currentUser.fullName || 'DP'}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span>
-                  {currentUser?.fullName
-                    ? currentUser.fullName.slice(0, 2).toUpperCase()
-                    : 'CN'}
-                </span>
-              )}
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                {currentUser?.fullName || 'User'}
-              </p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
-                {currentUser?.city || 'Tamil Nadu'}
-              </p>
-            </div>
           </Link>
 
           <button
             onClick={handleLogout}
-            title="Logout"
-            className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="w-full flex items-center px-4 py-2.5 rounded-2xl text-xs font-semibold text-slate-400 hover:text-rose-400 hover:bg-white/5 transition-all cursor-pointer"
           >
-            <LogOut className="w-3.5 h-3.5" />
+            <LogOut className="w-4 h-4 mr-3 text-slate-400" />
+            <span>Logout</span>
           </button>
         </div>
 
-        {/* Safety Notice Box */}
-        <div className="rounded-2xl bg-teal-900/5 dark:bg-teal-950/30 p-2.5 border border-teal-800/10 dark:border-teal-800/30 text-[10px] text-slate-500 dark:text-slate-400">
-          <div className="flex items-center space-x-1 font-semibold text-teal-900 dark:text-teal-300 mb-0.5">
-            <AlertTriangle className="w-3 h-3 text-teal-700 dark:text-teal-400" />
-            <span>Emergency Hotline</span>
+        {/* Mountain Vignette Card with Quote (Matching Design Poster!) */}
+        <div className="relative overflow-hidden rounded-2xl h-24 border border-white/10 shadow-lg group">
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+            style={{ backgroundImage: "url('/images/carenest_login_bg_dark.jpg')", backgroundPosition: 'center 40%' }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071827] via-[#071827]/40 to-transparent" />
+          <div className="absolute inset-x-3 bottom-2.5 text-left">
+            <p className="font-serif italic text-[11px] text-white/90 leading-tight drop-shadow-md">
+              &ldquo;Better Care For A Healthier You.&rdquo;
+            </p>
           </div>
-          <span>Dial 108 / 112 for acute medical distress in India.</span>
         </div>
       </div>
     </aside>

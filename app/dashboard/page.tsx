@@ -3,55 +3,43 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import {
   Search,
-  Compass,
   Building2,
   Bot,
-  CalendarCheck,
-  CheckCircle2,
-  ArrowRight,
-  Bookmark,
-  Clock,
-  AlertCircle,
   MapPin,
-  ChevronRight,
-  Camera,
-  User,
-  Check,
   HeartPulse,
   Bell,
+  Camera,
+  ArrowRight,
+  ShieldAlert,
+  Pill,
+  Lightbulb,
+  Video,
+  Plus,
+  Clock,
+  Star,
+  Compass,
   FileText,
-  ShieldCheck,
-  Navigation,
-  Phone,
-  Layers,
-  Sparkles,
+  ChevronRight,
+  CheckCircle2,
 } from 'lucide-react';
-import { useLanguage } from '@/hooks/use-language';
-import { useAccessibility } from '@/hooks/use-accessibility';
 import { repository } from '@/lib/data/repository';
 import { HealthcareJourney, Facility, UserProfile, DocumentItem } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { formatDistance } from '@/lib/utils';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { t } = useLanguage();
-  const { easyMode } = useAccessibility();
   const [searchQuery, setSearchQuery] = useState('');
   const [journeys, setJourneys] = useState<HealthcareJourney[]>([]);
   const [nearbyFacilities, setNearbyFacilities] = useState<Facility[]>([]);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
-  const [greeting, setGreeting] = useState('');
-  const [userName, setUserName] = useState('User');
+  const [greeting, setGreeting] = useState('Good Evening');
+  const [userName, setUserName] = useState('Kirthik');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoSavedSuccess, setPhotoSavedSuccess] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(2);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -99,72 +87,55 @@ export default function DashboardPage() {
     reader.onload = () => {
       const dataUrl = reader.result as string;
       setPhotoUrl(dataUrl);
-      const updated = repository.updateProfilePhoto(dataUrl);
-      if (updated) {
-        setUserProfile(updated);
-        setPhotoSavedSuccess(true);
-        setTimeout(() => setPhotoSavedSuccess(false), 3000);
-      }
+      repository.updateProfilePhoto(dataUrl);
+      setPhotoSavedSuccess(true);
+      setTimeout(() => setPhotoSavedSuccess(false), 3000);
     };
     reader.readAsDataURL(file);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchQuery.trim()) return;
-    router.push(`/find-care?q=${encodeURIComponent(searchQuery.trim())}`);
-  };
-
-  const calculateETA = (distanceKm?: number) => {
-    if (!distanceKm) return '5 - 10 mins';
-    const minutes = Math.max(5, Math.round(distanceKm * 2.4));
-    if (minutes > 60) {
-      const hours = Math.floor(minutes / 60);
-      const rem = minutes % 60;
-      return `${hours} hr ${rem} mins`;
+    if (searchQuery.trim()) {
+      router.push(`/find-care?q=${encodeURIComponent(searchQuery.trim())}`);
     }
-    return `${minutes} mins`;
   };
-
-  const activeJourney = journeys[0];
-  const completedSteps = activeJourney?.steps.filter((s) => s.isCompleted).length || 0;
-  const totalSteps = activeJourney?.steps.length || 6;
-  const progressPercent = Math.round((completedSteps / totalSteps) * 100);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-in fade-in duration-300">
-      {/* 1. HEADER: Profile DP, Personalized Greeting, Theme & Notifications */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/60 dark:border-slate-800/80">
-        <div className="flex items-center space-x-4">
-          {/* Profile DP with Camera Uploader */}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-7">
+      
+      {/* ========================================================================= */}
+      {/* 1. HEADER: PROFILE AVATAR + GREETING + CONTROLS                           */}
+      {/* ========================================================================= */}
+      <div className="flex items-center justify-between gap-4">
+        {/* Profile Avatar + Dynamic Greeting */}
+        <div className="flex items-center space-x-3.5 sm:space-x-4">
           <div className="relative group shrink-0">
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              title="Click to update profile photo"
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl overflow-hidden border-2 border-[#0866FF] dark:border-[#00C6D7] bg-white dark:bg-[#10283B] flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/15 transition transform hover:scale-105"
-            >
-              {photoUrl ? (
-                <img
-                  src={photoUrl}
-                  alt={userName}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="text-[#0866FF] dark:text-[#48DFFF] font-extrabold text-xl">
-                  {userName ? userName.slice(0, 2).toUpperCase() : 'CN'}
-                </div>
-              )}
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full overflow-hidden p-[2px] bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] shadow-md flex items-center justify-center">
+              <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-[#071827] flex items-center justify-center">
+                {photoUrl ? (
+                  <img
+                    src={photoUrl}
+                    alt={userName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-[#0866FF] dark:text-[#00C6D7] font-black text-lg">
+                    {userName ? userName.slice(0, 2).toUpperCase() : 'CN'}
+                  </div>
+                )}
+              </div>
             </div>
 
+            {/* Quick Change Photo Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white flex items-center justify-center shadow-md hover:scale-110 transition ring-2 ring-white dark:ring-[#071827]"
+              className="absolute bottom-0 right-0 p-1.5 rounded-full bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-md hover:scale-110 active:scale-95 transition-all cursor-pointer"
               title="Upload profile photo"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-3 h-3" />
             </button>
-
             <input
               ref={fileInputRef}
               type="file"
@@ -175,399 +146,306 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-[11px] font-bold text-[#0866FF] dark:text-[#48DFFF] uppercase tracking-wider">
-                Personalized Care Portal
-              </span>
-              {userProfile?.city && (
-                <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center">
-                  • <MapPin className="w-3 h-3 ml-1 mr-0.5 text-[#00C6D7]" />
-                  {userProfile.city}
-                </span>
-              )}
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-0.5">
-              {greeting}, {userName}
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+              {greeting}, &nbsp;{userName}
             </h1>
-            <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
               How are you feeling today?
             </p>
-
-            {photoSavedSuccess && (
-              <p className="text-[11px] text-[#20C997] font-semibold flex items-center pt-0.5 animate-in fade-in">
-                <Check className="w-3.5 h-3.5 mr-1" />
-                Profile photo updated successfully!
-              </p>
-            )}
           </div>
         </div>
 
-        {/* Right side: Notification, Theme toggle, Profile button */}
-        <div className="flex items-center space-x-2.5 self-start sm:self-center">
+        {/* Right Header Controls: Notification Bell + Theme Switcher */}
+        <div className="flex items-center space-x-2.5 sm:space-x-3">
           <button
-            onClick={() => setNotificationCount(0)}
-            className="relative p-2.5 rounded-2xl glass-card text-slate-600 dark:text-slate-300 hover:text-[#0866FF] dark:hover:text-[#48DFFF] transition"
+            type="button"
+            className="p-2 sm:p-2.5 rounded-full bg-white/80 dark:bg-white/10 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#0866FF] dark:hover:text-cyan-300 shadow-sm relative transition-all"
             title="Notifications"
           >
-            <Bell className="w-4 h-4" />
-            {notificationCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#FF5C6C] animate-pulse" />
-            )}
+            <Bell className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
           </button>
-
+          
           <ThemeToggle />
-
-          <Link href="/profile">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-2xl text-xs py-2 px-3.5 border-slate-200/80 dark:border-slate-700/80 hover:border-[#0866FF]"
-            >
-              <User className="w-3.5 h-3.5 mr-1.5 text-[#0866FF] dark:text-[#48DFFF]" />
-              <span>Profile</span>
-            </Button>
-          </Link>
         </div>
       </div>
 
-      {/* 2. LARGE GLOBAL SEARCH */}
-      <div className="glass-panel p-6 sm:p-9 rounded-[2rem] shadow-xl space-y-4 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#0866FF]/15 to-[#00C6D7]/15 rounded-full blur-3xl pointer-events-none" />
-
-        <form onSubmit={handleSearchSubmit} className="space-y-3 relative z-10">
-          <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#0866FF] dark:text-[#48DFFF]">
-              Global Healthcare Search
-            </span>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Search hospitals, doctors, specialists or healthcare services...
-            </h2>
-          </div>
-
-          <div className="relative flex items-center">
-            <Search className="absolute left-4 h-5 w-5 text-[#0866FF] dark:text-[#48DFFF]" />
-            <input
-              id="care-search"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="e.g. Apollo Greams Road, Cardiologist near me, 24/7 Casualty, CMC Vellore..."
-              className={`w-full rounded-2xl glass-input pl-12 pr-32 py-4 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none shadow-sm ${
-                easyMode ? 'text-lg py-5 pl-14' : ''
-              }`}
-            />
-            <Button
-              type="submit"
-              size="sm"
-              className="absolute right-2 px-5 py-2.5 font-bold rounded-xl bg-gradient-to-r from-[#0866FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white shadow-md shadow-[#0866FF]/25"
-            >
-              Search
-            </Button>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Popular Filters:</span>
-            {[
-              'Apollo Chennai',
-              'Ganga Hospital Coimbatore',
-              'Meenakshi Mission Madurai',
-              'Kauvery Trichy',
-              'Manipal Salem',
-              'CMC Vellore',
-              '24/7 Casualty',
-              'CMCHIS Cashless',
-              'Jan Aushadhi Generic',
-            ].map((sample) => (
-              <button
-                key={sample}
-                type="button"
-                onClick={() => {
-                  setSearchQuery(sample);
-                  router.push(`/find-care?q=${encodeURIComponent(sample)}`);
-                }}
-                className="text-xs glass-card hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-xl transition font-medium hover:border-[#0866FF]/40 dark:hover:border-[#48DFFF]/40"
-              >
-                {sample}
-              </button>
-            ))}
-          </div>
-        </form>
-      </div>
-
-      {/* 3. QUICK ACTIONS GRID */}
-      <div className="space-y-3">
-        <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Core Healthcare Services
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href="/find-care" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#0866FF]/50 dark:hover:border-[#48DFFF]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-[#0866FF]/10 text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center mb-3 shadow-xs">
-                <Search className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#0866FF] dark:group-hover:text-[#48DFFF] transition">
-                Find Care
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">17+ specialties, diagnostics & clinics</p>
-            </div>
-          </Link>
-
-          <Link href="/map" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#00C6D7]/50 dark:hover:border-[#00C6D7]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-[#00C6D7]/15 text-[#00C6D7] flex items-center justify-center mb-3 shadow-xs">
-                <MapPin className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#00C6D7] transition">
-                Hospital Map
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Real Google Maps navigation & radar</p>
-            </div>
-          </Link>
-
-          <Link href="/assistant" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#20C997]/50 dark:hover:border-[#20C997]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-[#20C997]/15 text-[#20C997] flex items-center justify-center mb-3 shadow-xs">
-                <Bot className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-[#20C997] transition">
-                Ask Care AI
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Triage, CMCHIS & health guidance</p>
-            </div>
-          </Link>
-
-          <Link href="/journey" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-indigo-500/50 dark:hover:border-indigo-400/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 flex items-center justify-center mb-3 shadow-xs">
-                <CalendarCheck className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-indigo-500 transition">
-                My Care Journey
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Connected visit milestones & checklists</p>
-            </div>
-          </Link>
+      {photoSavedSuccess && (
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs rounded-2xl flex items-center space-x-2 animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+          <span className="font-semibold">Profile photo updated successfully!</span>
         </div>
-      </div>
+      )}
 
-      {/* 4. PERSONALIZED HEALTH HERO */}
-      <div className="glass-panel p-6 sm:p-8 rounded-[2rem] border border-blue-200/70 dark:border-blue-900/60 shadow-xl relative overflow-hidden">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-3 max-w-xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-[11px] font-bold text-[#0866FF] dark:text-[#48DFFF]">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Personalized Health Navigation</span>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              &ldquo;Your Health Journey Matters&rdquo;
-            </h2>
-
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              CareNest organizes verified hospitals, appointments, and medical records into one calm, private ecosystem.
-              {userProfile?.healthConditions
-                ? ` Tailored for your profile with active note on ${userProfile.healthConditions}.`
-                : ' All data is stored locally in your private encrypted health vault.'}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Badge variant="success" className="text-xs px-3 py-1 font-semibold">
-                🔒 Encrypted Health Vault
-              </Badge>
-              <Badge variant="outline" className="text-xs px-3 py-1 font-semibold glass-card">
-                🏛️ CMCHIS / PM-JAY Cashless Support
-              </Badge>
-            </div>
-          </div>
-
-          <div className="shrink-0 flex flex-col items-center sm:items-end space-y-3">
-            <Link href="/assistant">
-              <Button className="py-3 px-6 text-sm font-bold rounded-2xl bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-lg shadow-blue-500/30">
-                Ask AI Assistant →
-              </Button>
-            </Link>
-            <span className="text-[11px] text-slate-400">24/7 Immediate Guidance</span>
-          </div>
+      {/* ========================================================================= */}
+      {/* 2. GLOBAL SEARCH BAR (PILL SHAPED EXACTLY LIKE REFERENCE)                 */}
+      {/* ========================================================================= */}
+      <form onSubmit={handleSearchSubmit} className="relative">
+        <div className="relative flex items-center">
+          <Search className="w-4 h-4 text-slate-400 absolute left-4 pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for hospitals, symptoms, doctors, or services..."
+            className="w-full pl-11 pr-4 py-3 sm:py-3.5 rounded-full bg-white/90 dark:bg-[#10283B]/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00C6D7] focus:border-transparent transition-all"
+          />
         </div>
-      </div>
+      </form>
 
-      {/* 5. NEARBY HEALTHCARE */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      {/* ========================================================================= */}
+      {/* 3. FOUR SERVICE CARDS (Find Care, Ask Care, Map View, My Care Journey)    */}
+      {/* ========================================================================= */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4">
+        
+        {/* Card 1: Find Care */}
+        <Link
+          href="/find-care"
+          className="group p-4 sm:p-5 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-cyan-400/50 transition-all flex flex-col items-center text-center space-y-2.5 transform hover:-translate-y-0.5"
+        >
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#0066FF] dark:text-[#42D9FF] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
+          </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              Nearby Healthcare in {userProfile?.city || 'Tamil Nadu'}
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Verified tertiary medical centers & specialty hospitals with live travel time
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
+              Find Care
+            </h3>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Hospitals, Clinics &amp; more
             </p>
           </div>
+        </Link>
+
+        {/* Card 2: Ask Care */}
+        <Link
+          href="/assistant"
+          className="group p-4 sm:p-5 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-cyan-400/50 transition-all flex flex-col items-center text-center space-y-2.5 transform hover:-translate-y-0.5"
+        >
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-cyan-50 dark:bg-cyan-950/50 text-[#00C6D7] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Bot className="w-5 h-5 sm:w-6 sm:h-6" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
+              Ask Care
+            </h3>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              AI Health Assistant
+            </p>
+          </div>
+        </Link>
+
+        {/* Card 3: Map View */}
+        <Link
+          href="/map"
+          className="group p-4 sm:p-5 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-cyan-400/50 transition-all flex flex-col items-center text-center space-y-2.5 transform hover:-translate-y-0.5"
+        >
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-sky-50 dark:bg-sky-950/50 text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
+              Map View
+            </h3>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Nearby Hospitals
+            </p>
+          </div>
+        </Link>
+
+        {/* Card 4: My Care Journey */}
+        <Link
+          href="/journey"
+          className="group p-4 sm:p-5 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-cyan-400/50 transition-all flex flex-col items-center text-center space-y-2.5 transform hover:-translate-y-0.5"
+        >
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-teal-50 dark:bg-teal-950/50 text-[#00C6D7] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <HeartPulse className="w-5 h-5 sm:w-6 sm:h-6" />
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
+              My Care Journey
+            </h3>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Track Your Health
+            </p>
+          </div>
+        </Link>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 4. HERO BANNER: "Your Health Journey Matters" (EXACTLY AS IN POSTER)       */}
+      {/* ========================================================================= */}
+      <div className="relative overflow-hidden rounded-[28px] sm:rounded-3xl border border-slate-200/70 dark:border-white/10 bg-gradient-to-r from-blue-50/90 via-sky-50/80 to-cyan-50/60 dark:from-[#0c2642] dark:via-[#0c243e] dark:to-[#0a1e34] shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-12 items-center">
+          
+          {/* Left Text Content */}
+          <div className="md:col-span-7 p-6 sm:p-8 md:p-9 space-y-3 sm:space-y-4 z-10">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+              Your Health Journey<br />
+              Matters
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium max-w-md leading-relaxed">
+              Get personalized care, trusted information and a healthier tomorrow.
+            </p>
+            <div className="pt-1">
+              <Link
+                href="/find-care"
+                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-[#102033] hover:bg-[#1a3350] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#102033] text-xs font-bold shadow-md hover:shadow-lg transition-all"
+              >
+                <span>Explore Now</span>
+                <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Consultation Image */}
+          <div className="md:col-span-5 relative h-48 sm:h-56 md:h-64 w-full overflow-hidden">
+            <Image
+              src="/images/carenest_doctor_consultation.jpg"
+              alt="Doctor Consultation"
+              fill
+              sizes="(max-width: 768px) 100vw, 40vw"
+              className="object-cover object-center"
+              priority
+            />
+            {/* Smooth gradient blend into the banner */}
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-blue-50/90 dark:from-[#0c2642] via-transparent to-transparent" />
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 5. QUICK ACCESS SECTION (5 CIRCULAR ICONS: EMERGENCY, PHARMACY, TIPS...) */}
+      {/* ========================================================================= */}
+      <div className="space-y-3.5 pt-1">
+        <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+          Quick Access
+        </h2>
+
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4">
+          
+          {/* Quick 1: Emergency Services */}
+          <a
+            href="tel:108"
+            className="group p-3.5 sm:p-4 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-rose-300 transition-all flex flex-col items-center text-center space-y-2 cursor-pointer"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-500 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <ShieldAlert className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+              Emergency<br />Services
+            </span>
+          </a>
+
+          {/* Quick 2: Nearby Pharmacies */}
+          <Link
+            href="/find-care?type=pharmacy"
+            className="group p-3.5 sm:p-4 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-cyan-300 transition-all flex flex-col items-center text-center space-y-2"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-cyan-50 dark:bg-cyan-950/50 text-[#00C6D7] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Pill className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+              Nearby<br />Pharmacies
+            </span>
+          </Link>
+
+          {/* Quick 3: Health Tips */}
+          <Link
+            href="/assistant"
+            className="group p-3.5 sm:p-4 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-teal-300 transition-all flex flex-col items-center text-center space-y-2"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Lightbulb className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+              Health<br />Tips
+            </span>
+          </Link>
+
+          {/* Quick 4: Teleconsultation */}
+          <Link
+            href="/assistant"
+            className="group p-3.5 sm:p-4 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col items-center text-center space-y-2"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Video className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+              Teleconsultation
+            </span>
+          </Link>
+
+          {/* Quick 5: More */}
           <Link
             href="/facilities"
-            className="text-xs font-bold text-[#0866FF] dark:text-[#48DFFF] hover:underline flex items-center"
+            className="group p-3.5 sm:p-4 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col items-center text-center space-y-2"
           >
-            Explore All Directory
-            <ChevronRight className="w-4 h-4 ml-0.5" />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Plus className="w-5 h-5" />
+            </div>
+            <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+              More
+            </span>
+          </Link>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 6. NEARBY HEALTHCARE HUBS PREVIEW                                         */}
+      {/* ========================================================================= */}
+      <div className="space-y-3.5 pt-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+            Verified Healthcare Centers Near You
+          </h2>
+          <Link
+            href="/find-care"
+            className="text-xs font-bold text-[#0866FF] dark:text-cyan-400 hover:underline flex items-center"
+          >
+            <span>View All</span>
+            <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {nearbyFacilities.map((facility) => (
-            <div
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {nearbyFacilities.slice(0, 2).map((facility) => (
+            <Link
               key={facility.id}
-              onClick={() => router.push(`/facilities/${facility.id}`)}
-              className="p-5 rounded-3xl glass-card border border-white/70 dark:border-white/10 hover:border-[#0866FF]/40 dark:hover:border-[#48DFFF]/40 transition-all duration-200 cursor-pointer hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+              href={`/facilities/${facility.id}`}
+              className="p-4 sm:p-5 rounded-3xl bg-white/85 dark:bg-[#10283B]/85 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md hover:border-cyan-400/50 transition-all flex flex-col justify-between space-y-3 group"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    {facility.facilityType}
-                  </span>
-                  {facility.distanceKm !== undefined && (
-                    <span className="text-xs font-bold text-[#0866FF] dark:text-[#48DFFF] bg-[#0866FF]/10 dark:bg-[#0866FF]/20 px-2 py-0.5 rounded-lg border border-[#0866FF]/20 shrink-0">
-                      {formatDistance(facility.distanceKm)}
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#0866FF] dark:group-hover:text-cyan-300 transition-colors line-clamp-1">
+                    {facility.name}
+                  </h3>
+                  {facility.emergencyAvailable && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 shrink-0">
+                      24/7 ER
                     </span>
                   )}
                 </div>
-
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm mt-1.5 line-clamp-2 group-hover:text-[#0866FF] dark:group-hover:text-[#48DFFF] transition">
-                  {facility.name}
-                </h3>
-
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center line-clamp-1">
+                <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center mt-1">
                   <MapPin className="w-3.5 h-3.5 mr-1 text-[#0866FF] shrink-0" />
-                  {facility.location.city}
+                  <span>{facility.location.city}, Tamil Nadu</span>
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-[#20C997] font-semibold text-[11px] flex items-center">
-                  <Clock className="w-3.5 h-3.5 mr-1" />
-                  ETA: {calculateETA(facility.distanceKm)}
+              <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100 dark:border-white/10 text-slate-600 dark:text-slate-300">
+                <span className="flex items-center text-amber-500 font-bold">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 mr-1" />
+                  {facility.rating}
                 </span>
-                <span className="text-[#0866FF] dark:text-[#48DFFF] font-bold">
-                  Details →
+                <span className="flex items-center text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
+                  <Clock className="w-3 h-3 mr-1" />
+                  ~{Math.round((facility.distanceKm || 3.2) * 2.8)} mins travel
                 </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 6. UPCOMING CARE / JOURNEY */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-            Upcoming Care & Journey Milestones
-          </h2>
-          <Link
-            href="/journey"
-            className="text-xs font-bold text-[#0866FF] dark:text-[#48DFFF] hover:underline flex items-center"
-          >
-            Full Journey Timeline
-            <ChevronRight className="w-4 h-4 ml-0.5" />
-          </Link>
-        </div>
-
-        {activeJourney ? (
-          <div className="glass-panel p-6 sm:p-7 rounded-[2rem] space-y-4 shadow-lg border border-white/60 dark:border-white/10">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/60 dark:border-slate-800">
-              <div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="success" className="text-xs px-2.5 py-0.5">Active Pathway</Badge>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Updated {new Date(activeJourney.updatedAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1.5">
-                  {activeJourney.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                  Specialty: <strong className="text-[#0866FF] dark:text-[#48DFFF]">{activeJourney.categoryName}</strong>
-                </p>
-              </div>
-
-              <Link href="/journey">
-                <Button size="sm" className="rounded-xl px-4 py-2 font-bold bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-[#0866FF]/20">
-                  Continue Next Step →
-                </Button>
-              </Link>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="pt-2 space-y-2">
-              <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                <span>Journey Progress: {progressPercent}%</span>
-                <span>{completedSteps} of {totalSteps} milestones completed</span>
-              </div>
-              <div className="w-full bg-slate-200/70 dark:bg-slate-800 rounded-full h-3 overflow-hidden p-0.5">
-                <div
-                  className="bg-gradient-to-r from-[#0866FF] via-[#00C6D7] to-[#20C997] h-full rounded-full transition-all duration-500 shadow-xs"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="glass-card p-8 text-center text-slate-500 dark:text-slate-400 rounded-3xl border border-white/60 dark:border-white/10">
-            <p className="text-sm font-medium">No active care pathway scheduled.</p>
-            <Link href="/find-care" className="mt-3 inline-block">
-              <Button size="sm" className="rounded-xl bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white">Start New Care Pathway</Button>
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* 7. RECENT HEALTH DOCUMENTS VAULT PREVIEW */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              Secure Document Vault
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Digital health wallet for diagnostic reports, prescriptions, and scheme cards
-            </p>
-          </div>
-          <Link
-            href="/documents"
-            className="text-xs font-bold text-[#0866FF] dark:text-[#48DFFF] hover:underline flex items-center"
-          >
-            View Document Vault
-            <ChevronRight className="w-4 h-4 ml-0.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {documents.map((doc) => (
-            <Link key={doc.id} href="/documents" className="group">
-              <div className="p-5 rounded-3xl glass-card border border-white/70 dark:border-white/10 hover:border-[#0866FF]/40 dark:hover:border-[#48DFFF]/40 transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center shrink-0">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#00C6D7] block truncate">
-                      {doc.categoryName}
-                    </span>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0866FF] dark:group-hover:text-[#48DFFF] transition">
-                      {doc.title}
-                    </h4>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center">
-                    <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                    Verified
-                  </span>
-                </div>
               </div>
             </Link>
           ))}
         </div>
       </div>
+
     </div>
   );
 }
