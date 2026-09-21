@@ -157,19 +157,20 @@ function AssistantPageContent() {
   };
 
   const guidedQueries = [
-    { label: '🩺 General OPD Visit', query: 'I have a high fever, body ache, and need an OPD general physician consultation.' },
-    { label: '🦴 Joint / Ortho Care', query: 'I have persistent knee joint swelling and want to consult an orthopaedic specialist.' },
+    { label: '🩺 General OPD Visit', query: 'I have a persistent fever, cold and fatigue and need an OPD physician consultation.' },
+    { label: '🏥 CMCHIS / Govt GH OPD', query: 'How do I get an OPD token and CMCHIS free scheme treatment at a Tamil Nadu Government Hospital?' },
+    { label: '🦴 Joint / Ortho Care', query: 'I have persistent knee joint pain and want to consult an orthopaedic specialist in Tamil Nadu.' },
     { label: '🚨 Chest Pain (Emergency)', query: 'Severe sudden crushing chest pain and shortness of breath.' },
-    { label: '🔬 Blood Test (NABL)', query: 'Where can I get a comprehensive fasting blood sugar and lipid profile test?' },
-    { label: '💊 Jan Aushadhi Stores', query: 'How can I find affordable generic medicine equivalents through Jan Aushadhi?' },
+    { label: '💊 Jan Aushadhi Stores', query: 'How can I find affordable generic medicine equivalents through Pradhan Mantri Jan Aushadhi Kendra?' },
+    { label: '🚑 108 Emergency Triage', query: 'When should I call 108 ambulance vs visit a hospital emergency department?' },
   ];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex flex-col h-[calc(100vh-5rem)]">
       {/* Top Controls Bar */}
-      <div className="glass-panel rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-md flex items-center justify-between shrink-0 mb-4 backdrop-blur-xl">
+      <div className="glass-panel rounded-3xl p-4 border border-white/60 dark:border-white/10 shadow-md flex items-center justify-between shrink-0 mb-4 backdrop-blur-xl">
         <div className="flex items-center space-x-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-700 to-teal-500 text-white flex items-center justify-center shadow-md">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center shadow-md shadow-[#0066FF]/20">
             <Bot className="w-6 h-6" />
           </div>
           <div>
@@ -178,13 +179,11 @@ function AssistantPageContent() {
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center">
               <span>Non-diagnostic triage</span>
-              {currentUser?.city && (
-                <>
-                  <span className="mx-1">•</span>
-                  <MapPin className="w-3 h-3 text-teal-600 mr-0.5 inline" />
-                  <span>Personalized for {currentUser.city}</span>
-                </>
-              )}
+              <span className="mx-1.5">•</span>
+              <span className="text-[#20C997] font-semibold flex items-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#20C997] inline-block mr-1 animate-pulse" />
+                Live AI Engine
+              </span>
             </p>
           </div>
         </div>
@@ -192,10 +191,11 @@ function AssistantPageContent() {
         <div className="flex items-center space-x-2">
           <button
             onClick={handleResetChat}
-            className="text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white flex items-center px-3.5 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-800 transition shadow-xs"
+            className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 transition glass-card"
+            title="Reset Conversation"
           >
-            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-            New Chat
+            <RotateCcw className="w-3.5 h-3.5 mr-1" />
+            <span>Reset</span>
           </button>
         </div>
       </div>
@@ -268,15 +268,15 @@ function AssistantPageContent() {
                   </div>
 
                   {/* 2. Possible Healthcare Service Category */}
-                  <div className="p-3.5 bg-teal-50/80 dark:bg-teal-950/60 rounded-2xl border border-teal-200/70 dark:border-teal-800/70 flex items-start justify-between shadow-xs">
+                  <div className="p-3.5 bg-[#0066FF]/10 dark:bg-[#0066FF]/20 rounded-2xl border border-[#0066FF]/25 dark:border-[#42D9FF]/25 flex items-start justify-between shadow-xs">
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 block mb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#0066FF] dark:text-[#42D9FF] block mb-1">
                         {t.assistant.possibleService}
                       </span>
-                      <p className="text-sm font-bold text-teal-950 dark:text-teal-100">
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">
                         {msg.structuredResponse.possibleServiceCategory}
                       </p>
-                      <p className="text-xs text-teal-800 dark:text-teal-300 mt-1">
+                      <p className="text-xs text-[#0066FF] dark:text-[#42D9FF] mt-1">
                         {msg.structuredResponse.why}
                       </p>
                     </div>
@@ -401,7 +401,7 @@ function AssistantPageContent() {
           placeholder={
             isListening ? t.assistant.speakListening : 'Ask about hospital departments, OPD tokens, Jan Aushadhi, or symptoms...'
           }
-          className={`flex-1 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 glass-panel px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20 shadow-md ${
+          className={`flex-1 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 glass-panel px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-[#0066FF] dark:focus:border-[#42D9FF] focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 shadow-md ${
             easyMode ? 'text-lg py-4' : ''
           }`}
         />
@@ -409,7 +409,7 @@ function AssistantPageContent() {
         <Button
           type="submit"
           disabled={!input.trim() || isTyping}
-          className="px-5 py-3.5 rounded-2xl shadow-md bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600"
+          className="px-5 py-3.5 rounded-2xl shadow-md bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00a8b7]"
         >
           <Send className="w-4 h-4" />
         </Button>

@@ -34,17 +34,31 @@ const INDIAN_HUBS: Record<string, { name: string; lat: number; lon: number }> = 
   madurai: { name: 'Madurai, Tamil Nadu', lat: 9.9252, lon: 78.1198 },
   trichy: { name: 'Tiruchirappalli (Trichy), Tamil Nadu', lat: 10.7905, lon: 78.7047 },
   salem: { name: 'Salem, Tamil Nadu', lat: 11.6643, lon: 78.1460 },
+  tirunelveli: { name: 'Tirunelveli, Tamil Nadu', lat: 8.7139, lon: 77.7567 },
   vellore: { name: 'Vellore, Tamil Nadu', lat: 12.9165, lon: 79.1325 },
+  erode: { name: 'Erode, Tamil Nadu', lat: 11.3410, lon: 77.7172 },
+  tiruppur: { name: 'Tiruppur, Tamil Nadu', lat: 11.1085, lon: 77.3411 },
+  thanjavur: { name: 'Thanjavur, Tamil Nadu', lat: 10.7870, lon: 79.1378 },
+  hosur: { name: 'Hosur, Tamil Nadu', lat: 12.7409, lon: 77.8253 },
+  dindigul: { name: 'Dindigul, Tamil Nadu', lat: 10.3673, lon: 77.9803 },
+  thoothukudi: { name: 'Thoothukudi (Tuticorin), Tamil Nadu', lat: 8.7642, lon: 78.1348 },
+  nagercoil: { name: 'Nagercoil (Kanyakumari), Tamil Nadu', lat: 8.1960, lon: 77.4119 },
+  karur: { name: 'Karur, Tamil Nadu', lat: 10.9601, lon: 78.0766 },
+  kanchipuram: { name: 'Kanchipuram, Tamil Nadu', lat: 12.8342, lon: 79.7036 },
+  kumbakonam: { name: 'Kumbakonam, Tamil Nadu', lat: 10.9602, lon: 79.3845 },
+  cuddalore: { name: 'Cuddalore, Tamil Nadu', lat: 11.7480, lon: 79.7714 },
+  pudukkottai: { name: 'Pudukkottai, Tamil Nadu', lat: 10.3797, lon: 78.8208 },
+  villupuram: { name: 'Villupuram, Tamil Nadu', lat: 11.9922, lon: 79.5160 },
   puducherry: { name: 'Puducherry (Pondicherry)', lat: 11.9416, lon: 79.8083 },
   bengaluru: { name: 'Bengaluru, Karnataka', lat: 12.9716, lon: 77.5946 },
   mysuru: { name: 'Mysuru (Mysore), Karnataka', lat: 12.2958, lon: 76.6394 },
-  mangaluru: { name: 'Mangaluru (Mangalore), Karnataka', lat: 12.9141, lon: 74.8560 },
+  mangaluru: { name: 'Mangaluru, Karnataka', lat: 12.9141, lon: 74.8560 },
   kochi: { name: 'Kochi (Cochin), Kerala', lat: 9.9312, lon: 76.2673 },
-  thiruvananthapuram: { name: 'Thiruvananthapuram (Trivandrum), Kerala', lat: 8.5241, lon: 76.9366 },
+  thiruvananthapuram: { name: 'Thiruvananthapuram, Kerala', lat: 8.5241, lon: 76.9366 },
   kozhikode: { name: 'Kozhikode (Calicut), Kerala', lat: 11.2588, lon: 75.7804 },
   hyderabad: { name: 'Hyderabad, Telangana', lat: 17.3850, lon: 78.4867 },
   vijayawada: { name: 'Vijayawada, Andhra Pradesh', lat: 16.5062, lon: 80.6480 },
-  visakhapatnam: { name: 'Visakhapatnam (Vizag), Andhra Pradesh', lat: 17.6868, lon: 83.2185 },
+  visakhapatnam: { name: 'Visakhapatnam, Andhra Pradesh', lat: 17.6868, lon: 83.2185 },
   delhi: { name: 'New Delhi (NCR)', lat: 28.6139, lon: 77.2090 },
   mumbai: { name: 'Mumbai, Maharashtra', lat: 19.0760, lon: 72.8777 },
   kolkata: { name: 'Kolkata, West Bengal', lat: 22.5726, lon: 88.3639 },
@@ -215,7 +229,7 @@ function MapPageContent() {
                 onClick={() => setSelectedFacility(fac)}
                 className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
                   isSelected
-                    ? 'border-teal-600 dark:border-teal-400 bg-teal-50/70 dark:bg-teal-950/50 shadow-md ring-1 ring-teal-500/30'
+                    ? 'border-[#0066FF] dark:border-[#42D9FF] bg-[#0066FF]/10 dark:bg-[#0066FF]/20 shadow-md ring-1 ring-[#0066FF]/30'
                     : 'border-slate-200/70 dark:border-slate-800/70 glass-card hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md'
                 }`}
               >
@@ -229,7 +243,7 @@ function MapPageContent() {
                     </h3>
                   </div>
                   {fac.distanceKm !== undefined && (
-                    <span className="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50/80 dark:bg-teal-950/80 px-2 py-0.5 rounded-lg border border-teal-100 dark:border-teal-900/50 shrink-0">
+                    <span className="text-xs font-bold text-[#0066FF] dark:text-[#42D9FF] bg-[#0066FF]/10 dark:bg-[#0066FF]/20 px-2 py-0.5 rounded-lg border border-[#0066FF]/20 shrink-0">
                       {formatDistance(fac.distanceKm)}
                     </span>
                   )}
@@ -240,13 +254,13 @@ function MapPageContent() {
                 </p>
 
                 <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs">
-                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold flex items-center text-[11px]">
+                  <span className="text-[#20C997] font-semibold flex items-center text-[11px]">
                     <Clock className="w-3.5 h-3.5 mr-1" />
                     ETA: {calculateETA(fac.distanceKm)}
                   </span>
                   <Link
                     href={`/facilities/${fac.id}`}
-                    className="text-teal-700 dark:text-teal-400 font-bold hover:underline"
+                    className="text-[#0066FF] dark:text-[#42D9FF] font-bold hover:underline"
                     onClick={(e) => e.stopPropagation()}
                   >
                     View Details →
@@ -442,11 +456,11 @@ function MapPageContent() {
 
                 <div className="flex items-center space-x-3 text-xs pt-1">
                   {selectedFacility.distanceKm !== undefined && (
-                    <span className="font-bold text-teal-700 dark:text-teal-400">
+                    <span className="font-bold text-[#0066FF] dark:text-[#42D9FF]">
                       📍 {formatDistance(selectedFacility.distanceKm)}
                     </span>
                   )}
-                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold flex items-center">
+                  <span className="text-[#20C997] font-semibold flex items-center">
                     <Car className="w-3.5 h-3.5 mr-1" />
                     ~{calculateETA(selectedFacility.distanceKm)}
                   </span>
@@ -466,7 +480,7 @@ function MapPageContent() {
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedFacility.location.latitude},${selectedFacility.location.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-semibold text-xs rounded-2xl shadow-md transition"
+                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00a8b7] text-white font-semibold text-xs rounded-2xl shadow-md shadow-[#0066FF]/20 transition"
                 >
                   <Navigation className="w-3.5 h-3.5 mr-1" />
                   Directions

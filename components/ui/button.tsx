@@ -15,21 +15,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { easyMode } = useAccessibility();
 
     const baseStyles =
-      'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none rounded-xl';
+      'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none rounded-2xl';
 
     const variants = {
       primary:
-        'bg-teal-700 text-white hover:bg-teal-800 focus-visible:ring-teal-600 shadow-sm',
+        'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white focus-visible:ring-[#0066FF] shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30',
       secondary:
-        'bg-slate-100 text-slate-800 hover:bg-slate-200 focus-visible:ring-slate-400',
+        'bg-blue-50/80 dark:bg-slate-800/80 text-[#0066FF] dark:text-[#42D9FF] hover:bg-blue-100/90 dark:hover:bg-slate-750 border border-blue-200/60 dark:border-slate-700/60',
       outline:
-        'border-2 border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-400',
+        'border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md text-slate-800 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-750 focus-visible:ring-[#0066FF]',
       ghost:
-        'text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-300',
+        'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white',
       destructive:
-        'bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-rose-500 shadow-sm',
+        'bg-[#FF5C6C] text-white hover:bg-red-600 focus-visible:ring-red-500 shadow-sm shadow-red-500/20',
       emergency:
-        'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 shadow-md font-bold tracking-wide animate-pulse',
+        'bg-[#FF5C6C] text-white hover:bg-red-600 focus-visible:ring-red-500 shadow-md shadow-red-500/30 font-bold tracking-wide animate-pulse',
     };
 
     const sizes = {

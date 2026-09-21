@@ -67,11 +67,11 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-white/50 dark:lg:border-slate-800/60 bg-white/65 dark:bg-slate-950/65 backdrop-blur-xl p-4 shrink-0 transition-all duration-200',
+        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-white/50 dark:lg:border-slate-800/60 bg-white/65 dark:bg-[#071827]/75 backdrop-blur-xl p-4 shrink-0 transition-all duration-200',
         easyMode ? 'lg:w-72' : ''
       )}
     >
-      <nav className="flex flex-1 flex-col space-y-1">
+      <nav className="flex flex-1 flex-col space-y-1.5">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -81,13 +81,13 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'group flex items-center rounded-2xl font-medium transition-all duration-150',
-                easyMode ? 'px-4 py-3 text-base' : 'px-3 py-2 text-xs',
+                'group flex items-center rounded-2xl font-medium transition-all duration-200',
+                easyMode ? 'px-4 py-3 text-base' : 'px-3.5 py-2.5 text-xs',
                 isActive
-                  ? 'bg-teal-700 dark:bg-teal-600 text-white shadow-sm font-semibold'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
+                  ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/25 font-semibold'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50/70 dark:hover:bg-slate-800/70 hover:text-[#0066FF] dark:hover:text-[#42D9FF]',
                 item.highlight && !isActive
-                  ? 'bg-teal-50/80 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60'
+                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-[#0066FF] dark:text-[#42D9FF] border border-blue-200/60 dark:border-blue-800/60'
                   : ''
               )}
             >
@@ -98,8 +98,8 @@ export function Sidebar() {
                   isActive
                     ? 'text-white'
                     : item.highlight
-                    ? 'text-teal-700 dark:text-teal-400'
-                    : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'
+                    ? 'text-[#0066FF] dark:text-[#42D9FF]'
+                    : 'text-slate-400 dark:text-slate-400 group-hover:text-[#0066FF] dark:group-hover:text-[#42D9FF]'
                 )}
                 aria-hidden="true"
               />
@@ -110,10 +110,10 @@ export function Sidebar() {
       </nav>
 
       {/* User Section at bottom of Sidebar */}
-      <div className="mt-auto space-y-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-        <div className="p-2.5 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+      <div className="mt-auto space-y-2 pt-3 border-t border-slate-200/80 dark:border-slate-800/80">
+        <div className="p-2.5 rounded-2xl glass-card flex items-center justify-between shadow-xs">
           <Link href="/profile" className="flex items-center space-x-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl overflow-hidden bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 flex items-center justify-center font-bold text-xs shrink-0 border border-teal-300 dark:border-teal-700">
+            <div className="w-8 h-8 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-100 to-cyan-100 dark:from-slate-800 dark:to-slate-700 text-[#0066FF] dark:text-[#42D9FF] flex items-center justify-center font-bold text-xs shrink-0 border border-blue-200 dark:border-slate-700">
               {currentUser?.photoUrl ? (
                 <img
                   src={currentUser.photoUrl}

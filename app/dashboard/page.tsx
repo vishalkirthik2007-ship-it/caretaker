@@ -169,14 +169,14 @@ export default function DashboardPage() {
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                 {greeting}, {userName}
               </h1>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">
-                {t.app.tagline}
+              <p className="text-slate-600 dark:text-slate-300 text-sm font-medium mt-0.5">
+                How are you feeling today?
               </p>
             </div>
           </div>
 
           {photoSavedSuccess && (
-            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center pt-1 animate-in fade-in">
+            <p className="text-[11px] text-[#20C997] font-semibold flex items-center pt-1 animate-in fade-in">
               <Check className="w-3.5 h-3.5 mr-1" />
               Profile photo updated successfully!
             </p>
@@ -185,8 +185,8 @@ export default function DashboardPage() {
 
         {/* Quick Profile Link */}
         <Link href="/profile" className="self-start sm:self-center">
-          <Button variant="outline" size="sm" className="text-xs">
-            <User className="w-3.5 h-3.5 mr-1.5 text-teal-700 dark:text-teal-400" />
+          <Button variant="outline" size="sm" className="text-xs rounded-xl border-slate-300 dark:border-slate-700 hover:border-[#0066FF] dark:hover:border-[#42D9FF]">
+            <User className="w-3.5 h-3.5 mr-1.5 text-[#0066FF] dark:text-[#42D9FF]" />
             View Full Profile
           </Button>
         </Link>
@@ -194,11 +194,11 @@ export default function DashboardPage() {
 
       {/* 2. Main Search Bar & Hero ("How can we help you find care?") */}
       <div className="glass-panel p-6 sm:p-9 rounded-3xl shadow-xl space-y-5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-sky-400/10 dark:bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#0066FF]/15 to-[#00C6D7]/15 rounded-full blur-3xl pointer-events-none" />
         
         <form onSubmit={handleSearchSubmit} className="space-y-4 relative z-10">
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#0066FF] dark:text-[#42D9FF]">
               Instant Healthcare Navigation
             </span>
             <label
@@ -210,7 +210,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="relative flex items-center">
-            <Search className="absolute left-4 h-5 w-5 text-sky-600 dark:text-sky-400" />
+            <Search className="absolute left-4 h-5 w-5 text-[#0066FF] dark:text-[#42D9FF]" />
             <input
               id="care-search"
               type="text"
@@ -224,38 +224,45 @@ export default function DashboardPage() {
             <Button
               type="submit"
               size="sm"
-              className="absolute right-2 px-4 py-2 font-bold rounded-xl bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white shadow-md"
+              className="absolute right-2 px-4 py-2 font-bold rounded-xl bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00a8b7] text-white shadow-md shadow-[#0066FF]/20"
             >
               {t.common.search}
             </Button>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Popular Indian Searches:</span>
-            {['Apollo Greams Road', 'AIIMS trauma triage', 'NABL Blood Test', 'Jan Aushadhi generic shop', 'Chest pain emergency', 'CMC Vellore OPD'].map(
-              (sample) => (
-                <button
-                  key={sample}
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery(sample);
-                    router.push(`/find-care?q=${encodeURIComponent(sample)}`);
-                  }}
-                  className="text-xs glass-card hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-xl transition shadow-2xs font-medium"
-                >
-                  {sample}
-                </button>
-              )
-            )}
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Popular Tamil Nadu & Indian Searches:</span>
+            {[
+              'Apollo Greams Road',
+              'Kauvery Hospital Chennai',
+              'Ganga Hospital Coimbatore',
+              'Meenakshi Mission Madurai',
+              'CMC Vellore OPD',
+              'Jan Aushadhi Generic',
+              '108 Emergency Ambulance',
+              'NABL Blood Test Lab'
+            ].map((sample) => (
+              <button
+                key={sample}
+                type="button"
+                onClick={() => {
+                  setSearchQuery(sample);
+                  router.push(`/find-care?q=${encodeURIComponent(sample)}`);
+                }}
+                className="text-xs glass-card hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-xl transition shadow-2xs font-medium hover:border-[#0066FF]/40 dark:hover:border-[#42D9FF]/40"
+              >
+                {sample}
+              </button>
+            ))}
           </div>
         </form>
       </div>
 
       {/* Personalized Healthcare Context & City Navigation Alert */}
       {userProfile?.healthConditions && (
-        <div className="p-4 sm:p-5 glass-card border border-sky-200/80 dark:border-sky-800/80 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+        <div className="p-4 sm:p-5 glass-card border border-[#0066FF]/25 dark:border-[#42D9FF]/25 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
           <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center shrink-0 shadow-md">
               <HeartPulse className="w-6 h-6" />
             </div>
             <div className="text-xs space-y-0.5">
@@ -268,7 +275,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <Link href="/find-care" className="shrink-0 self-start sm:self-center">
-            <Button size="sm" variant="outline" className="text-xs py-1.5 px-3.5 rounded-xl border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-300">
+            <Button size="sm" variant="outline" className="text-xs py-1.5 px-3.5 rounded-xl border-[#0066FF]/30 dark:border-[#42D9FF]/30 text-[#0066FF] dark:text-[#42D9FF]">
               Explore Care Categories →
             </Button>
           </Link>
@@ -282,23 +289,23 @@ export default function DashboardPage() {
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link href="/find-care" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-11 h-11 rounded-2xl bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 flex items-center justify-center mb-3 shadow-xs">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#0066FF]/50 dark:hover:border-[#42D9FF]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-[#0066FF]/10 text-[#0066FF] dark:text-[#42D9FF] flex items-center justify-center mb-3 shadow-xs">
                 <Search className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-sky-600 dark:group-hover:text-sky-400 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-[#0066FF] dark:group-hover:text-[#42D9FF] transition">
                 {t.nav.findCare}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Browse 25+ care categories</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Browse 17+ care categories</p>
             </div>
           </Link>
 
           <Link href="/facilities" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-11 h-11 rounded-2xl bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 flex items-center justify-center mb-3 shadow-xs">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#00C6D7]/50 dark:hover:border-[#00C6D7]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-[#00C6D7]/15 text-[#00C6D7] flex items-center justify-center mb-3 shadow-xs">
                 <Building2 className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-[#00C6D7] transition">
                 {t.dashboard.nearbyFacilities}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Hospitals, clinics & labs</p>
@@ -306,11 +313,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/assistant" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center mb-3 shadow-xs">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#20C997]/50 dark:hover:border-[#20C997]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-[#20C997]/15 text-[#20C997] flex items-center justify-center mb-3 shadow-xs">
                 <Bot className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-[#20C997] transition">
                 {t.nav.assistant}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">AI triage & guidance</p>
@@ -318,11 +325,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/journey" className="group">
-            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-              <div className="w-11 h-11 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center mb-3 shadow-xs">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-[#0066FF]/50 dark:hover:border-[#0066FF]/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 flex items-center justify-center mb-3 shadow-xs">
                 <CalendarCheck className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-indigo-500 transition">
                 {t.dashboard.prepareVisit}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">OPD questions & prep</p>
@@ -337,7 +344,7 @@ export default function DashboardPage() {
           <h2 className="text-base font-bold text-slate-900 dark:text-white">
             {t.dashboard.activeJourney}
           </h2>
-          <Link href="/journey" className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline flex items-center">
+          <Link href="/journey" className="text-xs font-semibold text-[#0066FF] dark:text-[#42D9FF] hover:underline flex items-center">
             View Journey Pipeline
             <ChevronRight className="w-4 h-4 ml-0.5" />
           </Link>
@@ -357,11 +364,11 @@ export default function DashboardPage() {
                   {activeJourney.title}
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                  Target Service: <strong className="text-sky-700 dark:text-sky-400">{activeJourney.categoryName}</strong>
+                  Target Service: <strong className="text-[#0066FF] dark:text-[#42D9FF]">{activeJourney.categoryName}</strong>
                 </p>
               </div>
               <Link href="/journey">
-                <Button size="sm" className="rounded-xl px-4 py-2 font-bold bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md">
+                <Button size="sm" className="rounded-xl px-4 py-2 font-bold bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-[#0066FF]/20">
                   Continue Next Step →
                 </Button>
               </Link>
@@ -375,7 +382,7 @@ export default function DashboardPage() {
               </div>
               <div className="w-full bg-slate-200/70 dark:bg-slate-800 rounded-full h-3 overflow-hidden p-0.5">
                 <div
-                  className="bg-gradient-to-r from-sky-600 via-teal-600 to-emerald-500 h-full rounded-full transition-all duration-500 shadow-xs"
+                  className="bg-gradient-to-r from-[#0066FF] via-[#00C6D7] to-[#20C997] h-full rounded-full transition-all duration-500 shadow-xs"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -385,7 +392,7 @@ export default function DashboardPage() {
           <div className="glass-card p-8 text-center text-slate-500 dark:text-slate-400 rounded-3xl border border-white/60 dark:border-white/10">
             <p className="text-sm font-medium">{t.dashboard.noActiveJourney}</p>
             <Link href="/find-care" className="mt-3 inline-block">
-              <Button size="sm" className="rounded-xl bg-gradient-to-r from-sky-600 to-teal-600 text-white">{t.dashboard.startJourneyBtn}</Button>
+              <Button size="sm" className="rounded-xl bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white">{t.dashboard.startJourneyBtn}</Button>
             </Link>
           </div>
         )}

@@ -146,13 +146,13 @@ function FacilitiesPageContent() {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300">
             <span className="flex items-center">
-              <MapPin className="w-3.5 h-3.5 mr-1 text-sky-600 dark:text-sky-400" />
-              Filter by Hub / City (South India Priority):
+              <MapPin className="w-3.5 h-3.5 mr-1 text-[#0066FF] dark:text-[#42D9FF]" />
+              Filter by Hub / City (Tamil Nadu & South India Priority):
             </span>
             {selectedCity !== 'all' && (
               <button
                 onClick={() => setSelectedCity('all')}
-                className="text-sky-600 dark:text-sky-400 hover:underline text-[11px]"
+                className="text-[#0066FF] dark:text-[#42D9FF] hover:underline text-[11px]"
               >
                 Clear city filter
               </button>
@@ -164,22 +164,28 @@ function FacilitiesPageContent() {
               { id: 'Chennai', label: 'Chennai' },
               { id: 'Coimbatore', label: 'Coimbatore' },
               { id: 'Madurai', label: 'Madurai' },
-              { id: 'Trichy', label: 'Trichy' },
+              { id: 'Tiruchirappalli', label: 'Trichy' },
               { id: 'Salem', label: 'Salem' },
+              { id: 'Tirunelveli', label: 'Tirunelveli' },
               { id: 'Vellore', label: 'Vellore' },
-              { id: 'Bengaluru', label: 'Bengaluru' },
-              { id: 'Mysuru', label: 'Mysuru' },
-              { id: 'Mangaluru', label: 'Mangaluru' },
-              { id: 'Kochi', label: 'Kochi' },
-              { id: 'Thiruvananthapuram', label: 'Trivandrum' },
-              { id: 'Kozhikode', label: 'Kozhikode' },
-              { id: 'Hyderabad', label: 'Hyderabad' },
-              { id: 'Vijayawada', label: 'Vijayawada' },
-              { id: 'Visakhapatnam', label: 'Vizag' },
+              { id: 'Erode', label: 'Erode' },
+              { id: 'Tiruppur', label: 'Tiruppur' },
+              { id: 'Thanjavur', label: 'Thanjavur' },
+              { id: 'Hosur', label: 'Hosur' },
+              { id: 'Dindigul', label: 'Dindigul' },
+              { id: 'Thoothukudi', label: 'Thoothukudi' },
+              { id: 'Nagercoil', label: 'Nagercoil' },
+              { id: 'Karur', label: 'Karur' },
+              { id: 'Kanchipuram', label: 'Kanchipuram' },
+              { id: 'Kumbakonam', label: 'Kumbakonam' },
+              { id: 'Cuddalore', label: 'Cuddalore' },
+              { id: 'Pudukkottai', label: 'Pudukkottai' },
+              { id: 'Villupuram', label: 'Villupuram' },
               { id: 'Puducherry', label: 'Puducherry' },
+              { id: 'Bengaluru', label: 'Bengaluru' },
+              { id: 'Hyderabad', label: 'Hyderabad' },
               { id: 'Delhi', label: 'Delhi NCR' },
               { id: 'Mumbai', label: 'Mumbai' },
-              { id: 'Chandigarh', label: 'Chandigarh' },
             ].map((c) => (
               <button
                 key={c.id}
@@ -187,7 +193,7 @@ function FacilitiesPageContent() {
                 onClick={() => setSelectedCity(c.id)}
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-2xs ${
                   selectedCity.toLowerCase() === c.id.toLowerCase()
-                    ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-[#0066FF]/20'
                     : 'glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                 }`}
               >

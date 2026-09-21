@@ -161,7 +161,7 @@ export default function FacilityDetailPage() {
               variant={isSaved ? 'primary' : 'outline'}
               size="sm"
               className={`w-full rounded-xl font-bold ${
-                isSaved ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white' : 'glass-card'
+                isSaved ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-[#0066FF]/20' : 'glass-card'
               }`}
             >
               {isSaved ? (
@@ -181,9 +181,9 @@ export default function FacilityDetailPage() {
               onClick={handleStartJourney}
               variant="secondary"
               size="sm"
-              className="w-full text-xs rounded-xl font-bold glass-card border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300"
+              className="w-full text-xs rounded-xl font-bold glass-card border border-[#0066FF]/30 dark:border-[#42D9FF]/30 text-[#0066FF] dark:text-[#42D9FF]"
             >
-              <CalendarCheck className="w-4 h-4 mr-1.5 text-sky-600 dark:text-sky-400" />
+              <CalendarCheck className="w-4 h-4 mr-1.5 text-[#0066FF] dark:text-[#42D9FF]" />
               Prepare Appointment
             </Button>
           </div>
@@ -193,7 +193,7 @@ export default function FacilityDetailPage() {
         <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800 flex flex-wrap items-center gap-3">
           <a
             href={`tel:${facility.phone}`}
-            className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-bold text-xs rounded-2xl shadow-md transition"
+            className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00a8b7] text-white font-bold text-xs rounded-2xl shadow-md shadow-[#0066FF]/20 transition"
           >
             <Phone className="w-3.5 h-3.5 mr-1.5" />
             Call {facility.phone}
@@ -203,9 +203,9 @@ export default function FacilityDetailPage() {
             href={`https://www.google.com/maps/dir/?api=1&destination=${facility.location.latitude},${facility.location.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-2xl transition shadow-xs"
+            className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-2xl border border-slate-200/70 dark:border-slate-700/70 transition shadow-xs"
           >
-            <Navigation className="w-3.5 h-3.5 mr-1.5 text-sky-600 dark:text-sky-400" />
+            <Navigation className="w-3.5 h-3.5 mr-1.5 text-[#0066FF] dark:text-[#42D9FF]" />
             Get Google Maps Directions
           </a>
 
@@ -214,7 +214,7 @@ export default function FacilityDetailPage() {
               href={facility.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl transition shadow-xs"
+              className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl border border-slate-200/70 dark:border-slate-700/70 transition shadow-xs"
             >
               <Globe className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
               Official Hospital Portal

@@ -35,12 +35,12 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center -mt-5 group"
+                className="flex flex-col items-center justify-center -mt-6 group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-teal-700 dark:bg-teal-600 text-white shadow-lg flex items-center justify-center transition-transform group-active:scale-95">
+                <div className="w-13 h-13 rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white shadow-lg shadow-blue-500/30 flex items-center justify-center transition-transform group-active:scale-95 ring-4 ring-white/70 dark:ring-[#071827]">
                   <Bot className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-semibold text-teal-800 dark:text-teal-300 mt-1">
+                <span className="text-[10px] font-bold text-[#0066FF] dark:text-[#42D9FF] mt-1">
                   Ask AI
                 </span>
               </Link>
@@ -54,12 +54,12 @@ export function BottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center w-14 py-1 transition-colors',
                 isActive
-                  ? 'text-teal-700 dark:text-teal-400 font-semibold'
+                  ? 'text-[#0066FF] dark:text-[#42D9FF] font-semibold'
                   : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
               )}
             >
               <item.icon className="h-5 w-5" />
-              <span className="text-[10px] mt-0.5 truncate max-w-full">
+              <span className="text-[10px] mt-0.5 truncate max-w-full font-medium">
                 {item.name}
               </span>
             </Link>

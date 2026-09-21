@@ -16,12 +16,29 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-poppins)', 'Poppins', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        healthcare: {
+          primary: "#0066FF",
+          secondary: "#00C6D7",
+          accent: "#42D9FF",
+          bgLight: "#F4F8FC",
+          surfaceLight: "#FFFFFF",
+          bgDark: "#071827",
+          surfaceDark: "#10283B",
+          text: "#102033",
+          secondaryText: "#66758A",
+          success: "#20C997",
+          warning: "#FFB547",
+          emergency: "#FF5C6C",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -59,4 +76,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

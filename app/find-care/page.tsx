@@ -160,7 +160,7 @@ function FindCarePageContent() {
               onClick={() => setSelectedUrgency(pill.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs ${
                 selectedUrgency === pill.id
-                  ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-[#0066FF]/20'
                   : 'glass-card text-slate-700 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-slate-800'
               }`}
             >
@@ -206,13 +206,13 @@ function FindCarePageContent() {
 
       {/* AI Category Match Recommendation Banner */}
       {matchedCategory && !emergencyAlert && query.trim() && (
-        <div className="glass-card rounded-3xl border border-sky-200 dark:border-sky-800 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+        <div className="glass-card rounded-3xl border border-[#0066FF]/30 dark:border-[#42D9FF]/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
           <div className="flex items-center space-x-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center shrink-0 shadow-md">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300">
+              <div className="text-xs font-bold uppercase tracking-wider text-[#0066FF] dark:text-[#42D9FF]">
                 Care Navigation Match
               </div>
               <div className="text-sm font-black text-slate-900 dark:text-white">
@@ -222,7 +222,7 @@ function FindCarePageContent() {
           </div>
           <Link
             href={`/assistant?q=${encodeURIComponent(query)}`}
-            className="inline-flex items-center text-xs font-bold text-white bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 px-4 py-2 rounded-xl shadow-md shrink-0"
+            className="inline-flex items-center text-xs font-bold text-white bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00a8b7] px-4 py-2 rounded-xl shadow-md shadow-[#0066FF]/20 shrink-0"
           >
             <span>Ask CarePath AI</span>
             <ArrowRight className="w-4 h-4 ml-1.5" />

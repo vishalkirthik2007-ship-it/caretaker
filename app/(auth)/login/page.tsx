@@ -27,18 +27,40 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const INDIAN_CITIES = [
   'Chennai',
+  'Coimbatore',
+  'Madurai',
+  'Tiruchirappalli (Trichy)',
+  'Salem',
+  'Tirunelveli',
+  'Vellore',
+  'Erode',
+  'Tiruppur',
+  'Thanjavur',
+  'Hosur',
+  'Dindigul',
+  'Thoothukudi',
+  'Nagercoil',
+  'Karur',
+  'Kanchipuram',
+  'Kumbakonam',
+  'Cuddalore',
+  'Pudukkottai',
+  'Villupuram',
+  'Puducherry',
   'Bengaluru',
-  'New Delhi',
-  'Mumbai',
+  'Mysuru',
+  'Mangaluru',
+  'Kochi',
+  'Thiruvananthapuram',
+  'Kozhikode',
   'Hyderabad',
+  'Vijayawada',
+  'Visakhapatnam',
+  'New Delhi (NCR)',
+  'Mumbai',
   'Kolkata',
   'Pune',
   'Chandigarh',
-  'Vellore',
-  'Ahmedabad',
-  'Jaipur',
-  'Coimbatore',
-  'Kochi',
   'Other / Regional India',
 ];
 
@@ -208,9 +230,9 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-10 overflow-hidden">
       {/* Dynamic Animated Atmospheric Medical Nature Background Overlays */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-sky-100/30 via-transparent to-sky-900/10 dark:from-slate-950/40 dark:via-slate-950/80 dark:to-slate-950/90 pointer-events-none" />
-      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-sky-400/25 dark:bg-sky-500/15 blur-3xl pointer-events-none animate-pulse" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-teal-400/20 dark:bg-teal-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-100/20 via-transparent to-blue-900/10 dark:from-[#071827]/40 dark:via-[#071827]/80 dark:to-[#071827]/95 pointer-events-none" />
+      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#0066FF]/20 dark:bg-[#0066FF]/15 blur-3xl pointer-events-none animate-float-particle" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-[#00C6D7]/20 dark:bg-[#00C6D7]/12 blur-3xl pointer-events-none animate-float-particle" style={{ animationDelay: '3s' }} />
 
       {/* Top Floating Theme Switcher */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center space-x-2">
@@ -221,15 +243,15 @@ export default function LoginPage() {
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full glass-card">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-600 to-teal-500 text-white shadow-md shadow-sky-600/30">
-              <Compass className="h-5 w-5 animate-spin" style={{ animationDuration: '9s' }} />
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/30">
+              <Compass className="h-5 w-5 animate-spin" style={{ animationDuration: '12s' }} />
             </div>
-            <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
-              CarePath<span className="text-sky-600 dark:text-sky-400">AI</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              CarePath<span className="text-[#0066FF] dark:text-[#42D9FF] font-extrabold ml-0.5">AI</span>
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Patient Portal & Healthcare Identity
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
@@ -248,16 +270,16 @@ export default function LoginPage() {
 
         {/* Returning User Notification Banner */}
         {isReturningUser && returningProfiles.length > 0 && (
-          <div className="p-4 glass-card border border-sky-200/80 dark:border-sky-900/60 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+          <div className="p-4 glass-card border border-blue-200/80 dark:border-blue-900/60 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 to-teal-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
                 {fullName ? fullName.slice(0, 2).toUpperCase() : 'CP'}
               </div>
               <div className="text-xs">
                 <span className="font-bold text-slate-900 dark:text-white text-sm block">
                   Welcome back, {fullName || 'Patient'}!
                 </span>
-                <span className="text-sky-700 dark:text-sky-300 text-[11px]">
+                <span className="text-[#0066FF] dark:text-[#42D9FF] text-[11px]">
                   Saved verified profile detected for {city}, India.
                 </span>
               </div>
@@ -268,7 +290,7 @@ export default function LoginPage() {
                 variant="outline"
                 size="sm"
                 onClick={handleClearForNewUser}
-                className="text-xs py-1.5 px-3 rounded-xl border-slate-300 dark:border-slate-700 hover:bg-white/60 dark:hover:bg-slate-800/60"
+                className="text-xs py-1.5 px-3 rounded-2xl border-slate-300 dark:border-slate-700 hover:bg-white/60 dark:hover:bg-slate-800/60"
               >
                 <RefreshCw className="w-3 h-3 mr-1" />
                 New User
@@ -278,9 +300,9 @@ export default function LoginPage() {
                 size="sm"
                 disabled={isSubmitting}
                 onClick={() => handleQuickLogin(returningProfiles[0])}
-                className="text-xs py-1.5 px-4 bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-md"
+                className="text-xs py-1.5 px-4 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white font-bold rounded-2xl shadow-md shadow-blue-500/20"
               >
-                Continue to App →
+                Get Started →
               </Button>
             </div>
           </div>
@@ -503,7 +525,7 @@ export default function LoginPage() {
 
             {/* Privacy Check */}
             <div className="flex items-start space-x-2 pt-2 text-slate-600 dark:text-slate-400 text-xs">
-              <ShieldCheck className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0 mt-0.5" />
+              <ShieldCheck className="w-4 h-4 text-[#0066FF] dark:text-[#42D9FF] shrink-0 mt-0.5" />
               <span className="text-[11px] leading-relaxed">
                 By continuing, you agree to access CarePath AI's educational navigation system. Your data is isolated to your private account under national digital health standards.
               </span>
@@ -513,10 +535,9 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 text-sm font-bold rounded-2xl shadow-xl shadow-sky-600/20 bg-gradient-to-r from-sky-600 via-teal-600 to-emerald-600 hover:from-sky-700 hover:to-emerald-700 text-white flex items-center justify-center space-x-2 transition-transform active:scale-[0.99]"
+              className="w-full py-4 text-sm font-bold rounded-2xl shadow-xl shadow-blue-500/25 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white flex items-center justify-center space-x-2 transition-transform hover:-translate-y-0.5 active:scale-[0.99]"
             >
-              <span>{isSubmitting ? 'Securing Healthcare Profile...' : 'Continue to Main Application'}</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <span>{isSubmitting ? 'Securing Healthcare Profile...' : 'Get Started →'}</span>
             </Button>
           </form>
         </div>
