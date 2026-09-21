@@ -20,12 +20,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col text-slate-900 dark:text-slate-100 bg-sky-100/15 dark:bg-slate-950/60">
+    <div className="flex min-h-screen flex-col text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950/60">
       <Header />
       <OfflineBanner />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 pb-20 lg:pb-12 overflow-y-auto">
+        <main className="flex-1 pb-20 lg:pb-12 overflow-y-auto bg-white dark:bg-transparent">
           {children}
         </main>
       </div>
