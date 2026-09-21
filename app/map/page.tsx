@@ -30,13 +30,25 @@ import { formatDistance } from '@/lib/utils';
 
 const INDIAN_HUBS: Record<string, { name: string; lat: number; lon: number }> = {
   chennai: { name: 'Chennai, Tamil Nadu', lat: 13.0827, lon: 80.2707 },
+  coimbatore: { name: 'Coimbatore, Tamil Nadu', lat: 11.0168, lon: 76.9558 },
+  madurai: { name: 'Madurai, Tamil Nadu', lat: 9.9252, lon: 78.1198 },
+  trichy: { name: 'Tiruchirappalli (Trichy), Tamil Nadu', lat: 10.7905, lon: 78.7047 },
+  salem: { name: 'Salem, Tamil Nadu', lat: 11.6643, lon: 78.1460 },
+  vellore: { name: 'Vellore, Tamil Nadu', lat: 12.9165, lon: 79.1325 },
+  puducherry: { name: 'Puducherry (Pondicherry)', lat: 11.9416, lon: 79.8083 },
   bengaluru: { name: 'Bengaluru, Karnataka', lat: 12.9716, lon: 77.5946 },
+  mysuru: { name: 'Mysuru (Mysore), Karnataka', lat: 12.2958, lon: 76.6394 },
+  mangaluru: { name: 'Mangaluru (Mangalore), Karnataka', lat: 12.9141, lon: 74.8560 },
+  kochi: { name: 'Kochi (Cochin), Kerala', lat: 9.9312, lon: 76.2673 },
+  thiruvananthapuram: { name: 'Thiruvananthapuram (Trivandrum), Kerala', lat: 8.5241, lon: 76.9366 },
+  kozhikode: { name: 'Kozhikode (Calicut), Kerala', lat: 11.2588, lon: 75.7804 },
+  hyderabad: { name: 'Hyderabad, Telangana', lat: 17.3850, lon: 78.4867 },
+  vijayawada: { name: 'Vijayawada, Andhra Pradesh', lat: 16.5062, lon: 80.6480 },
+  visakhapatnam: { name: 'Visakhapatnam (Vizag), Andhra Pradesh', lat: 17.6868, lon: 83.2185 },
   delhi: { name: 'New Delhi (NCR)', lat: 28.6139, lon: 77.2090 },
   mumbai: { name: 'Mumbai, Maharashtra', lat: 19.0760, lon: 72.8777 },
-  hyderabad: { name: 'Hyderabad, Telangana', lat: 17.3850, lon: 78.4867 },
   kolkata: { name: 'Kolkata, West Bengal', lat: 22.5726, lon: 88.3639 },
   chandigarh: { name: 'Chandigarh, Punjab/Haryana', lat: 30.7333, lon: 76.7794 },
-  vellore: { name: 'Vellore, Tamil Nadu', lat: 12.9165, lon: 79.1325 },
 };
 
 function MapPageContent() {
@@ -62,9 +74,11 @@ function MapPageContent() {
       return;
     }
     if (user?.city) {
-      const matchedKey = Object.keys(INDIAN_HUBS).find((k) =>
-        INDIAN_HUBS[k].name.toLowerCase().includes(user.city?.toLowerCase() || '')
-      );
+      const userCityNorm = user.city.toLowerCase().trim();
+      const matchedKey = Object.keys(INDIAN_HUBS).find((k) => {
+        const hubName = INDIAN_HUBS[k].name.toLowerCase();
+        return hubName.includes(userCityNorm) || k.includes(userCityNorm) || userCityNorm.includes(k);
+      });
       if (matchedKey) {
         setCurrentCityKey(matchedKey);
         setUserLocation({
@@ -131,10 +145,10 @@ function MapPageContent() {
   return (
     <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)] overflow-hidden">
       {/* Sidebar / Facilities List Panel */}
-      <div className="w-full lg:w-96 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0 z-10">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 space-y-3">
+      <div className="w-full lg:w-96 border-r border-slate-200/80 dark:border-slate-800/80 glass-panel flex flex-col shrink-0 z-10 shadow-xl">
+        <div className="p-4 border-b border-slate-200/70 dark:border-slate-800/70 space-y-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-base font-bold text-slate-900 dark:text-white flex items-center">
+            <h1 className="text-base font-bold text-slate-900 dark:text-white flex items-center tracking-tight">
               <MapPin className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400" />
               {t.nav.map}
             </h1>
@@ -142,7 +156,7 @@ function MapPageContent() {
             <button
               onClick={requestUserLocation}
               disabled={locationStatus === 'locating'}
-              className="inline-flex items-center text-xs font-semibold text-teal-700 dark:text-teal-300 hover:text-teal-800 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1.5 rounded-xl border border-teal-200 dark:border-teal-800 transition"
+              className="inline-flex items-center text-xs font-semibold text-teal-700 dark:text-teal-300 hover:text-teal-800 bg-teal-50/80 dark:bg-teal-950/60 px-2.5 py-1.5 rounded-xl border border-teal-200/80 dark:border-teal-800/80 transition shadow-xs"
               title="Locate via GPS"
             >
               <LocateFixed className={`w-3.5 h-3.5 mr-1 ${locationStatus === 'locating' ? 'animate-spin' : ''}`} />
@@ -158,10 +172,10 @@ function MapPageContent() {
             <select
               value={currentCityKey}
               onChange={(e) => handleCityChange(e.target.value)}
-              className="w-full text-xs px-2.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-teal-700"
+              className="w-full text-xs px-2.5 py-2 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 shadow-xs"
             >
               {Object.entries(INDIAN_HUBS).map(([k, hub]) => (
-                <option key={k} value={k}>
+                <option key={k} value={k} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                   {hub.name}
                 </option>
               ))}
@@ -169,7 +183,7 @@ function MapPageContent() {
           </div>
 
           {locationStatus === 'denied' && (
-            <p className="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 p-2 rounded-xl border border-amber-200 dark:border-amber-800">
+            <p className="text-[11px] text-amber-700 dark:text-amber-400 bg-amber-50/80 dark:bg-amber-950/50 p-2 rounded-xl border border-amber-200 dark:border-amber-800">
               GPS permission denied. Showing facilities using manual city selection.
             </p>
           )}
@@ -177,15 +191,15 @@ function MapPageContent() {
           <div className="flex items-center space-x-2 pt-1">
             <button
               onClick={() => setEmergencyOnly(!emergencyOnly)}
-              className={`px-3 py-1 rounded-xl text-xs font-semibold border transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition shadow-xs ${
                 emergencyOnly
-                  ? 'bg-red-600 text-white border-red-600'
-                  : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  ? 'bg-red-600 text-white border-red-600 shadow-red-500/20'
+                  : 'bg-white/60 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800'
               }`}
             >
               🚨 24/7 Casualty Only
             </button>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
               {facilities.length} locations
             </span>
           </div>
@@ -199,10 +213,10 @@ function MapPageContent() {
               <div
                 key={fac.id}
                 onClick={() => setSelectedFacility(fac)}
-                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
                   isSelected
-                    ? 'border-teal-600 dark:border-teal-400 bg-teal-50/50 dark:bg-teal-950/40 shadow-sm'
-                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'border-teal-600 dark:border-teal-400 bg-teal-50/70 dark:bg-teal-950/50 shadow-md ring-1 ring-teal-500/30'
+                    : 'border-slate-200/70 dark:border-slate-800/70 glass-card hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md'
                 }`}
               >
                 <div className="flex justify-between items-start">
@@ -215,7 +229,7 @@ function MapPageContent() {
                     </h3>
                   </div>
                   {fac.distanceKm !== undefined && (
-                    <span className="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md shrink-0">
+                    <span className="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50/80 dark:bg-teal-950/80 px-2 py-0.5 rounded-lg border border-teal-100 dark:border-teal-900/50 shrink-0">
                       {formatDistance(fac.distanceKm)}
                     </span>
                   )}
@@ -225,7 +239,7 @@ function MapPageContent() {
                   {fac.location.addressLine1}, {fac.location.city}
                 </p>
 
-                <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-xs">
                   <span className="text-emerald-700 dark:text-emerald-400 font-semibold flex items-center text-[11px]">
                     <Clock className="w-3.5 h-3.5 mr-1" />
                     ETA: {calculateETA(fac.distanceKm)}
@@ -400,25 +414,25 @@ function MapPageContent() {
         {/* Selected Facility Floating Bottom Card (Google Maps Style) */}
         {selectedFacility && (
           <div className="absolute bottom-6 left-4 right-4 max-w-xl mx-auto z-30">
-            <Card className="p-4 sm:p-5 shadow-2xl border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in slide-in-from-bottom duration-200">
+            <div className="p-4 sm:p-5 shadow-2xl border border-slate-200/80 dark:border-slate-800/80 glass-panel rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in slide-in-from-bottom duration-200">
               <div className="space-y-1">
                 <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     {selectedFacility.facilityType}
                   </span>
                   {selectedFacility.verified && (
-                    <span className="text-[10px] font-bold text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-teal-800 dark:text-teal-300 bg-teal-50/80 dark:bg-teal-950/80 px-2 py-0.5 rounded-full border border-teal-200/60 dark:border-teal-800/60">
                       Verified
                     </span>
                   )}
                   {selectedFacility.emergencyAvailable && (
-                    <span className="text-[10px] font-bold text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/60 px-1.5 py-0.5 rounded">
-                      24/7 Trauma
+                    <span className="text-[10px] font-bold text-red-700 dark:text-red-300 bg-red-50/80 dark:bg-red-950/80 px-2 py-0.5 rounded-full border border-red-200/60 dark:border-red-800/60">
+                      24/7 Casualty
                     </span>
                   )}
                 </div>
 
-                <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                <h4 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
                   {selectedFacility.name}
                 </h4>
 
@@ -442,7 +456,7 @@ function MapPageContent() {
               <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
                 <a
                   href={`tel:${selectedFacility.phone}`}
-                  className="p-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl"
+                  className="p-2.5 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 transition shadow-xs"
                   title="Call Facility"
                 >
                   <Phone className="w-4 h-4" />
@@ -452,19 +466,19 @@ function MapPageContent() {
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selectedFacility.location.latitude},${selectedFacility.location.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs rounded-xl shadow-xs transition"
+                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white font-semibold text-xs rounded-2xl shadow-md transition"
                 >
                   <Navigation className="w-3.5 h-3.5 mr-1" />
                   Directions
                 </a>
 
                 <Link href={`/facilities/${selectedFacility.id}`}>
-                  <Button size="sm" variant="outline" className="text-xs">
+                  <Button size="sm" variant="outline" className="text-xs rounded-2xl border-slate-200/80 dark:border-slate-700/80">
                     Details
                   </Button>
                 </Link>
               </div>
-            </Card>
+            </div>
           </div>
         )}
       </div>

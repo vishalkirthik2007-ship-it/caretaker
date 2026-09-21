@@ -123,32 +123,32 @@ export default function FacilityDetailPage() {
       </div>
 
       {/* Main Header Banner */}
-      <Card className="p-6 sm:p-8 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-5 rounded-3xl">
+      <div className="glass-panel p-6 sm:p-9 shadow-2xl space-y-6 rounded-3xl relative overflow-hidden border border-white/60 dark:border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{facility.facilityType}</Badge>
+              <Badge variant="outline" className="glass-card font-bold px-3 py-0.5">{facility.facilityType}</Badge>
               {facility.verified && (
-                <span className="inline-flex items-center text-xs text-teal-800 dark:text-teal-300 font-bold bg-teal-50 dark:bg-teal-950/60 px-2.5 py-0.5 rounded-md">
-                  <ShieldCheck className="w-4 h-4 mr-1 text-teal-700 dark:text-teal-400" />
+                <span className="inline-flex items-center text-xs text-sky-800 dark:text-sky-300 font-bold bg-sky-100/80 dark:bg-sky-950/80 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">
+                  <ShieldCheck className="w-4 h-4 mr-1 text-sky-600 dark:text-sky-400" />
                   Verified Healthcare Provider (India)
                 </span>
               )}
               {facility.emergencyAvailable && (
-                <Badge variant="danger">24/7 Casualty & Trauma Unit</Badge>
+                <Badge variant="danger" className="px-2.5 py-0.5">24/7 Casualty & Trauma Unit</Badge>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
               {facility.name}
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
               {facility.description}
             </p>
 
             <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 pt-1">
-              <MapPin className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400 shrink-0" />
+              <MapPin className="w-4 h-4 mr-1.5 text-sky-600 dark:text-sky-400 shrink-0" />
               <span>
                 {facility.location.addressLine1}, {facility.location.city}, {facility.location.state} - {facility.location.postalCode}
               </span>
@@ -160,7 +160,9 @@ export default function FacilityDetailPage() {
               onClick={handleToggleSave}
               variant={isSaved ? 'primary' : 'outline'}
               size="sm"
-              className="w-full"
+              className={`w-full rounded-xl font-bold ${
+                isSaved ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white' : 'glass-card'
+              }`}
             >
               {isSaved ? (
                 <>
@@ -179,19 +181,19 @@ export default function FacilityDetailPage() {
               onClick={handleStartJourney}
               variant="secondary"
               size="sm"
-              className="w-full text-xs"
+              className="w-full text-xs rounded-xl font-bold glass-card border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300"
             >
-              <CalendarCheck className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400" />
+              <CalendarCheck className="w-4 h-4 mr-1.5 text-sky-600 dark:text-sky-400" />
               Prepare Appointment
             </Button>
           </div>
         </div>
 
         {/* Action Buttons Bar */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-3">
+        <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800 flex flex-wrap items-center gap-3">
           <a
             href={`tel:${facility.phone}`}
-            className="inline-flex items-center px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs rounded-xl shadow-xs transition"
+            className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white font-bold text-xs rounded-2xl shadow-md transition"
           >
             <Phone className="w-3.5 h-3.5 mr-1.5" />
             Call {facility.phone}
@@ -201,9 +203,9 @@ export default function FacilityDetailPage() {
             href={`https://www.google.com/maps/dir/?api=1&destination=${facility.location.latitude},${facility.location.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs rounded-xl transition"
+            className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-2xl transition shadow-xs"
           >
-            <Navigation className="w-3.5 h-3.5 mr-1.5 text-teal-700 dark:text-teal-400" />
+            <Navigation className="w-3.5 h-3.5 mr-1.5 text-sky-600 dark:text-sky-400" />
             Get Google Maps Directions
           </a>
 
@@ -212,62 +214,62 @@ export default function FacilityDetailPage() {
               href={facility.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition"
+              className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl transition shadow-xs"
             >
               <Globe className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
-              Official Portal
+              Official Hospital Portal
               <ExternalLink className="w-3 h-3 ml-1 text-slate-400" />
             </a>
           )}
         </div>
-      </Card>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Column: Departments & Guidance */}
         <div className="md:col-span-2 space-y-6">
           {/* Departments & Specialities Offered */}
-          <Card className="p-6 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center">
-              <HeartPulse className="w-4 h-4 mr-2 text-teal-700 dark:text-teal-400" />
+          <div className="glass-panel p-6 space-y-4 rounded-3xl border border-white/60 dark:border-white/10 shadow-lg">
+            <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center">
+              <HeartPulse className="w-4 h-4 mr-2 text-sky-600 dark:text-sky-400" />
               Specialities & Departments
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {facility.services?.map((service) => (
                 <div
                   key={service}
-                  className="flex items-center space-x-2 text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-slate-100 dark:border-slate-800"
+                  className="flex items-center space-x-2 text-xs font-semibold text-slate-700 dark:text-slate-300 glass-card p-3 rounded-2xl border border-white/60 dark:border-white/10"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>{service}</span>
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
 
           {/* Before You Visit Guidance for Indian Hospitals */}
-          <Card className="p-6 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          <div className="glass-panel p-6 space-y-4 rounded-3xl border border-white/60 dark:border-white/10 shadow-lg">
+            <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
               {t.facilities.beforeYouVisit} (Indian Healthcare Workflow)
             </h2>
-            <ul className="space-y-3 text-xs text-slate-600 dark:text-slate-400">
-              <li className="flex items-start space-x-2.5">
-                <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
+            <ul className="space-y-3.5 text-xs text-slate-600 dark:text-slate-300">
+              <li className="flex items-start space-x-3">
+                <span className="w-5 h-5 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px] border border-sky-300 dark:border-sky-700">
                   1
                 </span>
                 <span>
                   <strong>Government ID & Health Cards:</strong> Carry your Aadhaar card, Voter ID, or Ayushman Bharat PM-JAY card along with cashless TPA insurance policy number.
                 </span>
               </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
+              <li className="flex items-start space-x-3">
+                <span className="w-5 h-5 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px] border border-sky-300 dark:border-sky-700">
                   2
                 </span>
                 <span>
-                  <strong>OPD Registration Token:</strong> For government hospitals (AIIMS, PGIMER, KEM), arrive early for OPD counter registration or book an online appointment via e-Hospital / ORS portal.
+                  <strong>OPD Registration Token:</strong> For government hospitals (RGGGH, JIPMER, AIIMS, NIMS), arrive early for OPD counter registration or book an online appointment via e-Hospital / ORS portal.
                 </span>
               </li>
-              <li className="flex items-start space-x-2.5">
-                <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px]">
+              <li className="flex items-start space-x-3">
+                <span className="w-5 h-5 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[11px] border border-sky-300 dark:border-sky-700">
                   3
                 </span>
                 <span>
@@ -275,18 +277,18 @@ export default function FacilityDetailPage() {
                 </span>
               </li>
             </ul>
-          </Card>
+          </div>
         </div>
 
         {/* Right Column: Location, Operating Hours & Accessibility */}
         <div className="space-y-6">
           {/* Location & Parking */}
-          <Card className="p-5 space-y-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <div className="glass-card p-6 space-y-3 rounded-3xl border border-white/60 dark:border-white/10 shadow-md">
+            <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Hospital Location & Address
             </h2>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1">
-              <div className="font-semibold text-slate-900 dark:text-white text-sm">
+              <div className="font-extrabold text-slate-900 dark:text-white text-sm">
                 {facility.location.addressLine1}
               </div>
               <div>
@@ -296,47 +298,47 @@ export default function FacilityDetailPage() {
             </div>
 
             {facility.location.parkingInfo && (
-              <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-start space-x-2 text-xs text-slate-600 dark:text-slate-400">
-                <Car className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+              <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-start space-x-2 text-xs text-slate-600 dark:text-slate-300">
+                <Car className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
                 <span>{facility.location.parkingInfo}</span>
               </div>
             )}
-          </Card>
+          </div>
 
           {/* Operating Hours */}
-          <Card className="p-5 space-y-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center">
-              <Clock className="w-4 h-4 mr-1.5 text-teal-700 dark:text-teal-400" />
+          <div className="glass-card p-6 space-y-3 rounded-3xl border border-white/60 dark:border-white/10 shadow-md">
+            <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center">
+              <Clock className="w-4 h-4 mr-1.5 text-sky-600 dark:text-sky-400" />
               {t.facilities.openingHours}
             </h2>
             <div className="space-y-1.5 text-xs">
               {facility.hours ? (
                 facility.hours.map((h) => (
-                  <div key={h.dayOfWeek} className="flex justify-between py-1 border-b border-slate-50 dark:border-slate-800/60">
+                  <div key={h.dayOfWeek} className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/60">
                     <span className="font-medium text-slate-600 dark:text-slate-400">
                       {DAYS_OF_WEEK[h.dayOfWeek]}
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="font-bold text-slate-900 dark:text-white">
                       {h.is24Hours ? '24 Hours Emergency' : `${h.openTime} - ${h.closeTime}`}
                     </span>
                   </div>
                 ))
               ) : (
-                <div className="text-slate-500 dark:text-slate-400">
+                <div className="text-slate-500 dark:text-slate-400 leading-relaxed">
                   OPD Hours: Mon - Sat 08:30 - 17:00. 24/7 Casualty available for acute medical emergencies.
                 </div>
               )}
             </div>
-          </Card>
+          </div>
 
           {/* Languages & Accessibility */}
-          <Card className="p-5 space-y-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <div className="glass-card p-6 space-y-3 rounded-3xl border border-white/60 dark:border-white/10 shadow-md">
+            <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Languages & Accessibility
             </h2>
             <div className="space-y-2 text-xs">
               <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
-                <Accessibility className="w-4 h-4 text-teal-700 dark:text-teal-400" />
+                <Accessibility className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
                 <span>
                   {facility.wheelchairAccessible
                     ? 'Wheelchair Ramp & Stretcher Lifts Available'
@@ -344,13 +346,13 @@ export default function FacilityDetailPage() {
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
-                <Languages className="w-4 h-4 text-teal-700 dark:text-teal-400" />
+                <Languages className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
                 <span>
                   Supported: {facility.languagesSupported.join(', ')}
                 </span>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

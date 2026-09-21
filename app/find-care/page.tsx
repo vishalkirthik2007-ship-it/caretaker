@@ -129,15 +129,15 @@ function FindCarePageContent() {
       </div>
 
       {/* Search & Filter Box */}
-      <div className="space-y-3">
+      <div className="glass-panel p-6 sm:p-7 rounded-3xl shadow-lg space-y-4">
         <div className="relative">
-          <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+          <Search className="absolute left-4 top-3.5 h-5 w-5 text-sky-600 dark:text-sky-400" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search e.g. chest pain, AIIMS trauma, blood test NABL, Jan Aushadhi, child fever..."
-            className={`w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 pl-12 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/20 shadow-xs ${
+            placeholder="Search e.g. chest pain, AIIMS trauma, Apollo Greams, blood test NABL, Jan Aushadhi, child fever..."
+            className={`w-full rounded-2xl glass-input pl-12 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none shadow-xs ${
               easyMode ? 'text-lg py-4 pl-14' : ''
             }`}
           />
@@ -145,7 +145,7 @@ function FindCarePageContent() {
 
         {/* Urgency Filter Pills */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1">
             Filter by Urgency:
           </span>
           {[
@@ -158,10 +158,10 @@ function FindCarePageContent() {
               key={pill.id}
               type="button"
               onClick={() => setSelectedUrgency(pill.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs ${
                 selectedUrgency === pill.id
-                  ? 'bg-teal-700 text-white border-teal-700 dark:bg-teal-600 shadow-xs'
-                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
+                  ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md'
+                  : 'glass-card text-slate-700 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-slate-800'
               }`}
             >
               {pill.label}
@@ -172,30 +172,30 @@ function FindCarePageContent() {
 
       {/* Emergency Alert Box if red flag detected */}
       {emergencyAlert && (
-        <div className="rounded-2xl bg-red-50 dark:bg-red-950/60 border-2 border-red-500 p-5 text-red-900 dark:text-red-100 flex items-start space-x-3 shadow-md animate-in fade-in">
-          <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
-          <div className="space-y-2">
-            <h3 className="font-bold text-base text-red-800 dark:text-red-200">
+        <div className="rounded-3xl bg-red-50/90 dark:bg-red-950/70 border-2 border-red-500 p-6 text-red-900 dark:text-red-100 flex items-start space-x-3.5 shadow-xl animate-in fade-in backdrop-blur-md">
+          <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400 shrink-0 mt-0.5 animate-bounce" />
+          <div className="space-y-2.5">
+            <h3 className="font-extrabold text-base text-red-800 dark:text-red-200">
               High Acuity Medical Symptom Flagged
             </h3>
             <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">{emergencyAlert}</p>
-            <div className="pt-2 flex flex-wrap gap-2">
+            <div className="pt-2 flex flex-wrap gap-2.5">
               <a
                 href="tel:108"
-                className="inline-flex items-center px-4 py-2 bg-red-600 text-white font-bold text-xs rounded-xl shadow hover:bg-red-700"
+                className="inline-flex items-center px-4 py-2 bg-red-600 text-white font-bold text-xs rounded-xl shadow-md hover:bg-red-700 transition"
               >
                 <Phone className="w-3.5 h-3.5 mr-1.5" />
                 Call Ambulance (Dial 108)
               </a>
               <a
                 href="tel:112"
-                className="inline-flex items-center px-4 py-2 bg-red-700 text-white font-bold text-xs rounded-xl shadow hover:bg-red-800"
+                className="inline-flex items-center px-4 py-2 bg-red-700 text-white font-bold text-xs rounded-xl shadow-md hover:bg-red-800 transition"
               >
                 National Emergency (Dial 112)
               </a>
               <Link
                 href="/facilities?emergency=true"
-                className="inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 font-bold text-xs rounded-xl hover:bg-red-50 dark:hover:bg-slate-700"
+                className="inline-flex items-center px-4 py-2 glass-card border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 font-bold text-xs rounded-xl hover:bg-white/90"
               >
                 View 24/7 Trauma Centers
               </Link>
@@ -206,23 +206,23 @@ function FindCarePageContent() {
 
       {/* AI Category Match Recommendation Banner */}
       {matchedCategory && !emergencyAlert && query.trim() && (
-        <div className="rounded-2xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-teal-700 dark:bg-teal-600 text-white flex items-center justify-center shrink-0">
+        <div className="glass-card rounded-3xl border border-sky-200 dark:border-sky-800 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-teal-800 dark:text-teal-300">
+              <div className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300">
                 Care Navigation Match
               </div>
-              <div className="text-sm font-bold text-slate-900 dark:text-white">
+              <div className="text-sm font-black text-slate-900 dark:text-white">
                 Recommended Setting: {matchedCategory.categoryName}
               </div>
             </div>
           </div>
           <Link
             href={`/assistant?q=${encodeURIComponent(query)}`}
-            className="inline-flex items-center text-xs font-bold text-teal-800 dark:text-teal-200 hover:text-teal-900 bg-white dark:bg-slate-800 px-3.5 py-2 rounded-xl border border-teal-200 dark:border-teal-700 shrink-0"
+            className="inline-flex items-center text-xs font-bold text-white bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 px-4 py-2 rounded-xl shadow-md shrink-0"
           >
             <span>Ask CarePath AI</span>
             <ArrowRight className="w-4 h-4 ml-1.5" />
@@ -232,7 +232,7 @@ function FindCarePageContent() {
 
       {/* 25 Categories Grid */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-bold">
           <span>Showing {filteredCategories.length} Indian Healthcare Categories</span>
           <span>Click any category card to view accredited facilities</span>
         </div>
@@ -254,27 +254,27 @@ function FindCarePageContent() {
                 : cat.descriptionEn;
 
             return (
-              <Card
+              <div
                 key={cat.id}
                 onClick={() => router.push(`/facilities?category=${cat.id}`)}
-                className="p-5 flex flex-col justify-between hover:border-teal-400 dark:hover:border-teal-500 transition-all cursor-pointer group bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-md"
+                className="p-6 rounded-3xl glass-card border border-white/60 dark:border-white/10 flex flex-col justify-between hover:border-sky-400/60 dark:hover:border-sky-500/60 transition-all duration-200 cursor-pointer group hover:shadow-xl hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center group-hover:scale-105 transition">
+                    <div className="w-11 h-11 rounded-2xl bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 flex items-center justify-center group-hover:scale-105 transition shadow-2xs">
                       <Icon className="w-5 h-5" />
                     </div>
                     {cat.urgencyLevel === 'emergency' && (
-                      <Badge variant="danger">Emergency (24/7)</Badge>
+                      <Badge variant="danger" className="px-2.5 py-0.5">Emergency (24/7)</Badge>
                     )}
                     {cat.urgencyLevel === 'urgent' && (
-                      <Badge variant="warning">Urgent OPD</Badge>
+                      <Badge variant="warning" className="px-2.5 py-0.5">Urgent OPD</Badge>
                     )}
                     {cat.urgencyLevel === 'routine' && (
-                      <Badge variant="secondary">Routine</Badge>
+                      <Badge variant="secondary" className="px-2.5 py-0.5">Routine</Badge>
                     )}
                   </div>
-                  <h3 className="font-bold text-slate-900 dark:text-white text-base group-hover:text-teal-700 dark:group-hover:text-teal-400 transition">
+                  <h3 className="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-sky-600 dark:group-hover:text-sky-400 transition">
                     {name}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed line-clamp-3">
@@ -282,8 +282,8 @@ function FindCarePageContent() {
                   </p>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-teal-700 dark:text-teal-400 group-hover:underline flex items-center">
+                <div className="mt-5 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                  <span className="text-xs font-bold text-sky-600 dark:text-sky-400 group-hover:underline flex items-center">
                     Browse Facilities
                     <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
                   </span>
@@ -293,12 +293,12 @@ function FindCarePageContent() {
                       e.stopPropagation();
                       router.push(`/assistant?category=${cat.id}`);
                     }}
-                    className="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                    className="text-xs font-bold text-slate-400 hover:text-sky-600 dark:hover:text-sky-400"
                   >
-                    Ask AI
+                    Ask AI →
                   </button>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>

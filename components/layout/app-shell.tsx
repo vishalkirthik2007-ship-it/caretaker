@@ -13,14 +13,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (isAuthOrLanding) {
     return (
-      <main className="min-h-screen bg-slate-50/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+      <main className="min-h-screen text-slate-900 dark:text-slate-100">
         {children}
       </main>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="flex min-h-screen flex-col text-slate-900 dark:text-slate-100 bg-sky-100/15 dark:bg-slate-950/60">
       <Header />
       <OfflineBanner />
       <div className="flex flex-1">

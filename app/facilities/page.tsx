@@ -130,46 +130,86 @@ function FacilitiesPageContent() {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-xs space-y-3">
+      <div className="glass-panel p-5 rounded-3xl shadow-lg space-y-4">
         <div className="relative">
-          <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-4 top-3.5 h-4 w-4 text-sky-600 dark:text-sky-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search hospitals by name, speciality (e.g. AIIMS, Apollo, Oncology, Cardiology, Jan Aushadhi)..."
-            className="w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 pl-10 pr-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-800 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/20"
+            placeholder="Search hospitals by name, speciality (e.g. Apollo, Ganga, AIIMS, Oncology, Cardiology, NIMS, Jan Aushadhi)..."
+            className="w-full rounded-2xl glass-input pl-11 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
           />
         </div>
 
-        {/* Filters Row */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center mr-1">
-            <SlidersHorizontal className="w-3.5 h-3.5 mr-1" />
-            Filters:
-          </span>
+        {/* City Filter Pills */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300">
+            <span className="flex items-center">
+              <MapPin className="w-3.5 h-3.5 mr-1 text-sky-600 dark:text-sky-400" />
+              Filter by Hub / City (South India Priority):
+            </span>
+            {selectedCity !== 'all' && (
+              <button
+                onClick={() => setSelectedCity('all')}
+                className="text-sky-600 dark:text-sky-400 hover:underline text-[11px]"
+              >
+                Clear city filter
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto py-1">
+            {[
+              { id: 'all', label: 'All India' },
+              { id: 'Chennai', label: 'Chennai' },
+              { id: 'Coimbatore', label: 'Coimbatore' },
+              { id: 'Madurai', label: 'Madurai' },
+              { id: 'Trichy', label: 'Trichy' },
+              { id: 'Salem', label: 'Salem' },
+              { id: 'Vellore', label: 'Vellore' },
+              { id: 'Bengaluru', label: 'Bengaluru' },
+              { id: 'Mysuru', label: 'Mysuru' },
+              { id: 'Mangaluru', label: 'Mangaluru' },
+              { id: 'Kochi', label: 'Kochi' },
+              { id: 'Thiruvananthapuram', label: 'Trivandrum' },
+              { id: 'Kozhikode', label: 'Kozhikode' },
+              { id: 'Hyderabad', label: 'Hyderabad' },
+              { id: 'Vijayawada', label: 'Vijayawada' },
+              { id: 'Visakhapatnam', label: 'Vizag' },
+              { id: 'Puducherry', label: 'Puducherry' },
+              { id: 'Delhi', label: 'Delhi NCR' },
+              { id: 'Mumbai', label: 'Mumbai' },
+              { id: 'Chandigarh', label: 'Chandigarh' },
+            ].map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setSelectedCity(c.id)}
+                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                  selectedCity.toLowerCase() === c.id.toLowerCase()
+                    ? 'bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md'
+                    : 'glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-          {/* City Filter */}
-          <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="text-xs px-2.5 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold focus:outline-none focus:border-teal-700"
-          >
-            <option value="all">All India (National)</option>
-            <option value="Delhi">Delhi NCR</option>
-            <option value="Chennai">Chennai</option>
-            <option value="Bengaluru">Bengaluru</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Chandigarh">Chandigarh</option>
-            <option value="Vellore">Vellore</option>
-          </select>
+        {/* Feature Filters Row */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center mr-1">
+            <SlidersHorizontal className="w-3.5 h-3.5 mr-1 text-sky-600" />
+            Quick Tags:
+          </span>
 
           <button
             onClick={() => setEmergencyOnly(!emergencyOnly)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs ${
               emergencyOnly
-                ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
+                ? 'bg-red-600 text-white border-red-600 shadow-sm'
+                : 'glass-card text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-white/90'
             }`}
           >
             🚨 24/7 Casualty & Trauma
@@ -177,10 +217,10 @@ function FacilitiesPageContent() {
 
           <button
             onClick={() => setWheelchairOnly(!wheelchairOnly)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs ${
               wheelchairOnly
-                ? 'bg-teal-700 text-white border-teal-700 shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
+                ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                : 'glass-card text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-white/90'
             }`}
           >
             ♿ Wheelchair Accessible
@@ -188,10 +228,10 @@ function FacilitiesPageContent() {
 
           <button
             onClick={() => setOpenNowOnly(!openNowOnly)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs ${
               openNowOnly
-                ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
-                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                : 'glass-card text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-white/90'
             }`}
           >
             Open Now
@@ -211,31 +251,31 @@ function FacilitiesPageContent() {
             {facilities.map((fac) => {
               const isSaved = savedIds.includes(fac.id);
               return (
-                <Card
+                <div
                   key={fac.id}
                   onClick={() => handleCardClick(fac.id)}
-                  className="p-6 flex flex-col justify-between border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-lg cursor-pointer group"
+                  className="p-6 rounded-3xl glass-card flex flex-col justify-between border border-white/60 dark:border-white/10 hover:border-sky-400/60 dark:hover:border-sky-500/60 transition-all hover:shadow-2xl hover:-translate-y-1 cursor-pointer group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs glass-panel px-2.5 py-0.5 font-bold">
                             {fac.facilityType}
                           </Badge>
                           {fac.verified && (
-                            <span className="inline-flex items-center text-xs text-teal-800 dark:text-teal-300 font-semibold bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md">
-                              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-teal-700 dark:text-teal-400" />
+                            <span className="inline-flex items-center text-xs text-sky-800 dark:text-sky-300 font-bold bg-sky-100/80 dark:bg-sky-950/80 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">
+                              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-sky-600 dark:text-sky-400" />
                               {t.facilities.verifiedBadge}
                             </span>
                           )}
                           {fac.emergencyAvailable && (
-                            <span className="inline-flex items-center text-[10px] font-bold text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded-md">
+                            <span className="inline-flex items-center text-[10px] font-bold text-red-700 dark:text-red-300 bg-red-100/80 dark:bg-red-950/80 px-2 py-0.5 rounded-lg border border-red-200 dark:border-red-900">
                               24/7 Emergency
                             </span>
                           )}
                         </div>
-                        <h2 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
+                        <h2 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
                           {fac.name}
                         </h2>
                       </div>
@@ -243,32 +283,32 @@ function FacilitiesPageContent() {
                         onClick={(e) => handleToggleSave(fac.id, e)}
                         aria-label="Save facility"
                         title={isSaved ? 'Remove from saved' : 'Save in My Care'}
-                        className={`p-2 rounded-xl border transition ${
+                        className={`p-2 rounded-2xl border transition ${
                           isSaved
-                            ? 'bg-teal-50 dark:bg-teal-950 border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300'
-                            : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                            ? 'bg-sky-100 dark:bg-sky-950 border-sky-300 dark:border-sky-700 text-sky-700 dark:text-sky-300 shadow-sm'
+                            : 'glass-card border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                         }`}
                       >
                         {isSaved ? (
-                          <BookmarkCheck className="w-5 h-5 text-teal-700 dark:text-teal-400" />
+                          <BookmarkCheck className="w-5 h-5 text-sky-600 dark:text-sky-400" />
                         ) : (
                           <Bookmark className="w-5 h-5" />
                         )}
                       </button>
                     </div>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
                       {fac.description}
                     </p>
 
                     <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1 pt-1">
                       <div className="flex items-center">
-                        <MapPin className="w-3.5 h-3.5 mr-1.5 text-slate-400 shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 mr-1.5 text-sky-600 shrink-0" />
                         <span className="truncate">
                           {fac.location.addressLine1}, {fac.location.city}, {fac.location.state}
                         </span>
                         {fac.distanceKm !== undefined && (
-                          <span className="ml-auto font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md shrink-0">
+                          <span className="ml-auto font-bold text-sky-700 dark:text-sky-300 bg-sky-100/80 dark:bg-sky-950/80 px-2 py-0.5 rounded-lg shrink-0 border border-sky-200 dark:border-sky-800">
                             {formatDistance(fac.distanceKm)}
                           </span>
                         )}
@@ -286,13 +326,13 @@ function FacilitiesPageContent() {
                         {fac.services.slice(0, 3).map((srv) => (
                           <span
                             key={srv}
-                            className="text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium"
+                            className="text-[11px] glass-card text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-lg font-medium border border-slate-200/60 dark:border-slate-800"
                           >
                             {srv}
                           </span>
                         ))}
                         {fac.services.length > 3 && (
-                          <span className="text-[11px] text-slate-400 self-center">
+                          <span className="text-[11px] text-slate-400 self-center font-medium">
                             +{fac.services.length - 3} more
                           </span>
                         )}
@@ -301,22 +341,22 @@ function FacilitiesPageContent() {
                   </div>
 
                   {/* Card Bottom CTA Actions */}
-                  <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+                  <div className="mt-5 pt-4 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-3">
                     <a
                       href={`tel:${fac.phone}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-400"
+                      className="inline-flex items-center text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400"
                     >
-                      <Phone className="w-3.5 h-3.5 mr-1 text-teal-700 dark:text-teal-400" />
+                      <Phone className="w-3.5 h-3.5 mr-1 text-sky-600 dark:text-sky-400" />
                       {t.facilities.callFacility}
                     </a>
 
-                    <div className="flex items-center text-xs font-bold text-teal-700 dark:text-teal-400 group-hover:underline">
+                    <div className="flex items-center text-xs font-bold text-sky-600 dark:text-sky-400 group-hover:underline">
                       <span>View Hospital Details</span>
                       <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
-                </Card>
+                </div>
               );
             })}
           </div>

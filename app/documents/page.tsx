@@ -141,9 +141,9 @@ export default function DocumentsPage() {
       </div>
 
       {/* Upload Zone */}
-      <Card className="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-400 transition-colors p-8 text-center bg-white/70 dark:bg-slate-900/70 rounded-3xl">
+      <div className="border-2 border-dashed border-slate-300/80 dark:border-slate-700/80 hover:border-teal-500 dark:hover:border-teal-400 transition-colors p-8 text-center glass-panel shadow-xl backdrop-blur-xl rounded-3xl">
         <div className="max-w-md mx-auto space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center mx-auto shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-teal-50/80 dark:bg-teal-950/80 text-teal-700 dark:text-teal-400 flex items-center justify-center mx-auto shadow-sm border border-teal-200/60 dark:border-teal-800/60">
             <Upload className="w-6 h-6" />
           </div>
           <div>
@@ -162,19 +162,19 @@ export default function DocumentsPage() {
               onChange={handleFileUpload}
               className="sr-only"
             />
-            <span className="inline-flex items-center px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl shadow-xs transition">
+            <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white text-xs font-semibold rounded-2xl shadow-md transition">
               Select Document File
             </span>
           </label>
 
           {uploadError && (
-            <div className="p-2.5 bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5">
+            <div className="p-2.5 bg-red-50/80 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5">
               <AlertCircle className="w-4 h-4" />
               <span>{uploadError}</span>
             </div>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Documents List */}
       <div className="space-y-4">
@@ -189,7 +189,7 @@ export default function DocumentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search your documents..."
-              className="w-full text-xs pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-teal-700"
+              className="w-full text-xs pl-9 pr-3 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 shadow-xs"
             />
           </div>
         </div>
@@ -197,13 +197,13 @@ export default function DocumentsPage() {
         {filteredDocs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredDocs.map((doc) => (
-              <Card
+              <div
                 key={doc.id}
-                className="p-5 flex flex-col justify-between border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-teal-300 dark:hover:border-teal-700 transition rounded-3xl"
+                className="p-5 flex flex-col justify-between border border-slate-200/80 dark:border-slate-800/80 glass-card hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-xl transition rounded-3xl"
               >
                 <div className="space-y-2">
                   <div className="flex items-start justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 bg-teal-50/80 dark:bg-teal-950/80 px-2 py-0.5 rounded-full border border-teal-200/60 dark:border-teal-800/60">
                       {doc.categoryName}
                     </span>
                     <span className="text-[11px] text-slate-400">
@@ -211,16 +211,16 @@ export default function DocumentsPage() {
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">{doc.title}</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">{doc.title}</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     Size: {(doc.fileSizeBytes / 1024).toFixed(1)} KB • Type: {doc.mimeType}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
                   <button
                     onClick={() => handleExplainWithAI(doc)}
-                    className="inline-flex items-center text-xs font-bold text-teal-700 dark:text-teal-400 hover:text-teal-800 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1.5 rounded-xl border border-teal-200 dark:border-teal-800 transition"
+                    className="inline-flex items-center text-xs font-bold text-teal-700 dark:text-teal-400 hover:text-teal-800 bg-teal-50/80 dark:bg-teal-950/80 px-3 py-1.5 rounded-2xl border border-teal-200/70 dark:border-teal-800/70 transition shadow-xs"
                   >
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     {t.documents.explainWithAI}
@@ -228,19 +228,19 @@ export default function DocumentsPage() {
 
                   <button
                     onClick={() => handleDelete(doc.id)}
-                    className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg"
+                    className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition"
                     title="Delete document"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         ) : (
-          <Card className="p-8 text-center text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-3xl text-xs">
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400 glass-panel border border-slate-200/80 dark:border-slate-800/80 rounded-3xl text-xs">
             {t.documents.noDocs}
-          </Card>
+          </div>
         )}
       </div>
 

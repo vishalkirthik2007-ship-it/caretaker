@@ -192,38 +192,47 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* 2. Main Search Bar ("How can we help you find care?") */}
-      <Card className="border-teal-100 dark:border-teal-900/60 bg-gradient-to-br from-teal-50/50 to-white dark:from-slate-900 dark:to-slate-800/80 shadow-sm p-6 sm:p-8">
-        <form onSubmit={handleSearchSubmit} className="space-y-4">
-          <label
-            htmlFor="care-search"
-            className="block text-lg sm:text-xl font-bold text-slate-900 dark:text-white"
-          >
-            {t.dashboard.mainQuestion}
-          </label>
+      {/* 2. Main Search Bar & Hero ("How can we help you find care?") */}
+      <div className="glass-panel p-6 sm:p-9 rounded-3xl shadow-xl space-y-5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-sky-400/10 dark:bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <form onSubmit={handleSearchSubmit} className="space-y-4 relative z-10">
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400">
+              Instant Healthcare Navigation
+            </span>
+            <label
+              htmlFor="care-search"
+              className="block text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight"
+            >
+              {t.dashboard.mainQuestion}
+            </label>
+          </div>
+
           <div className="relative flex items-center">
-            <Search className="absolute left-4 h-5 w-5 text-slate-400" />
+            <Search className="absolute left-4 h-5 w-5 text-sky-600 dark:text-sky-400" />
             <input
               id="care-search"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.dashboard.searchPlaceholder}
-              className={`w-full rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 pl-12 pr-28 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/20 shadow-xs ${
+              className={`w-full rounded-2xl glass-input pl-12 pr-28 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none shadow-sm ${
                 easyMode ? 'text-lg py-4 pl-14' : ''
               }`}
             />
             <Button
               type="submit"
               size="sm"
-              className="absolute right-2.5 px-4 font-semibold"
+              className="absolute right-2 px-4 py-2 font-bold rounded-xl bg-gradient-to-r from-sky-600 to-teal-600 hover:from-sky-700 hover:to-teal-700 text-white shadow-md"
             >
               {t.common.search}
             </Button>
           </div>
+
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Try searching:</span>
-            {['Skin specialist', 'AIIMS trauma care', 'Blood test (NABL)', 'Jan Aushadhi store', 'Chest tightness'].map(
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Popular Indian Searches:</span>
+            {['Apollo Greams Road', 'AIIMS trauma triage', 'NABL Blood Test', 'Jan Aushadhi generic shop', 'Chest pain emergency', 'CMC Vellore OPD'].map(
               (sample) => (
                 <button
                   key={sample}
@@ -232,7 +241,7 @@ export default function DashboardPage() {
                     setSearchQuery(sample);
                     router.push(`/find-care?q=${encodeURIComponent(sample)}`);
                   }}
-                  className="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-2.5 py-1 rounded-lg transition"
+                  className="text-xs glass-card hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-xl transition shadow-2xs font-medium"
                 >
                   {sample}
                 </button>
@@ -240,84 +249,84 @@ export default function DashboardPage() {
             )}
           </div>
         </form>
-      </Card>
+      </div>
 
       {/* Personalized Healthcare Context & City Navigation Alert */}
       {userProfile?.healthConditions && (
-        <Card className="p-4 bg-teal-50/60 dark:bg-teal-950/40 border-teal-200/80 dark:border-teal-800/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-teal-700 dark:bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-              <HeartPulse className="w-5 h-5" />
+        <div className="p-4 sm:p-5 glass-card border border-sky-200/80 dark:border-sky-800/80 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
+              <HeartPulse className="w-6 h-6" />
             </div>
-            <div className="text-xs">
-              <span className="font-bold text-teal-950 dark:text-teal-100 block">
+            <div className="text-xs space-y-0.5">
+              <span className="font-bold text-slate-900 dark:text-white text-sm block">
                 Personalized Care Context: {userProfile.healthConditions}
               </span>
-              <span className="text-teal-800 dark:text-teal-300 text-[11px]">
-                CarePath AI has tailored facility suggestions and appointment checklists for your location in {userProfile.city || 'India'}.
+              <span className="text-slate-600 dark:text-slate-300 text-xs">
+                CarePath AI has tailored facility suggestions, emergency triage, and OPD checklists for your location in {userProfile.city || 'India'}.
               </span>
             </div>
           </div>
           <Link href="/find-care" className="shrink-0 self-start sm:self-center">
-            <Button size="sm" variant="outline" className="text-xs py-1 px-3">
+            <Button size="sm" variant="outline" className="text-xs py-1.5 px-3.5 rounded-xl border-sky-300 dark:border-sky-700 text-sky-800 dark:text-sky-300">
               Explore Care Categories →
             </Button>
           </Link>
-        </Card>
+        </div>
       )}
 
       {/* 3. Quick Actions */}
       <div className="space-y-3">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <h2 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t.dashboard.quickActions}
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link href="/find-care" className="group">
-            <Card className="h-full p-5 hover:border-teal-300 dark:hover:border-teal-600 transition group-hover:shadow-md bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-              <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center mb-3">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 flex items-center justify-center mb-3 shadow-xs">
                 <Search className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-800 dark:group-hover:text-teal-300 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-sky-600 dark:group-hover:text-sky-400 transition">
                 {t.nav.findCare}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Browse 25+ care categories</p>
-            </Card>
+            </div>
           </Link>
 
           <Link href="/facilities" className="group">
-            <Card className="h-full p-5 hover:border-teal-300 dark:hover:border-teal-600 transition group-hover:shadow-md bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-              <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 flex items-center justify-center mb-3">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 flex items-center justify-center mb-3 shadow-xs">
                 <Building2 className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-800 dark:group-hover:text-teal-300 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition">
                 {t.dashboard.nearbyFacilities}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Hospitals, clinics & labs</p>
-            </Card>
+            </div>
           </Link>
 
           <Link href="/assistant" className="group">
-            <Card className="h-full p-5 hover:border-teal-300 dark:hover:border-teal-600 transition group-hover:shadow-md bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-3">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center mb-3 shadow-xs">
                 <Bot className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-800 dark:group-hover:text-teal-300 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                 {t.nav.assistant}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">AI triage & guidance</p>
-            </Card>
+            </div>
           </Link>
 
           <Link href="/journey" className="group">
-            <Card className="h-full p-5 hover:border-teal-300 dark:hover:border-teal-600 transition group-hover:shadow-md bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center mb-3">
+            <div className="h-full p-5 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center mb-3 shadow-xs">
                 <CalendarCheck className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-teal-800 dark:group-hover:text-teal-300 transition">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
                 {t.dashboard.prepareVisit}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">OPD questions & prep</p>
-            </Card>
+            </div>
           </Link>
         </div>
       </div>
@@ -335,58 +344,60 @@ export default function DashboardPage() {
         </div>
 
         {activeJourney ? (
-          <Card className="p-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-teal-200 transition">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-4 shadow-lg border border-white/60 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/60 dark:border-slate-800">
               <div>
                 <div className="flex items-center space-x-2">
-                  <Badge variant="success">Active Journey</Badge>
-                  <span className="text-xs text-slate-400">
+                  <Badge variant="success" className="text-xs px-2.5 py-0.5">Active Journey</Badge>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                     Started {new Date(activeJourney.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1.5">
+                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1.5">
                   {activeJourney.title}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Target Service: <strong>{activeJourney.categoryName}</strong>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                  Target Service: <strong className="text-sky-700 dark:text-sky-400">{activeJourney.categoryName}</strong>
                 </p>
               </div>
               <Link href="/journey">
-                <Button size="sm">Continue Next Step</Button>
+                <Button size="sm" className="rounded-xl px-4 py-2 font-bold bg-gradient-to-r from-sky-600 to-teal-600 text-white shadow-md">
+                  Continue Next Step →
+                </Button>
               </Link>
             </div>
 
             {/* Progress Bar */}
-            <div className="pt-4 space-y-2">
-              <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="pt-2 space-y-2">
+              <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
                 <span>Journey Progress: {progressPercent}%</span>
                 <span>{completedSteps} of {totalSteps} steps completed</span>
               </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+              <div className="w-full bg-slate-200/70 dark:bg-slate-800 rounded-full h-3 overflow-hidden p-0.5">
                 <div
-                  className="bg-teal-700 dark:bg-teal-500 h-2.5 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-sky-600 via-teal-600 to-emerald-500 h-full rounded-full transition-all duration-500 shadow-xs"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
             </div>
-          </Card>
+          </div>
         ) : (
-          <Card className="p-8 text-center text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
-            <p className="text-sm">{t.dashboard.noActiveJourney}</p>
+          <div className="glass-card p-8 text-center text-slate-500 dark:text-slate-400 rounded-3xl border border-white/60 dark:border-white/10">
+            <p className="text-sm font-medium">{t.dashboard.noActiveJourney}</p>
             <Link href="/find-care" className="mt-3 inline-block">
-              <Button size="sm">{t.dashboard.startJourneyBtn}</Button>
+              <Button size="sm" className="rounded-xl bg-gradient-to-r from-sky-600 to-teal-600 text-white">{t.dashboard.startJourneyBtn}</Button>
             </Link>
-          </Card>
+          </div>
         )}
       </div>
 
       {/* 5. Saved Care & Facilities */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
             {t.dashboard.savedCare}
           </h2>
-          <Link href="/facilities" className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline flex items-center">
+          <Link href="/facilities" className="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center">
             Browse All Facilities
             <ChevronRight className="w-4 h-4 ml-0.5" />
           </Link>
@@ -395,38 +406,38 @@ export default function DashboardPage() {
         {savedFacilities.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {savedFacilities.map((facility) => (
-              <Card
+              <div
                 key={facility.id}
                 onClick={() => router.push(`/facilities/${facility.id}`)}
-                className="p-5 hover:border-teal-300 dark:hover:border-teal-700 transition cursor-pointer bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-md"
+                className="p-6 rounded-3xl glass-card border border-white/60 dark:border-white/10 hover:border-sky-400/60 dark:hover:border-sky-500/60 transition-all duration-200 cursor-pointer hover:shadow-xl hover:-translate-y-0.5 group"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <Badge variant="outline" className="text-[11px] mb-1">
+                    <Badge variant="outline" className="text-[11px] mb-1.5 glass-panel px-2 py-0.5 text-slate-700 dark:text-slate-200 font-semibold">
                       {facility.facilityType}
                     </Badge>
-                    <h3 className="font-bold text-slate-900 dark:text-white text-base">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-sky-600 dark:group-hover:text-sky-400 transition">
                       {facility.name}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center">
-                      <MapPin className="w-3.5 h-3.5 mr-1 text-slate-400" />
+                      <MapPin className="w-3.5 h-3.5 mr-1 text-sky-500 shrink-0" />
                       {facility.location.addressLine1}, {facility.location.city}
                     </p>
                   </div>
-                  <span className="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-1 rounded-lg">
+                  <span className="text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100/80 dark:bg-sky-950/80 px-2.5 py-1 rounded-xl shadow-2xs border border-sky-200 dark:border-sky-800">
                     {formatDistance(facility.distanceKm)}
                   </span>
                 </div>
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <span className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block mr-1.5" />
-                    Open Today
+                <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                  <span className="text-xs text-emerald-700 dark:text-emerald-400 font-bold flex items-center">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse" />
+                    Verified Facility
                   </span>
-                  <span className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline">
+                  <span className="text-xs font-bold text-sky-600 dark:text-sky-400 group-hover:translate-x-0.5 transition flex items-center">
                     Facility Details →
                   </span>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         ) : (

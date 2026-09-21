@@ -167,13 +167,13 @@ function AssistantPageContent() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex flex-col h-[calc(100vh-5rem)]">
       {/* Top Controls Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+      <div className="glass-panel rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800/80 shadow-md flex items-center justify-between shrink-0 mb-4 backdrop-blur-xl">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-teal-700 dark:bg-teal-600 text-white flex items-center justify-center shadow-xs">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-700 to-teal-500 text-white flex items-center justify-center shadow-md">
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-base font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
               {t.assistant.title} (India Navigator)
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center">
@@ -192,16 +192,16 @@ function AssistantPageContent() {
         <div className="flex items-center space-x-2">
           <button
             onClick={handleResetChat}
-            className="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 flex items-center px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+            className="text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white flex items-center px-3.5 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-800 transition shadow-xs"
           >
-            <RotateCcw className="w-3.5 h-3.5 mr-1" />
+            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
             New Chat
           </button>
         </div>
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto py-6 space-y-6 pr-1">
+      <div className="flex-1 overflow-y-auto py-2 space-y-5 pr-1">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -210,16 +210,16 @@ function AssistantPageContent() {
             }`}
           >
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 flex items-center justify-center shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-2xl bg-teal-100/80 dark:bg-teal-950 text-teal-800 dark:text-teal-300 flex items-center justify-center shrink-0 mt-1 border border-teal-200/60 dark:border-teal-800/60 shadow-xs">
                 <Bot className="w-4 h-4" />
               </div>
             )}
 
             <div
-              className={`max-w-2xl rounded-3xl p-5 shadow-xs space-y-4 ${
+              className={`max-w-2xl rounded-3xl p-5 shadow-md space-y-4 ${
                 msg.role === 'user'
-                  ? 'bg-teal-700 text-white rounded-tr-xs'
-                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-tl-xs'
+                  ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-tr-xs shadow-teal-700/20'
+                  : 'glass-panel text-slate-900 dark:text-white rounded-tl-xs border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-xl'
               }`}
             >
               <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -228,10 +228,10 @@ function AssistantPageContent() {
 
               {/* Structured AI Navigation Cards */}
               {msg.structuredResponse && (
-                <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white">
+                <div className="space-y-4 pt-3 border-t border-slate-200/70 dark:border-slate-800/70 text-slate-900 dark:text-white">
                   {/* Emergency Alert Banner if red-flag detected */}
                   {msg.structuredResponse.isEmergency && (
-                    <div className="p-4 rounded-2xl bg-red-600 text-white space-y-2 shadow-md animate-pulse">
+                    <div className="p-4 rounded-2xl bg-red-600 text-white space-y-2 shadow-lg animate-pulse">
                       <div className="flex items-center space-x-2 font-bold text-sm">
                         <AlertTriangle className="w-5 h-5" />
                         <span>{t.assistant.emergencyDetected}</span>
@@ -258,7 +258,7 @@ function AssistantPageContent() {
                   )}
 
                   {/* 1. Understanding Card */}
-                  <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
+                  <div className="p-3.5 glass-card rounded-2xl border border-slate-200/70 dark:border-slate-800/70">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
                       {t.assistant.understanding}
                     </span>
@@ -268,7 +268,7 @@ function AssistantPageContent() {
                   </div>
 
                   {/* 2. Possible Healthcare Service Category */}
-                  <div className="p-3.5 bg-teal-50/70 dark:bg-teal-950/40 rounded-2xl border border-teal-100 dark:border-teal-900 flex items-start justify-between">
+                  <div className="p-3.5 bg-teal-50/80 dark:bg-teal-950/60 rounded-2xl border border-teal-200/70 dark:border-teal-800/70 flex items-start justify-between shadow-xs">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 block mb-1">
                         {t.assistant.possibleService}
@@ -285,7 +285,7 @@ function AssistantPageContent() {
                         href={`/facilities?category=${msg.structuredResponse.categoryId}`}
                         className="shrink-0 ml-3"
                       >
-                        <Button size="sm" variant="primary" className="text-xs py-1.5">
+                        <Button size="sm" variant="primary" className="text-xs py-1.5 rounded-xl shadow-xs">
                           Find Facilities
                         </Button>
                       </Link>
@@ -297,16 +297,16 @@ function AssistantPageContent() {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                       {t.assistant.nextSteps}
                     </span>
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       {msg.structuredResponse.nextSteps.map((step, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start space-x-2 text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800"
+                          className="flex items-start space-x-2 text-xs text-slate-700 dark:text-slate-300 glass-card p-3 rounded-2xl border border-slate-200/60 dark:border-slate-800/60"
                         >
-                          <span className="w-4 h-4 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[10px]">
+                          <span className="w-5 h-5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 font-bold flex items-center justify-center shrink-0 mt-0.5 text-[10px]">
                             {idx + 1}
                           </span>
-                          <span>{step}</span>
+                          <span className="leading-relaxed">{step}</span>
                         </div>
                       ))}
                     </div>
@@ -314,20 +314,20 @@ function AssistantPageContent() {
 
                   {/* 4. Questions to Ask Doctor */}
                   {msg.structuredResponse.suggestedQuestions && (
-                    <div className="p-3.5 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900 space-y-1.5">
+                    <div className="p-3.5 bg-indigo-50/70 dark:bg-indigo-950/50 rounded-2xl border border-indigo-200/70 dark:border-indigo-800/70 space-y-2 shadow-xs">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 dark:text-indigo-300 block">
                         Suggested Questions for Your Healthcare Visit (OPD)
                       </span>
-                      <ul className="list-disc list-inside text-xs text-indigo-950 dark:text-indigo-200 space-y-1">
+                      <ul className="list-disc list-inside text-xs text-indigo-950 dark:text-indigo-200 space-y-1.5">
                         {msg.structuredResponse.suggestedQuestions.map((q, i) => (
-                          <li key={i}>{q}</li>
+                          <li key={i} className="leading-relaxed">{q}</li>
                         ))}
                       </ul>
                     </div>
                   )}
 
                   {/* 5. Non-Diagnostic Medical Disclaimer Notice */}
-                  <div className="p-3 bg-amber-50/70 dark:bg-amber-950/40 rounded-xl border border-amber-200/80 dark:border-amber-800/60 flex items-start space-x-2 text-[11px] text-amber-900 dark:text-amber-200 leading-snug">
+                  <div className="p-3 bg-amber-50/80 dark:bg-amber-950/50 rounded-2xl border border-amber-200/80 dark:border-amber-800/60 flex items-start space-x-2 text-[11px] text-amber-900 dark:text-amber-200 leading-snug">
                     <ShieldCheck className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
                     <span>{msg.structuredResponse.importantSafetyMessage}</span>
                   </div>
@@ -336,7 +336,7 @@ function AssistantPageContent() {
             </div>
 
             {msg.role === 'user' && (
-              <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 mt-1">
+              <div className="w-8 h-8 rounded-2xl bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 flex items-center justify-center shrink-0 mt-1 border border-teal-200/60 dark:border-teal-800/60 shadow-xs">
                 <User className="w-4 h-4" />
               </div>
             )}
@@ -344,7 +344,7 @@ function AssistantPageContent() {
         ))}
 
         {isTyping && (
-          <div className="flex items-center space-x-2 text-slate-400 text-xs pl-11">
+          <div className="flex items-center space-x-2 text-teal-700 dark:text-teal-400 text-xs pl-11 font-medium">
             <Sparkles className="w-4 h-4 animate-spin text-teal-600" />
             <span>CarePath AI is preparing Indian healthcare navigation guidance...</span>
           </div>
@@ -364,7 +364,7 @@ function AssistantPageContent() {
               <button
                 key={idx}
                 onClick={() => handleSendMessage(g.query)}
-                className="text-xs bg-white dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 transition font-medium"
+                className="text-xs glass-card hover:border-teal-500 text-slate-700 dark:text-slate-300 px-3.5 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 transition-all duration-200 font-medium hover:shadow-xs"
               >
                 {g.label}
               </button>
@@ -379,16 +379,16 @@ function AssistantPageContent() {
           e.preventDefault();
           handleSendMessage(input);
         }}
-        className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2 shrink-0"
+        className="pt-3 flex items-center space-x-2 shrink-0"
       >
         <button
           type="button"
           onClick={handleVoiceInput}
           title="Voice input (English/Hindi)"
-          className={`p-3 rounded-2xl border transition ${
+          className={`p-3.5 rounded-2xl border transition shadow-xs ${
             isListening
               ? 'bg-red-500 text-white border-red-500 animate-pulse'
-              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
+              : 'glass-panel text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-800'
           }`}
         >
           {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -401,7 +401,7 @@ function AssistantPageContent() {
           placeholder={
             isListening ? t.assistant.speakListening : 'Ask about hospital departments, OPD tokens, Jan Aushadhi, or symptoms...'
           }
-          className={`flex-1 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/20 shadow-xs ${
+          className={`flex-1 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 glass-panel px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20 shadow-md ${
             easyMode ? 'text-lg py-4' : ''
           }`}
         />
@@ -409,7 +409,7 @@ function AssistantPageContent() {
         <Button
           type="submit"
           disabled={!input.trim() || isTyping}
-          className="px-5 py-3 rounded-2xl shadow-xs"
+          className="px-5 py-3.5 rounded-2xl shadow-md bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600"
         >
           <Send className="w-4 h-4" />
         </Button>

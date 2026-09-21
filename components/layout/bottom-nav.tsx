@@ -26,7 +26,7 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 block lg:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 block lg:hidden border-t border-white/50 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/85 backdrop-blur-xl pb-safe">
       <div className="flex h-16 items-center justify-around px-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -37,10 +37,10 @@ export function BottomNav() {
                 href={item.href}
                 className="flex flex-col items-center justify-center -mt-5 group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-teal-700 text-white shadow-lg flex items-center justify-center transition-transform group-active:scale-95">
+                <div className="w-12 h-12 rounded-2xl bg-teal-700 dark:bg-teal-600 text-white shadow-lg flex items-center justify-center transition-transform group-active:scale-95">
                   <Bot className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-semibold text-teal-800 mt-1">
+                <span className="text-[10px] font-semibold text-teal-800 dark:text-teal-300 mt-1">
                   Ask AI
                 </span>
               </Link>
@@ -53,7 +53,9 @@ export function BottomNav() {
               href={item.href}
               className={cn(
                 'flex flex-col items-center justify-center w-14 py-1 transition-colors',
-                isActive ? 'text-teal-700 font-semibold' : 'text-slate-400 hover:text-slate-600'
+                isActive
+                  ? 'text-teal-700 dark:text-teal-400 font-semibold'
+                  : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200'
               )}
             >
               <item.icon className="h-5 w-5" />

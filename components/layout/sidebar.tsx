@@ -67,7 +67,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-slate-200/80 dark:lg:border-slate-800/80 lg:bg-slate-50/50 dark:lg:bg-slate-900/60 p-4 shrink-0 transition-colors duration-200',
+        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-white/50 dark:lg:border-slate-800/60 bg-white/65 dark:bg-slate-950/65 backdrop-blur-xl p-4 shrink-0 transition-all duration-200',
         easyMode ? 'lg:w-72' : ''
       )}
     >

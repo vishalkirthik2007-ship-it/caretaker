@@ -198,8 +198,8 @@ export default function JourneyPage() {
       </div>
 
       {/* Active Journey Overview Card */}
-      <Card className="p-6 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-4 rounded-3xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="p-6 border border-slate-200/80 dark:border-slate-800/80 glass-panel space-y-4 rounded-3xl shadow-xl backdrop-blur-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/70 dark:border-slate-800/70">
           <div>
             <div className="flex items-center space-x-2">
               <Badge variant="success">Active Healthcare Workflow</Badge>
@@ -207,7 +207,7 @@ export default function JourneyPage() {
                 Created: {new Date(selectedJourney.createdAt).toLocaleDateString()}
               </span>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">
               {selectedJourney.title}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -216,7 +216,7 @@ export default function JourneyPage() {
             </p>
           </div>
           <Link href="/facilities">
-            <Button variant="outline" size="sm" className="text-xs">
+            <Button variant="outline" size="sm" className="text-xs rounded-2xl border-slate-200/80 dark:border-slate-700/80">
               Change Facility
             </Button>
           </Link>
@@ -235,15 +235,15 @@ export default function JourneyPage() {
                 onClick={() => handleToggleStep(step.id, step.isCompleted)}
                 className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
                   step.isCompleted
-                    ? 'bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-slate-800 dark:text-slate-200'
-                    : 'bg-slate-50/70 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
+                    ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-slate-800 dark:text-slate-200 shadow-xs'
+                    : 'glass-card border-slate-200/70 dark:border-slate-800/70 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
                 }`}
               >
                 <div className="shrink-0 mt-0.5">
                   {step.isCompleted ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   ) : (
-                    <Circle className="w-5 h-5 text-slate-300 dark:text-slate-600" />
+                    <Circle className="w-5 h-5 text-slate-400 dark:text-slate-600" />
                   )}
                 </div>
                 <div>
@@ -262,11 +262,11 @@ export default function JourneyPage() {
             ))}
           </div>
         </div>
-      </Card>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Section 1: Appointment Preparation Checklist */}
-        <Card className="p-6 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+        <div className="p-6 space-y-4 border border-slate-200/80 dark:border-slate-800/80 glass-panel rounded-3xl shadow-xl backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Calendar className="w-5 h-5 text-teal-700 dark:text-teal-400" />
@@ -285,9 +285,9 @@ export default function JourneyPage() {
               value={newChecklistText}
               onChange={(e) => setNewChecklistText(e.target.value)}
               placeholder="Add checklist item (e.g. bring previous ECG report)..."
-              className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-teal-700"
+              className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 shadow-xs"
             />
-            <Button type="submit" size="sm" className="text-xs shrink-0">
+            <Button type="submit" size="sm" className="text-xs shrink-0 rounded-xl">
               <Plus className="w-3.5 h-3.5 mr-1" />
               Add
             </Button>
@@ -304,13 +304,13 @@ export default function JourneyPage() {
                     )
                   )
                 }
-                className="flex items-center justify-between p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition text-xs"
+                className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 glass-card hover:bg-white/90 dark:hover:bg-slate-800 cursor-pointer transition text-xs"
               >
                 <div className="flex items-center space-x-2.5">
                   {item.completed ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   ) : (
-                    <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
+                    <Circle className="w-4 h-4 text-slate-400 dark:text-slate-600 shrink-0" />
                   )}
                   <span
                     className={`${
@@ -332,10 +332,10 @@ export default function JourneyPage() {
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
         {/* Section 2: Questions for Healthcare Professional */}
-        <Card className="p-6 space-y-4 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl">
+        <div className="p-6 space-y-4 border border-slate-200/80 dark:border-slate-800/80 glass-panel rounded-3xl shadow-xl backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <HelpCircle className="w-5 h-5 text-indigo-700 dark:text-indigo-400" />
@@ -346,9 +346,9 @@ export default function JourneyPage() {
             <button
               onClick={handleAIGenerateQuestions}
               disabled={isGenerating}
-              className="inline-flex items-center text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-1.5 rounded-xl border border-indigo-200 dark:border-indigo-800 transition"
+              className="inline-flex items-center text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 bg-indigo-50/80 dark:bg-indigo-950/60 px-3 py-1.5 rounded-xl border border-indigo-200/70 dark:border-indigo-800/70 transition shadow-xs"
             >
-              <Sparkles className="w-3.5 h-3.5 mr-1 text-indigo-600 dark:text-indigo-400" />
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-indigo-600 dark:text-indigo-400" />
               {isGenerating ? 'Generating...' : 'AI Suggestions'}
             </button>
           </div>
@@ -359,9 +359,9 @@ export default function JourneyPage() {
               value={newQuestionText}
               onChange={(e) => setNewQuestionText(e.target.value)}
               placeholder="Add question to ask your doctor..."
-              className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-teal-700"
+              className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 shadow-xs"
             />
-            <Button type="submit" size="sm" className="text-xs shrink-0">
+            <Button type="submit" size="sm" className="text-xs shrink-0 rounded-xl">
               <Plus className="w-3.5 h-3.5 mr-1" />
               Add
             </Button>
@@ -378,13 +378,13 @@ export default function JourneyPage() {
                     )
                   )
                 }
-                className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition text-xs flex items-start justify-between gap-2"
+                className="p-3 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 glass-card hover:bg-white/90 dark:hover:bg-slate-800 cursor-pointer transition text-xs flex items-start justify-between gap-2"
               >
                 <div className="flex items-start space-x-2.5">
                   {q.isAnswered ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   ) : (
-                    <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0 mt-0.5" />
+                    <Circle className="w-4 h-4 text-slate-400 dark:text-slate-600 shrink-0 mt-0.5" />
                   )}
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400 block">
@@ -411,7 +411,7 @@ export default function JourneyPage() {
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

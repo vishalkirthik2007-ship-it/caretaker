@@ -466,34 +466,34 @@ export function generateStructuredNavigationResponse(
   const nameGreeting = userProfile?.fullName ? `Hello ${userProfile.fullName.split(' ')[0]}, you` : 'You';
 
   const personalizedNextSteps = [
-    `Locate an accredited hospital or clinic${cityMention} matching your healthcare needs.`,
-    'Confirm OPD (Outpatient Department) consultation hours or book an appointment token.',
-    'Carry your previous medical records, current prescriptions, and government photo ID / Ayushman Bharat card.',
+    `Locate an accredited hospital, clinic, or medical center${cityMention} offering ${mapped.categoryName}.`,
+    'Book an OPD token online via e-Hospital / ORS portal, or arrive between 7:30 AM – 9:30 AM for physical counter registration.',
+    'Carry your Aadhaar card, previous diagnostic reports, active prescriptions, and Ayushman Bharat PM-JAY or state health insurance card (e.g. CMCHIS, Aarogya Karnataka, Aarogyasri, Karunya).',
   ];
 
   if (userProfile?.healthConditions) {
     personalizedNextSteps.push(
-      `Mention your active health background (${userProfile.healthConditions}) to the attending doctor for comprehensive evaluation.`
+      `Inform the doctor of your existing medical background (${userProfile.healthConditions}) so treatment plans avoid drug-condition interactions.`
     );
   } else {
     personalizedNextSteps.push(
-      'Consult a licensed medical specialist for thorough clinical evaluation and treatment.'
+      'Inquire with your attending physician if generic medicine substitutes (available at PM Jan Aushadhi Kendras) are suitable for your prescription.'
     );
   }
 
   return {
-    understanding: `${nameGreeting} are seeking healthcare guidance regarding "${userQuery}". This corresponds to outpatient or specialized care${cityMention}.`,
+    understanding: `${nameGreeting} are seeking clinical healthcare navigation for "${userQuery}". This is addressed through outpatient or specialized care in ${mapped.categoryName}${cityMention}.`,
     possibleServiceCategory: mapped.categoryName,
     categoryId: mapped.categoryId,
-    why: `For these symptoms, ${mapped.categoryName} provides verified clinical evaluation, diagnostic tests, and tailored care protocols.`,
+    why: `For these symptoms and navigation needs, ${mapped.categoryName} offers verified specialist diagnosis, targeted laboratory/imaging workups, and evidence-based clinical management.`,
     nextSteps: personalizedNextSteps,
     importantSafetyMessage:
-      'CarePath AI is an educational navigation platform. It does not provide medical diagnoses, write prescriptions, or replace consultation with a qualified doctor. Always seek professional healthcare advice.',
+      'CarePath AI is an educational healthcare navigation platform. It does not provide medical diagnoses, write prescriptions, or replace consultation with a qualified doctor. Always seek professional healthcare advice.',
     isEmergency: false,
     suggestedQuestions: [
-      'What symptoms or triggers should I track in a notebook before my OPD visit?',
-      'Are there any fasting or laboratory prerequisites before visiting the doctor?',
-      'Can I request cost-effective generic medicine equivalents (Jan Aushadhi) for this condition?',
+      'What specific diagnostic tests (bloodwork, ultrasound, X-ray) are advised before initiating treatment?',
+      'Are there quality generic medicine equivalents (PM Jan Aushadhi) that can be prescribed to reduce monthly pharmacy costs?',
+      'Is treatment or surgery for this condition covered under Ayushman Bharat (PM-JAY) or state health insurance schemes?',
     ],
   };
 }

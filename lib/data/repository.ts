@@ -144,6 +144,8 @@ export class CarePathRepository {
           f.name.toLowerCase().includes(q) ||
           f.description.toLowerCase().includes(q) ||
           f.facilityType.toLowerCase().includes(q) ||
+          f.location.city.toLowerCase().includes(q) ||
+          f.location.state.toLowerCase().includes(q) ||
           f.services?.some((s) => s.toLowerCase().includes(q))
       );
     }
