@@ -40,6 +40,8 @@ class AIService implements AIServiceInterface {
           fullName: user.fullName,
           city: user.city,
           healthConditions: user.healthConditions,
+          allergies: user.allergies,
+          currentMedications: user.currentMedications,
           age: user.age,
           gender: user.gender,
         }
@@ -96,6 +98,8 @@ User Profile Context:
 - Age: ${userProfileContext?.age || 'Not specified'}
 - Gender: ${userProfileContext?.gender || 'Not specified'}
 - Existing Health Conditions: ${userProfileContext?.healthConditions || 'None reported'}
+- Known Allergies: ${userProfileContext?.allergies && userProfileContext.allergies.length > 0 ? userProfileContext.allergies.join(', ') : 'None reported'}
+- Current Medications: ${userProfileContext?.currentMedications && userProfileContext.currentMedications.length > 0 ? userProfileContext.currentMedications.join(', ') : 'None reported'}
 
 Return JSON strictly matching this schema:
 {

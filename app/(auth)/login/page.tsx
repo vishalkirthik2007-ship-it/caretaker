@@ -19,6 +19,16 @@ import {
   ShieldCheck,
   Loader2,
   AlertCircle,
+  Calendar,
+  HeartPulse,
+  Droplets,
+  Ruler,
+  Scale,
+  Users,
+  Pill,
+  X,
+  Plus,
+  Heart,
 } from 'lucide-react';
 import { repository } from '@/lib/data/repository';
 import { UserProfile } from '@/types';
@@ -28,13 +38,34 @@ export default function LoginPage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
 
-  // Form States
+  // Form States - Core
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoginMode, setIsLoginMode] = useState(false);
+
+  // Form States - Additive Personal & Demographics
+  const [city, setCity] = useState('Chennai');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState('Male');
+
+  // Form States - Emergency Contact
+  const [emergencyContactName, setEmergencyContactName] = useState('');
+  const [emergencyContactRelationship, setEmergencyContactRelationship] = useState('Parent');
+  const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
+
+  // Form States - Health Information
+  const [bloodGroup, setBloodGroup] = useState('Unknown / Not sure');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [healthConditions, setHealthConditions] = useState<string[]>([]);
+  const [conditionInput, setConditionInput] = useState('');
+  const [allergies, setAllergies] = useState<string[]>([]);
+  const [allergyInput, setAllergyInput] = useState('');
+  const [currentMedications, setCurrentMedications] = useState<string[]>([]);
+  const [medicationInput, setMedicationInput] = useState('');
 
   // Validation & Submission States
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -52,8 +83,84 @@ export default function LoginPage() {
       setFullName(existing.fullName || '');
       setPhone(existing.phoneNumber || '');
       setEmail(existing.email || '');
+      if (existing.city) setCity(existing.city);
+      if (existing.dateOfBirth) setDateOfBirth(existing.dateOfBirth);
+      if (existing.gender) setGender(existing.gender);
+      if (existing.emergencyContactName) setEmergencyContactName(existing.emergencyContactName);
+      if (existing.emergencyContactRelationship) setEmergencyContactRelationship(existing.emergencyContactRelationship);
+      if (existing.emergencyContactPhone) setEmergencyContactPhone(existing.emergencyContactPhone);
+      if (existing.bloodGroup) setBloodGroup(existing.bloodGroup);
+      if (existing.height) setHeight(existing.height);
+      if (existing.weight) setWeight(existing.weight);
+      if (existing.healthConditions) {
+        setHealthConditions(
+          existing.healthConditions
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        );
+      }
+      if (existing.allergies) setAllergies(existing.allergies);
+      if (existing.currentMedications) setCurrentMedications(existing.currentMedications);
     }
   }, []);
+
+  const addHealthCondition = (cond: string) => {
+    const trimmed = cond.trim();
+    if (!trimmed) return;
+    if (trimmed === 'None' || trimmed === 'Prefer not to say') {
+      setHealthConditions([trimmed]);
+      setConditionInput('');
+      return;
+    }
+    const filtered = healthConditions.filter((c) => c !== 'None' && c !== 'Prefer not to say');
+    if (!filtered.includes(trimmed)) {
+      setHealthConditions([...filtered, trimmed]);
+    }
+    setConditionInput('');
+  };
+
+  const removeHealthCondition = (cond: string) => {
+    setHealthConditions(healthConditions.filter((c) => c !== cond));
+  };
+
+  const addAllergy = (item: string) => {
+    const trimmed = item.trim();
+    if (!trimmed) return;
+    if (trimmed === 'No known allergies') {
+      setAllergies([trimmed]);
+      setAllergyInput('');
+      return;
+    }
+    const filtered = allergies.filter((a) => a !== 'No known allergies');
+    if (!filtered.includes(trimmed)) {
+      setAllergies([...filtered, trimmed]);
+    }
+    setAllergyInput('');
+  };
+
+  const removeAllergy = (item: string) => {
+    setAllergies(allergies.filter((a) => a !== item));
+  };
+
+  const addMedication = (item: string) => {
+    const trimmed = item.trim();
+    if (!trimmed) return;
+    if (trimmed === 'No current medications') {
+      setCurrentMedications([trimmed]);
+      setMedicationInput('');
+      return;
+    }
+    const filtered = currentMedications.filter((m) => m !== 'No current medications');
+    if (!filtered.includes(trimmed)) {
+      setCurrentMedications([...filtered, trimmed]);
+    }
+    setMedicationInput('');
+  };
+
+  const removeMedication = (item: string) => {
+    setCurrentMedications(currentMedications.filter((m) => m !== item));
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -83,6 +190,13 @@ export default function LoginPage() {
       newErrors.password = 'Password must be at least 6 characters.';
     }
 
+    if (emergencyContactPhone.trim()) {
+      const cleanEmerg = emergencyContactPhone.replace(/[^0-9]/g, '');
+      if (cleanEmerg.length < 10) {
+        newErrors.emergencyContactPhone = 'Emergency phone should be a valid 10-digit Indian number.';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -94,7 +208,15 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     const userName = fullName.trim() || (returningUser?.fullName ?? 'CareNest Member');
-    const userCity = returningUser?.city || 'Chennai';
+    const userCity = city.trim() || returningUser?.city || 'Chennai';
+
+    let calculatedAge = returningUser?.age || 28;
+    if (dateOfBirth) {
+      const birthYear = new Date(dateOfBirth).getFullYear();
+      if (!isNaN(birthYear)) {
+        calculatedAge = Math.max(1, new Date().getFullYear() - birthYear);
+      }
+    }
 
     const userProfile: UserProfile = {
       id: returningUser?.id || `usr-${Date.now()}`,
@@ -102,12 +224,18 @@ export default function LoginPage() {
       fullName: userName,
       phoneNumber: phone.trim(),
       city: userCity,
-      dateOfBirth: returningUser?.dateOfBirth,
-      age: returningUser?.age || 28,
-      gender: returningUser?.gender || 'Male',
-      healthConditions: returningUser?.healthConditions,
-      emergencyContactName: returningUser?.emergencyContactName,
-      emergencyContactPhone: returningUser?.emergencyContactPhone,
+      dateOfBirth: dateOfBirth || returningUser?.dateOfBirth,
+      age: calculatedAge,
+      gender: gender || returningUser?.gender || 'Male',
+      emergencyContactName: emergencyContactName.trim() || returningUser?.emergencyContactName,
+      emergencyContactPhone: emergencyContactPhone.trim() || returningUser?.emergencyContactPhone,
+      emergencyContactRelationship: emergencyContactRelationship || returningUser?.emergencyContactRelationship || 'Parent',
+      bloodGroup: bloodGroup || returningUser?.bloodGroup || 'Unknown / Not sure',
+      height: height.trim() || returningUser?.height,
+      weight: weight.trim() || returningUser?.weight,
+      healthConditions: healthConditions.length > 0 ? healthConditions.join(', ') : returningUser?.healthConditions,
+      allergies: allergies.length > 0 ? allergies : returningUser?.allergies,
+      currentMedications: currentMedications.length > 0 ? currentMedications : returningUser?.currentMedications,
       photoUrl: returningUser?.photoUrl,
       preferredLanguage: returningUser?.preferredLanguage || 'en',
       theme: (theme as 'light' | 'dark') || 'light',
@@ -281,12 +409,12 @@ export default function LoginPage() {
           {/* --------------------------------------------------------------------- */}
           {/* 6. CENTRAL LOGIN CARD — THE PRIMARY FLOATING BUBBLE                   */}
           {/* --------------------------------------------------------------------- */}
-          <div className="lg:col-span-5 flex justify-center order-2 my-4 lg:my-0">
+          <div className="lg:col-span-5 flex justify-center order-2 my-3 lg:my-0">
             <div
-              className={`w-full max-w-[430px] rounded-[32px] sm:rounded-[36px] p-6 sm:p-8 md:p-9 transition-all duration-500 shadow-2xl relative overflow-hidden backdrop-blur-2xl ${
+              className={`w-full max-w-[490px] rounded-[32px] sm:rounded-[36px] p-5 sm:p-7 md:p-8 max-h-[86vh] overflow-y-auto pr-2 scrollbar-thin transition-all duration-500 shadow-2xl relative backdrop-blur-2xl ${
                 isDark
                   ? 'bg-[#0a1e38]/50 border border-cyan-400/25 shadow-black/60 text-white'
-                  : 'bg-white/45 border border-white/80 shadow-slate-900/15 text-[#102033]'
+                  : 'bg-white/50 border border-white/80 shadow-slate-900/15 text-[#102033]'
               }`}
               style={{
                 boxShadow: isDark
@@ -306,13 +434,22 @@ export default function LoginPage() {
                 <h2 className={`text-2xl sm:text-3xl font-bold tracking-tight ${
                   isDark ? 'text-white' : 'text-[#102033]'
                 }`}>
-                  Welcome Back
+                  {isLoginMode ? 'Welcome Back' : 'Welcome to CareNest'}
                 </h2>
                 <p className={`text-xs sm:text-sm font-medium ${
                   isDark ? 'text-cyan-100/80' : 'text-slate-600'
                 }`}>
-                  Sign in to continue your healthcare journey
+                  {isLoginMode
+                    ? 'Sign in to continue your healthcare journey'
+                    : '“Your health journey starts here.”'}
                 </p>
+                {!isLoginMode && (
+                  <p className={`text-[11px] leading-snug pt-0.5 ${
+                    isDark ? 'text-slate-300' : 'text-slate-500'
+                  }`}>
+                    Find the right care. Take the right next step safely with verified Indian healthcare providers.
+                  </p>
+                )}
               </div>
 
               {/* Returning User Quick Indicator */}
@@ -339,130 +476,781 @@ export default function LoginPage() {
               )}
 
               {/* 8. Bubble / Pill Input Fields */}
-              <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
-                {/* Field 1: Full Name */}
-                {!isLoginMode && (
-                  <div className="space-y-1">
-                    <div
-                      className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
-                        isDark
-                          ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
-                          : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
-                      }`}
-                    >
-                      <User className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
-                      <div className="flex-1 flex flex-col justify-center text-left">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
-                          isDark ? 'text-cyan-200/90' : 'text-slate-500'
-                        }`}>
-                          Full Name
-                        </span>
-                        <input
-                          type="text"
-                          value={fullName}
-                          onChange={(e) => {
-                            setFullName(e.target.value);
-                            if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: '' }));
-                          }}
-                          placeholder="Enter your name"
-                          className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
-                            isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
-                          }`}
-                        />
+              <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+                
+                {/* ------------------------------------------------------------- */}
+                {/* IF LOGIN MODE: COMPACT LOGIN VIEW                             */}
+                {/* ------------------------------------------------------------- */}
+                {isLoginMode ? (
+                  <>
+                    {/* Primary Identifier: Phone or Email */}
+                    <div className="space-y-1">
+                      <div
+                        className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                          isDark
+                            ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                            : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                        }`}
+                      >
+                        <Phone className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                        <div className="flex-1 flex flex-col justify-center text-left">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                            isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                          }`}>
+                            Phone Number or Email *
+                          </span>
+                          <input
+                            type="text"
+                            value={phone || email}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val.includes('@')) {
+                                setEmail(val);
+                              } else {
+                                setPhone(val);
+                              }
+                              if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
+                            }}
+                            placeholder="e.g. +91 98401 23456 or name@domain.com"
+                            className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                              isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                            }`}
+                          />
+                        </div>
+                      </div>
+                      {errors.phone && (
+                        <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
+                          <AlertCircle className="w-2.5 h-2.5 mr-1" />
+                          {errors.phone}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* ----------------------------------------------------------- */}
+                    {/* SECTION 1: PERSONAL & CONTACT INFORMATION                   */}
+                    {/* ----------------------------------------------------------- */}
+                    <div className="pt-1">
+                      <div className="flex items-center space-x-2 pb-2 text-[11px] font-extrabold uppercase tracking-wider text-cyan-500 dark:text-cyan-300">
+                        <User className="w-3.5 h-3.5 shrink-0" />
+                        <span>1. Personal & Contact Information</span>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {/* Full Name */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <User className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Full Name *
+                              </span>
+                              <input
+                                type="text"
+                                value={fullName}
+                                onChange={(e) => {
+                                  setFullName(e.target.value);
+                                  if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: '' }));
+                                }}
+                                placeholder="e.g. Vishal Kirthik"
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                                  isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                }`}
+                              />
+                            </div>
+                          </div>
+                          {errors.fullName && (
+                            <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
+                              <AlertCircle className="w-2.5 h-2.5 mr-1" />
+                              {errors.fullName}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Email Address */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Mail className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Email Address *
+                              </span>
+                              <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => {
+                                  setEmail(e.target.value);
+                                  if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                                }}
+                                placeholder="vishal@carepath.in"
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                                  isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                }`}
+                              />
+                            </div>
+                          </div>
+                          {errors.email && (
+                            <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
+                              <AlertCircle className="w-2.5 h-2.5 mr-1" />
+                              {errors.email}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Phone Number (India) +91 */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Phone className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Phone Number (India) *
+                              </span>
+                              <div className="flex items-center pt-0.5">
+                                <span className={`text-xs font-bold mr-1.5 ${isDark ? 'text-cyan-300' : 'text-slate-700'}`}>
+                                  +91
+                                </span>
+                                <input
+                                  type="tel"
+                                  value={phone}
+                                  onChange={(e) => {
+                                    setPhone(e.target.value);
+                                    if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
+                                  }}
+                                  placeholder="98401 23456"
+                                  className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight ${
+                                    isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          {errors.phone && (
+                            <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
+                              <AlertCircle className="w-2.5 h-2.5 mr-1" />
+                              {errors.phone}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Current City / Region */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <MapPin className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Current City / Region *
+                              </span>
+                              <select
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 cursor-pointer ${
+                                  isDark ? 'text-white bg-[#102640]' : 'text-[#102033] bg-white'
+                                }`}
+                              >
+                                <option value="Chennai">Chennai</option>
+                                <option value="Bengaluru">Bengaluru</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Delhi NCR">Delhi NCR</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <option value="Pune">Pune</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Coimbatore">Coimbatore</option>
+                                <option value="Kochi">Kochi</option>
+                                <option value="Other">Other</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    {errors.fullName && (
-                      <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
-                        <AlertCircle className="w-2.5 h-2.5 mr-1" />
-                        {errors.fullName}
-                      </p>
-                    )}
-                  </div>
+
+                    {/* ----------------------------------------------------------- */}
+                    {/* SECTION 2: DEMOGRAPHICS & AGE                               */}
+                    {/* ----------------------------------------------------------- */}
+                    <div className="pt-2">
+                      <div className="flex items-center space-x-2 pb-2 text-[11px] font-extrabold uppercase tracking-wider text-cyan-500 dark:text-cyan-300">
+                        <Calendar className="w-3.5 h-3.5 shrink-0" />
+                        <span>2. Demographics & Age</span>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {/* Date of Birth */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Calendar className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Date of Birth
+                              </span>
+                              <input
+                                type="date"
+                                value={dateOfBirth}
+                                onChange={(e) => setDateOfBirth(e.target.value)}
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                                  isDark ? 'text-white' : 'text-[#102033]'
+                                }`}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Gender Pill Buttons */}
+                        <div className="space-y-1">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider pl-2 block ${
+                            isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                          }`}>
+                            Gender
+                          </span>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                            {['Male', 'Female', 'Other', 'Prefer not to say'].map((opt) => (
+                              <button
+                                key={opt}
+                                type="button"
+                                onClick={() => setGender(opt)}
+                                className={`py-2 px-2 rounded-full text-xs font-semibold transition-all duration-200 border text-center ${
+                                  gender === opt
+                                    ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white border-transparent shadow-sm'
+                                    : isDark
+                                    ? 'bg-[#102640]/50 border-white/10 text-slate-300 hover:border-cyan-400/40'
+                                    : 'bg-white/70 border-white/90 text-slate-700 hover:bg-white'
+                                }`}
+                              >
+                                {opt}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ----------------------------------------------------------- */}
+                    {/* SECTION 3: EMERGENCY CONTACT                                */}
+                    {/* ----------------------------------------------------------- */}
+                    <div className="pt-2">
+                      <div className="flex items-center space-x-2 pb-2 text-[11px] font-extrabold uppercase tracking-wider text-cyan-500 dark:text-cyan-300">
+                        <Users className="w-3.5 h-3.5 shrink-0" />
+                        <span>3. Emergency Contact</span>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {/* Emergency Contact Name */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <User className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Emergency Contact Name
+                              </span>
+                              <input
+                                type="text"
+                                value={emergencyContactName}
+                                onChange={(e) => setEmergencyContactName(e.target.value)}
+                                placeholder="Enter emergency contact name"
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                                  isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                }`}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Relationship to Emergency Contact */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Heart className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Relationship to Emergency Contact
+                              </span>
+                              <select
+                                value={emergencyContactRelationship}
+                                onChange={(e) => setEmergencyContactRelationship(e.target.value)}
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 cursor-pointer ${
+                                  isDark ? 'text-white bg-[#102640]' : 'text-[#102033] bg-white'
+                                }`}
+                              >
+                                {[
+                                  'Parent',
+                                  'Mother',
+                                  'Father',
+                                  'Spouse',
+                                  'Partner',
+                                  'Sibling',
+                                  'Brother',
+                                  'Sister',
+                                  'Child',
+                                  'Son',
+                                  'Daughter',
+                                  'Guardian',
+                                  'Friend',
+                                  'Other',
+                                ].map((rel) => (
+                                  <option key={rel} value={rel}>{rel}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Emergency Contact Phone Number (+91) */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Phone className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Emergency Contact Phone Number
+                              </span>
+                              <div className="flex items-center pt-0.5">
+                                <span className={`text-xs font-bold mr-1.5 ${isDark ? 'text-cyan-300' : 'text-slate-700'}`}>
+                                  +91
+                                </span>
+                                <input
+                                  type="tel"
+                                  value={emergencyContactPhone}
+                                  onChange={(e) => {
+                                    setEmergencyContactPhone(e.target.value);
+                                    if (errors.emergencyContactPhone) setErrors((prev) => ({ ...prev, emergencyContactPhone: '' }));
+                                  }}
+                                  placeholder="98765 43210"
+                                  className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight ${
+                                    isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          {errors.emergencyContactPhone && (
+                            <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
+                              <AlertCircle className="w-2.5 h-2.5 mr-1" />
+                              {errors.emergencyContactPhone}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ----------------------------------------------------------- */}
+                    {/* SECTION 4: HEALTH INFORMATION                               */}
+                    {/* ----------------------------------------------------------- */}
+                    <div className="pt-2">
+                      <div className="flex items-center space-x-2 pb-2 text-[11px] font-extrabold uppercase tracking-wider text-cyan-500 dark:text-cyan-300">
+                        <HeartPulse className="w-3.5 h-3.5 shrink-0" />
+                        <span>4. Health Information</span>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {/* Blood Group */}
+                        <div className="space-y-1">
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Droplets className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Blood Group
+                              </span>
+                              <select
+                                value={bloodGroup}
+                                onChange={(e) => setBloodGroup(e.target.value)}
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 cursor-pointer ${
+                                  isDark ? 'text-white bg-[#102640]' : 'text-[#102033] bg-white'
+                                }`}
+                              >
+                                {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown / Not sure'].map((bg) => (
+                                  <option key={bg} value={bg}>{bg}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Optional Height & Weight (Side by Side) */}
+                        <div className="grid grid-cols-2 gap-2">
+                          {/* Height */}
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Ruler className={`w-4 h-4 shrink-0 mr-2.5 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Height (cm)
+                              </span>
+                              <input
+                                type="text"
+                                value={height}
+                                onChange={(e) => setHeight(e.target.value)}
+                                placeholder="e.g. 175"
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                                  isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                }`}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Weight */}
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                            }`}
+                          >
+                            <Scale className={`w-4 h-4 shrink-0 mr-2.5 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <div className="flex-1 flex flex-col justify-center text-left">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
+                                isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                              }`}>
+                                Weight (kg)
+                              </span>
+                              <input
+                                type="text"
+                                value={weight}
+                                onChange={(e) => setWeight(e.target.value)}
+                                placeholder="e.g. 68"
+                                className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
+                                  isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                                }`}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Current Health Conditions / Issues (Chips UX) */}
+                        <div className="space-y-1.5 pt-1">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider pl-2 block ${
+                            isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                          }`}>
+                            Current Health Conditions / Health Issues
+                          </span>
+                          
+                          {/* Search / Enter condition input */}
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500'
+                            }`}
+                          >
+                            <input
+                              type="text"
+                              value={conditionInput}
+                              onChange={(e) => setConditionInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  addHealthCondition(conditionInput);
+                                }
+                              }}
+                              placeholder="Search or enter health condition..."
+                              className={`w-full bg-transparent border-0 p-0 text-xs font-medium focus:outline-none focus:ring-0 ${
+                                isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                              }`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => addHealthCondition(conditionInput)}
+                              className="p-1 rounded-full text-cyan-500 hover:bg-cyan-500/10 ml-1 shrink-0"
+                              title="Add condition"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Selected Condition Chips */}
+                          {healthConditions.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {healthConditions.map((cond) => (
+                                <span
+                                  key={cond}
+                                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 border border-cyan-400/30"
+                                >
+                                  <span>{cond}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeHealthCondition(cond)}
+                                    className="hover:text-rose-500 ml-0.5"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Quick shortcuts for Conditions */}
+                          <div className="flex flex-wrap items-center gap-1.5 pt-0.5 text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => addHealthCondition('None')}
+                              className={`px-2 py-0.5 rounded-full border transition ${
+                                healthConditions.includes('None')
+                                  ? 'bg-cyan-500 text-white border-transparent'
+                                  : 'bg-white/40 dark:bg-white/5 border-white/20 hover:bg-white/60 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              None
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => addHealthCondition('Prefer not to say')}
+                              className={`px-2 py-0.5 rounded-full border transition ${
+                                healthConditions.includes('Prefer not to say')
+                                  ? 'bg-cyan-500 text-white border-transparent'
+                                  : 'bg-white/40 dark:bg-white/5 border-white/20 hover:bg-white/60 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              Prefer not to say
+                            </button>
+                            {['Diabetes', 'Hypertension', 'Asthma'].map((item) => (
+                              <button
+                                key={item}
+                                type="button"
+                                onClick={() => addHealthCondition(item)}
+                                className="px-2 py-0.5 rounded-full border bg-white/40 dark:bg-white/5 border-white/20 hover:bg-white/60 dark:hover:bg-white/10 transition"
+                              >
+                                + {item}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Allergies (Chips UX) */}
+                        <div className="space-y-1.5 pt-1">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider pl-2 block ${
+                            isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                          }`}>
+                            Allergies
+                          </span>
+                          
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500'
+                            }`}
+                          >
+                            <input
+                              type="text"
+                              value={allergyInput}
+                              onChange={(e) => setAllergyInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  addAllergy(allergyInput);
+                                }
+                              }}
+                              placeholder="e.g. Penicillin, Peanuts, Pollen..."
+                              className={`w-full bg-transparent border-0 p-0 text-xs font-medium focus:outline-none focus:ring-0 ${
+                                isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                              }`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => addAllergy(allergyInput)}
+                              className="p-1 rounded-full text-cyan-500 hover:bg-cyan-500/10 ml-1 shrink-0"
+                              title="Add allergy"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {allergies.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {allergies.map((all) => (
+                                <span
+                                  key={all}
+                                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-400/30"
+                                >
+                                  <span>{all}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeAllergy(all)}
+                                    className="hover:text-rose-500 ml-0.5"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="flex items-center gap-1.5 pt-0.5 text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => addAllergy('No known allergies')}
+                              className={`px-2 py-0.5 rounded-full border transition ${
+                                allergies.includes('No known allergies')
+                                  ? 'bg-amber-500 text-white border-transparent'
+                                  : 'bg-white/40 dark:bg-white/5 border-white/20 hover:bg-white/60 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              No known allergies
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Current Medications (Chips UX) */}
+                        <div className="space-y-1.5 pt-1">
+                          <span className={`text-[10px] font-bold uppercase tracking-wider pl-2 block ${
+                            isDark ? 'text-cyan-200/90' : 'text-slate-500'
+                          }`}>
+                            Current Medications
+                          </span>
+                          
+                          <div
+                            className={`relative rounded-full flex items-center px-4 py-2 transition-all duration-200 border shadow-xs ${
+                              isDark
+                                ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400'
+                                : 'bg-white/85 border-white/95 focus-within:border-cyan-500'
+                            }`}
+                          >
+                            <Pill className={`w-3.5 h-3.5 shrink-0 mr-2.5 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
+                            <input
+                              type="text"
+                              value={medicationInput}
+                              onChange={(e) => setMedicationInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  addMedication(medicationInput);
+                                }
+                              }}
+                              placeholder="e.g. Metformin 500mg, Atorvastatin..."
+                              className={`w-full bg-transparent border-0 p-0 text-xs font-medium focus:outline-none focus:ring-0 ${
+                                isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
+                              }`}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => addMedication(medicationInput)}
+                              className="p-1 rounded-full text-cyan-500 hover:bg-cyan-500/10 ml-1 shrink-0"
+                              title="Add medication"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {currentMedications.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {currentMedications.map((med) => (
+                                <span
+                                  key={med}
+                                  className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-400/30"
+                                >
+                                  <span>{med}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeMedication(med)}
+                                    className="hover:text-rose-500 ml-0.5"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="flex items-center gap-1.5 pt-0.5 text-[10px]">
+                            <button
+                              type="button"
+                              onClick={() => addMedication('No current medications')}
+                              className={`px-2 py-0.5 rounded-full border transition ${
+                                currentMedications.includes('No current medications')
+                                  ? 'bg-emerald-500 text-white border-transparent'
+                                  : 'bg-white/40 dark:bg-white/5 border-white/20 hover:bg-white/60 dark:hover:bg-white/10'
+                              }`}
+                            >
+                              No current medications
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
 
-                {/* Field 2: Phone Number (+91) */}
-                <div className="space-y-1">
-                  <div
-                    className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
-                      isDark
-                        ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
-                        : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
-                    }`}
-                  >
-                    <Phone className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
-                    <div className="flex-1 flex flex-col justify-center text-left">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
-                        isDark ? 'text-cyan-200/90' : 'text-slate-500'
-                      }`}>
-                        Phone Number
-                      </span>
-                      <div className="flex items-center pt-0.5">
-                        <span className={`text-xs font-bold mr-1.5 ${isDark ? 'text-cyan-300' : 'text-slate-700'}`}>
-                          +91
-                        </span>
-                        <input
-                          type="tel"
-                          value={phone}
-                          onChange={(e) => {
-                            setPhone(e.target.value);
-                            if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
-                          }}
-                          placeholder="Enter your mobile number"
-                          className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight ${
-                            isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  {errors.phone && (
-                    <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
-                      <AlertCircle className="w-2.5 h-2.5 mr-1" />
-                      {errors.phone}
-                    </p>
-                  )}
-                </div>
-
-                {/* Field 3: Email Address */}
-                <div className="space-y-1">
-                  <div
-                    className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
-                      isDark
-                        ? 'bg-[#102640]/70 border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20'
-                        : 'bg-white/85 border-white/95 focus-within:border-cyan-500 focus-within:ring-2 focus-within:ring-cyan-400/20 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
-                    }`}
-                  >
-                    <Mail className={`w-4 h-4 shrink-0 mr-3 ${isDark ? 'text-cyan-300/80' : 'text-slate-400'}`} />
-                    <div className="flex-1 flex flex-col justify-center text-left">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
-                        isDark ? 'text-cyan-200/90' : 'text-slate-500'
-                      }`}>
-                        Email Address
-                      </span>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
-                        }}
-                        placeholder="Enter your email"
-                        className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
-                          isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
-                        }`}
-                      />
-                    </div>
-                  </div>
-                  {errors.email && (
-                    <p className="text-[10px] text-rose-400 pl-4 font-semibold flex items-center">
-                      <AlertCircle className="w-2.5 h-2.5 mr-1" />
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-
-                {/* Field 4: Password */}
-                <div className="space-y-1">
+                {/* ------------------------------------------------------------- */}
+                {/* PASSWORD FIELD (Common to both modes)                         */}
+                {/* ------------------------------------------------------------- */}
+                <div className="space-y-1 pt-1">
                   <div
                     className={`relative rounded-full flex items-center px-4 py-2.5 transition-all duration-200 border shadow-xs ${
                       isDark
@@ -475,7 +1263,7 @@ export default function LoginPage() {
                       <span className={`text-[10px] font-bold uppercase tracking-wider leading-none ${
                         isDark ? 'text-cyan-200/90' : 'text-slate-500'
                       }`}>
-                        Password
+                        Password *
                       </span>
                       <input
                         type={showPassword ? 'text' : 'password'}
@@ -484,7 +1272,7 @@ export default function LoginPage() {
                           setPassword(e.target.value);
                           if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
                         }}
-                        placeholder="Create a password"
+                        placeholder={isLoginMode ? 'Enter your password' : 'Create a password'}
                         className={`w-full bg-transparent border-0 p-0 text-xs font-semibold focus:outline-none focus:ring-0 leading-tight pt-0.5 ${
                           isDark ? 'text-white placeholder:text-slate-500' : 'text-[#102033] placeholder:text-slate-400'
                         }`}
@@ -509,7 +1297,7 @@ export default function LoginPage() {
                   )}
                 </div>
 
-                {/* 10. Get Started Button (Blue -> Cyan Gradient) */}
+                {/* 10. Get Started / Login Action Button (Blue -> Cyan Gradient) */}
                 <div className="pt-2">
                   <button
                     type="submit"
@@ -519,27 +1307,27 @@ export default function LoginPage() {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        <span>Getting Started...</span>
+                        <span>{isLoginMode ? 'Signing In...' : 'Getting Started...'}</span>
                       </>
                     ) : (
                       <>
-                        <span>Get Started</span>
+                        <span>{isLoginMode ? 'Sign In' : 'Get Started'}</span>
                         <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1.5 transition-transform duration-300" />
                       </>
                     )}
                   </button>
                 </div>
 
-                {/* 11. Login Link */}
+                {/* 11. Mode Toggle Link */}
                 <div className="text-center pt-2">
                   <p className={`text-xs ${isDark ? 'text-white/80' : 'text-slate-600'}`}>
-                    Already have an account?{' '}
+                    {isLoginMode ? "Don't have an account?" : 'Already have an account?'}{' '}
                     <button
                       type="button"
                       onClick={() => setIsLoginMode(!isLoginMode)}
                       className="text-[#0084FF] dark:text-[#00C6D7] font-bold hover:underline cursor-pointer ml-1"
                     >
-                      Login
+                      {isLoginMode ? 'Get Started' : 'Login'}
                     </button>
                   </p>
                 </div>

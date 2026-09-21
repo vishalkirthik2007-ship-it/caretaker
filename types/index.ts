@@ -14,6 +14,12 @@ export interface UserProfile {
   healthConditions?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
+  emergencyContactRelationship?: string;
+  allergies?: string[];
+  currentMedications?: string[];
+  bloodGroup?: string;
+  height?: string;
+  weight?: string;
   photoUrl?: string;
   preferredLanguage: LanguageCode;
   theme?: 'light' | 'dark';
