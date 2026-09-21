@@ -64,15 +64,15 @@ export function Header() {
           {/* Brand Logo */}
           <div className="flex items-center space-x-3">
             <Link href="/dashboard" className="flex items-center space-x-2.5 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/25 transition-transform group-hover:scale-105">
                 <Compass className="h-6 w-6" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-                  CarePath<span className="text-[#0066FF] dark:text-[#42D9FF] font-extrabold ml-0.5">AI</span>
+                  Care<span className="text-[#0866FF] dark:text-[#48DFFF] font-extrabold ml-0.5">Nest</span>
                 </span>
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-wide hidden sm:inline">
-                  India Healthcare Navigation
+                  India Healthcare Ecosystem
                 </span>
               </div>
             </Link>

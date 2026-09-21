@@ -103,6 +103,7 @@ export interface Facility {
   }[];
   services?: string[];
   distanceKm?: number;
+  reviewCount?: number;
 }
 
 export interface AIStructuredResponse {

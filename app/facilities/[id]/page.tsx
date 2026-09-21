@@ -123,14 +123,14 @@ export default function FacilityDetailPage() {
       </div>
 
       {/* Main Header Banner */}
-      <div className="glass-panel p-6 sm:p-9 shadow-2xl space-y-6 rounded-3xl relative overflow-hidden border border-white/60 dark:border-white/10">
+      <div className="glass-panel p-6 sm:p-9 shadow-2xl space-y-6 rounded-[2rem] relative overflow-hidden border border-white/60 dark:border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline" className="glass-card font-bold px-3 py-0.5">{facility.facilityType}</Badge>
               {facility.verified && (
-                <span className="inline-flex items-center text-xs text-sky-800 dark:text-sky-300 font-bold bg-sky-100/80 dark:bg-sky-950/80 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800">
-                  <ShieldCheck className="w-4 h-4 mr-1 text-sky-600 dark:text-sky-400" />
+                <span className="inline-flex items-center text-xs text-[#0866FF] dark:text-[#48DFFF] font-bold bg-blue-50/80 dark:bg-blue-950/80 px-2.5 py-0.5 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <ShieldCheck className="w-4 h-4 mr-1 text-[#0866FF] dark:text-[#48DFFF]" />
                   Verified Healthcare Provider (India)
                 </span>
               )}
@@ -148,7 +148,7 @@ export default function FacilityDetailPage() {
             </p>
 
             <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 pt-1">
-              <MapPin className="w-4 h-4 mr-1.5 text-sky-600 dark:text-sky-400 shrink-0" />
+              <MapPin className="w-4 h-4 mr-1.5 text-[#0866FF] dark:text-[#48DFFF] shrink-0" />
               <span>
                 {facility.location.addressLine1}, {facility.location.city}, {facility.location.state} - {facility.location.postalCode}
               </span>
@@ -161,7 +161,7 @@ export default function FacilityDetailPage() {
               variant={isSaved ? 'primary' : 'outline'}
               size="sm"
               className={`w-full rounded-xl font-bold ${
-                isSaved ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-[#0066FF]/20' : 'glass-card'
+                isSaved ? 'bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/20' : 'glass-card'
               }`}
             >
               {isSaved ? (
@@ -181,9 +181,9 @@ export default function FacilityDetailPage() {
               onClick={handleStartJourney}
               variant="secondary"
               size="sm"
-              className="w-full text-xs rounded-xl font-bold glass-card border border-[#0066FF]/30 dark:border-[#42D9FF]/30 text-[#0066FF] dark:text-[#42D9FF]"
+              className="w-full text-xs rounded-xl font-bold glass-card border border-[#0866FF]/30 dark:border-[#48DFFF]/30 text-[#0866FF] dark:text-[#48DFFF]"
             >
-              <CalendarCheck className="w-4 h-4 mr-1.5 text-[#0066FF] dark:text-[#42D9FF]" />
+              <CalendarCheck className="w-4 h-4 mr-1.5 text-[#0866FF] dark:text-[#48DFFF]" />
               Prepare Appointment
             </Button>
           </div>
@@ -193,7 +193,7 @@ export default function FacilityDetailPage() {
         <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800 flex flex-wrap items-center gap-3">
           <a
             href={`tel:${facility.phone}`}
-            className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00a8b7] text-white font-bold text-xs rounded-2xl shadow-md shadow-[#0066FF]/20 transition"
+            className="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-[#0866FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white font-bold text-xs rounded-2xl shadow-md shadow-blue-500/20 transition"
           >
             <Phone className="w-3.5 h-3.5 mr-1.5" />
             Call {facility.phone}
@@ -205,7 +205,7 @@ export default function FacilityDetailPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center px-4 py-2.5 glass-card hover:bg-white/90 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-2xl border border-slate-200/70 dark:border-slate-700/70 transition shadow-xs"
           >
-            <Navigation className="w-3.5 h-3.5 mr-1.5 text-[#0066FF] dark:text-[#42D9FF]" />
+            <Navigation className="w-3.5 h-3.5 mr-1.5 text-[#0866FF] dark:text-[#48DFFF]" />
             Get Google Maps Directions
           </a>
 

@@ -228,59 +228,56 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-10 overflow-hidden">
-      {/* Dynamic Animated Atmospheric Medical Nature Background Overlays */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-100/20 via-transparent to-blue-900/10 dark:from-[#071827]/40 dark:via-[#071827]/80 dark:to-[#071827]/95 pointer-events-none" />
-      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#0066FF]/20 dark:bg-[#0066FF]/15 blur-3xl pointer-events-none animate-float-particle" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-[#00C6D7]/20 dark:bg-[#00C6D7]/12 blur-3xl pointer-events-none animate-float-particle" style={{ animationDelay: '3s' }} />
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 overflow-hidden">
+      {/* Dynamic Atmospheric Mountain & Nature Backdrop Overlays */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-100/30 via-transparent to-blue-900/15 dark:from-[#071827]/40 dark:via-[#071827]/80 dark:to-[#071827]/98 pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-[30rem] h-[30rem] rounded-full bg-[#0866FF]/20 dark:bg-[#0866FF]/15 blur-3xl pointer-events-none animate-float-particle" />
+      <div className="absolute -bottom-40 -left-40 w-[30rem] h-[30rem] rounded-full bg-[#00C6D7]/20 dark:bg-[#00C6D7]/12 blur-3xl pointer-events-none animate-float-particle" style={{ animationDelay: '3s' }} />
 
-      {/* Top Floating Theme Switcher */}
+      {/* Top Floating Theme Switcher & Region Indicator */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center space-x-2">
+        <span className="text-[11px] font-medium px-3 py-1 rounded-full glass-card hidden sm:inline text-slate-600 dark:text-slate-300">
+          🇮🇳 India Health Network
+        </span>
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-2xl space-y-6">
+      <div className="w-full max-w-xl space-y-6 animate-in fade-in zoom-in-95 duration-500">
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full glass-card">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/30">
-              <Compass className="h-5 w-5 animate-spin" style={{ animationDuration: '12s' }} />
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/30">
+              <Compass className="h-5 w-5 animate-spin" style={{ animationDuration: '14s' }} />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-              CarePath<span className="text-[#0066FF] dark:text-[#42D9FF] font-extrabold ml-0.5">AI</span>
+              Care<span className="text-[#0866FF] dark:text-[#48DFFF] font-extrabold ml-0.5">Nest</span>
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Patient Portal & Healthcare Identity
+            WELCOME TO CARENEST
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-            Find the right care. Take the right next step. Securely complete your verified profile to begin personalized navigation.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-md mx-auto font-medium">
+            &ldquo;Your health journey starts here.&rdquo;
           </p>
-
-          <div className="flex items-center justify-center space-x-2 pt-1">
-            <Badge variant="outline" className="text-[11px] glass-card px-3 py-0.5 text-slate-700 dark:text-slate-200">
-              🇮🇳 Dedicated for Indian Healthcare
-            </Badge>
-            <Badge variant="success" className="text-[11px] px-3 py-0.5">
-              🔒 Encrypted Patient Vault
-            </Badge>
-          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+            Find the right care. Take the right next step safely with verified Indian healthcare providers.
+          </p>
         </div>
 
         {/* Returning User Notification Banner */}
         {isReturningUser && returningProfiles.length > 0 && (
-          <div className="p-4 glass-card border border-blue-200/80 dark:border-blue-900/60 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+          <div className="p-4 glass-card border border-blue-200/80 dark:border-blue-900/60 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0066FF] to-[#00C6D7] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
-                {fullName ? fullName.slice(0, 2).toUpperCase() : 'CP'}
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                {fullName ? fullName.slice(0, 2).toUpperCase() : 'CN'}
               </div>
               <div className="text-xs">
                 <span className="font-bold text-slate-900 dark:text-white text-sm block">
-                  Welcome back, {fullName || 'Patient'}!
+                  Welcome back, {fullName || 'Member'}!
                 </span>
-                <span className="text-[#0066FF] dark:text-[#42D9FF] text-[11px]">
-                  Saved verified profile detected for {city}, India.
+                <span className="text-[#0866FF] dark:text-[#48DFFF] text-[11px]">
+                  Existing verified profile for {city}, India.
                 </span>
               </div>
             </div>
@@ -300,16 +297,16 @@ export default function LoginPage() {
                 size="sm"
                 disabled={isSubmitting}
                 onClick={() => handleQuickLogin(returningProfiles[0])}
-                className="text-xs py-1.5 px-4 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white font-bold rounded-2xl shadow-md shadow-blue-500/20"
+                className="text-xs py-1.5 px-4 bg-gradient-to-r from-[#0866FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white font-bold rounded-2xl shadow-md shadow-blue-500/20"
               >
-                Get Started →
+                Log In & Continue →
               </Button>
             </div>
           </div>
         )}
 
         {/* Main Onboarding / Login Form Card */}
-        <div className="glass-panel p-6 sm:p-9 rounded-3xl shadow-2xl space-y-6 relative overflow-hidden">
+        <div className="glass-panel p-6 sm:p-9 rounded-[2rem] shadow-2xl space-y-6 relative overflow-hidden">
           <form onSubmit={handleLoginSubmit} className="space-y-6">
             {/* Section 1: Basic Identity */}
             <div>
@@ -532,13 +529,34 @@ export default function LoginPage() {
             </div>
 
             {/* Continue / Submit Button */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-4 text-sm font-bold rounded-2xl shadow-xl shadow-blue-500/25 bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white flex items-center justify-center space-x-2 transition-transform hover:-translate-y-0.5 active:scale-[0.99]"
-            >
-              <span>{isSubmitting ? 'Securing Healthcare Profile...' : 'Get Started →'}</span>
-            </Button>
+            <div className="space-y-3 pt-2">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 text-sm sm:text-base font-bold rounded-2xl shadow-xl shadow-blue-500/25 bg-gradient-to-r from-[#0866FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white flex items-center justify-center space-x-2 transition-all hover:shadow-blue-500/40 hover:-translate-y-0.5 active:scale-[0.99]"
+              >
+                <span>{isSubmitting ? 'Personalizing CareNest...' : 'GET STARTED →'}</span>
+              </Button>
+
+              <div className="text-center pt-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (returningProfiles.length > 0) {
+                        handleQuickLogin(returningProfiles[0]);
+                      } else {
+                        router.replace('/dashboard');
+                      }
+                    }}
+                    className="font-bold text-[#0866FF] dark:text-[#48DFFF] hover:underline"
+                  >
+                    Log in
+                  </button>
+                </p>
+              </div>
+            </div>
           </form>
         </div>
       </div>

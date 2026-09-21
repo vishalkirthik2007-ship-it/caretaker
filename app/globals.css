@@ -3,43 +3,43 @@
 @tailwind utilities;
 
 :root {
-  /* Futuristic Healthcare Palette */
+  /* CareNest Futuristic Healthcare Palette */
   --background: 210 50% 97.5%; /* #F4F8FC */
   --foreground: 213 52% 13%;   /* #102033 */
   --card: 0 0% 100%;           /* #FFFFFF */
   --card-foreground: 213 52% 13%;
   --popover: 0 0% 100%;
   --popover-foreground: 213 52% 13%;
-  --primary: 216 100% 50%;     /* #0066FF */
+  --primary: 217 100% 51.6%;   /* #0866FF Ocean Blue */
   --primary-foreground: 0 0% 100%;
-  --secondary: 185 100% 42%;   /* #00C6D7 */
+  --secondary: 185 100% 42%;   /* #00C6D7 Electric Cyan */
   --secondary-foreground: 213 52% 13%;
   --muted: 210 40% 95%;
-  --muted-foreground: 215 15% 47%; /* #66758A */
-  --accent: 192 100% 63%;      /* #42D9FF */
+  --muted-foreground: 215 15% 48%; /* #68788C Slate Blue */
+  --accent: 191 100% 64%;      /* #48DFFF Soft Aqua */
   --accent-foreground: 213 52% 13%;
-  --destructive: 354 100% 68%; /* #FF5C6C */
+  --destructive: 354 100% 68%; /* #FF5C6C Emergency */
   --destructive-foreground: 0 0% 100%;
   --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 216 100% 50%;
+  --ring: 217 100% 51.6%;
   --radius: 1.25rem;
 }
 
 .dark {
-  --background: 209 70% 9%;    /* #071827 */
+  --background: 209 70% 9%;    /* #071827 Midnight Navy */
   --foreground: 210 40% 98%;
-  --card: 206 57% 15%;         /* #10283B */
+  --card: 206 57% 15%;         /* #10283B Deep Navy Surface */
   --card-foreground: 210 40% 98%;
   --popover: 206 57% 15%;
   --popover-foreground: 210 40% 98%;
-  --primary: 216 100% 55%;     /* Electric Blue */
+  --primary: 217 100% 55%;     /* #0866FF Electric Ocean Blue */
   --primary-foreground: 0 0% 100%;
-  --secondary: 185 100% 48%;   /* Vibrant Cyan */
+  --secondary: 185 100% 48%;   /* #00C6D7 Cyan Highlight */
   --secondary-foreground: 210 40% 98%;
-  --muted: 207 48% 18%;
+  --muted: 208 52% 16%;        /* #142B40 Deep Surface */
   --muted-foreground: 215 20% 65%;
-  --accent: 192 100% 63%;      /* Sky Accent */
+  --accent: 191 100% 64%;      /* #48DFFF */
   --accent-foreground: 209 70% 9%;
   --destructive: 354 100% 68%;
   --destructive-foreground: 0 0% 100%;
@@ -53,7 +53,7 @@ body {
   color: hsl(var(--foreground));
   background-color: hsl(var(--background));
   font-feature-settings: "rlig" 1, "calt" 1;
-  background-image: radial-gradient(circle at 50% 0%, rgba(224, 242, 254, 0.65) 0%, rgba(244, 248, 252, 0.85) 100%), url('/images/healthcare_bg_light.jpg');
+  background-image: radial-gradient(circle at 50% 0%, rgba(224, 242, 254, 0.65) 0%, rgba(244, 248, 252, 0.9) 100%), url('/images/healthcare_bg_light.jpg');
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
@@ -153,25 +153,32 @@ body {
 }
 
 /* Gradient Accents */
+.btn-gradient-carenest,
 .btn-gradient-healthcare {
-  background: linear-gradient(135deg, #0066FF 0%, #00C6D7 100%);
+  background: linear-gradient(135deg, #0866FF 0%, #00C6D7 100%);
   color: #FFFFFF;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.btn-gradient-carenest:hover,
 .btn-gradient-healthcare:hover {
   background: linear-gradient(135deg, #0052cc 0%, #00acc1 100%);
-  box-shadow: 0 8px 25px -6px rgba(0, 102, 255, 0.45);
+  box-shadow: 0 10px 28px -6px rgba(8, 102, 255, 0.45);
   transform: translateY(-1px);
 }
 
+.btn-gradient-carenest:active,
+.btn-gradient-healthcare:active {
+  transform: scale(0.98);
+}
+
 .btn-gradient-navy {
-  background: linear-gradient(135deg, #071827 0%, #0066FF 100%);
+  background: linear-gradient(135deg, #071827 0%, #0866FF 100%);
   color: #FFFFFF;
 }
 
 .ambient-glow-blue {
-  box-shadow: 0 0 45px -8px rgba(0, 102, 255, 0.35);
+  box-shadow: 0 0 45px -8px rgba(8, 102, 255, 0.35);
 }
 
 .ambient-glow-cyan {

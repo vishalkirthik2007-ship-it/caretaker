@@ -51,26 +51,38 @@ export function Sidebar() {
   };
 
   const navigation = [
-    { name: t.nav.dashboard, href: '/dashboard', icon: LayoutDashboard },
-    { name: t.nav.findCare, href: '/find-care', icon: Search },
-    { name: t.nav.facilities, href: '/facilities', icon: Building2 },
-    { name: t.nav.map, href: '/map', icon: MapPin },
-    { name: t.nav.assistant, href: '/assistant', icon: Bot, highlight: true },
-    { name: t.nav.journey, href: '/journey', icon: Compass },
-    { name: t.nav.documents, href: '/documents', icon: FileText },
-    { name: t.nav.family, href: '/family', icon: Users },
-    { name: 'My Profile', href: '/profile', icon: User },
-    { name: t.nav.settings, href: '/settings', icon: Settings },
-    { name: t.nav.admin, href: '/admin', icon: ShieldCheck },
+    { name: 'Home', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Find Care', href: '/find-care', icon: Search },
+    { name: 'Hospital Map', href: '/map', icon: MapPin },
+    { name: 'Ask Care AI', href: '/assistant', icon: Bot, highlight: true },
+    { name: 'My Care Journey', href: '/journey', icon: Compass },
+    { name: 'Document Vault', href: '/documents', icon: FileText },
+    { name: 'Directory', href: '/facilities', icon: Building2 },
+    { name: 'Family Care', href: '/family', icon: Users },
   ];
 
   return (
     <aside
       className={cn(
-        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-white/50 dark:lg:border-slate-800/60 bg-white/65 dark:bg-[#071827]/75 backdrop-blur-xl p-4 shrink-0 transition-all duration-200',
+        'hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-white/50 dark:lg:border-slate-800/60 bg-white/70 dark:bg-[#071827]/80 backdrop-blur-2xl p-4 shrink-0 transition-all duration-200 shadow-xl',
         easyMode ? 'lg:w-72' : ''
       )}
     >
+      {/* Sidebar Brand Header */}
+      <div className="flex items-center space-x-3 px-2 py-3 mb-3 border-b border-slate-200/60 dark:border-slate-800/60">
+        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/25">
+          <Compass className="h-5 w-5" />
+        </div>
+        <div>
+          <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none block">
+            Care<span className="text-[#0866FF] dark:text-[#48DFFF]">Nest</span>
+          </span>
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+            Healthcare Platform
+          </span>
+        </div>
+      </div>
+
       <nav className="flex flex-1 flex-col space-y-1.5">
         {navigation.map((item) => {
           const isActive =
@@ -84,10 +96,10 @@ export function Sidebar() {
                 'group flex items-center rounded-2xl font-medium transition-all duration-200',
                 easyMode ? 'px-4 py-3 text-base' : 'px-3.5 py-2.5 text-xs',
                 isActive
-                  ? 'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/25 font-semibold'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50/70 dark:hover:bg-slate-800/70 hover:text-[#0066FF] dark:hover:text-[#42D9FF]',
+                  ? 'bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white shadow-md shadow-blue-500/30 font-semibold scale-[1.02]'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50/70 dark:hover:bg-[#10283B]/80 hover:text-[#0866FF] dark:hover:text-[#48DFFF]',
                 item.highlight && !isActive
-                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-[#0066FF] dark:text-[#42D9FF] border border-blue-200/60 dark:border-blue-800/60'
+                  ? 'bg-blue-50/80 dark:bg-blue-950/40 text-[#0866FF] dark:text-[#48DFFF] border border-blue-200/60 dark:border-blue-800/60'
                   : ''
               )}
             >
@@ -98,8 +110,8 @@ export function Sidebar() {
                   isActive
                     ? 'text-white'
                     : item.highlight
-                    ? 'text-[#0066FF] dark:text-[#42D9FF]'
-                    : 'text-slate-400 dark:text-slate-400 group-hover:text-[#0066FF] dark:group-hover:text-[#42D9FF]'
+                    ? 'text-[#0866FF] dark:text-[#48DFFF]'
+                    : 'text-slate-400 dark:text-slate-400 group-hover:text-[#0866FF] dark:group-hover:text-[#48DFFF]'
                 )}
                 aria-hidden="true"
               />
@@ -111,9 +123,36 @@ export function Sidebar() {
 
       {/* User Section at bottom of Sidebar */}
       <div className="mt-auto space-y-2 pt-3 border-t border-slate-200/80 dark:border-slate-800/80">
+        <div className="flex items-center space-x-1 px-1">
+          <Link
+            href="/profile"
+            className={cn(
+              'flex-1 flex items-center space-x-2 px-2.5 py-2 rounded-xl text-xs font-medium transition',
+              pathname === '/profile'
+                ? 'bg-[#0866FF]/15 text-[#0866FF] dark:text-[#48DFFF] font-semibold'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
+            )}
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>Profile</span>
+          </Link>
+          <Link
+            href="/settings"
+            className={cn(
+              'flex-1 flex items-center space-x-2 px-2.5 py-2 rounded-xl text-xs font-medium transition',
+              pathname === '/settings'
+                ? 'bg-[#0866FF]/15 text-[#0866FF] dark:text-[#48DFFF] font-semibold'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
+            )}
+          >
+            <Settings className="w-3.5 h-3.5" />
+            <span>Settings</span>
+          </Link>
+        </div>
+
         <div className="p-2.5 rounded-2xl glass-card flex items-center justify-between shadow-xs">
           <Link href="/profile" className="flex items-center space-x-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-100 to-cyan-100 dark:from-slate-800 dark:to-slate-700 text-[#0066FF] dark:text-[#42D9FF] flex items-center justify-center font-bold text-xs shrink-0 border border-blue-200 dark:border-slate-700">
+            <div className="w-8 h-8 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-100 to-cyan-100 dark:from-slate-800 dark:to-slate-700 text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center font-bold text-xs shrink-0 border border-blue-200 dark:border-slate-700">
               {currentUser?.photoUrl ? (
                 <img
                   src={currentUser.photoUrl}
@@ -124,16 +163,16 @@ export function Sidebar() {
                 <span>
                   {currentUser?.fullName
                     ? currentUser.fullName.slice(0, 2).toUpperCase()
-                    : 'VK'}
+                    : 'CN'}
                 </span>
               )}
             </div>
             <div className="min-w-0">
               <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                {currentUser?.fullName || 'Vishal'}
+                {currentUser?.fullName || 'User'}
               </p>
               <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
-                {currentUser?.city || 'Chennai'}
+                {currentUser?.city || 'Tamil Nadu'}
               </p>
             </div>
           </Link>

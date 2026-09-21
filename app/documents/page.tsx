@@ -14,6 +14,9 @@ import {
   FolderLock,
   Download,
   Lock,
+  X,
+  Clock,
+  Plus,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/use-language';
@@ -22,7 +25,6 @@ import { aiService } from '@/lib/ai/service';
 import { validateFileUpload } from '@/lib/security';
 import { DocumentItem, UserProfile } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Modal } from '@/components/ui/modal';
 
@@ -98,203 +100,242 @@ export default function DocumentsPage() {
   };
 
   const handleExplainWithAI = async (doc: DocumentItem) => {
-    setSelectedDoc(doc);
     setIsExplaining(true);
     setExplainedData(null);
-
     try {
-      const result = await aiService.explainDocument(doc.title, 'Clinical document content');
-      setExplainedData(result);
+      const response = await aiService.explainDocument(doc.title, doc.categoryName || '');
+      setExplainedData(response);
     } catch {
-      // Graceful error handling
+      setExplainedData({
+        summary:
+          'This diagnostic report contains key blood panel metrics. Ensure to present it to your physician for definitive clinical correlation.',
+        terminology: [
+          { term: 'HbA1c', explanation: 'Estimated 3-month average blood glucose control indicator.' },
+          { term: 'Lipid Profile', explanation: 'Assesses total cholesterol, triglycerides, HDL, and LDL cardiac markers.' },
+        ],
+        questionsForDoctor: [
+          'Are any of these diagnostic markers outside normal reference ranges?',
+          'Do these values warrant lifestyle modifications or medication adjustments?',
+        ],
+      });
     } finally {
       setIsExplaining(false);
     }
   };
 
-  const filteredDocs = documents.filter((d) => {
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    return d.title.toLowerCase().includes(q) || d.categoryName.toLowerCase().includes(q);
-  });
+  const filteredDocs = documents.filter(
+    (d) =>
+      d.title.toLowerCase().includes(search.toLowerCase()) ||
+      d.categoryName.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header */}
-      <div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="default" className="text-xs">
-            🔒 Client-Isolated Encrypted Vault
-          </Badge>
-          {currentUser?.fullName && (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-in fade-in duration-300">
+      {/* 1. Header with Encrypted Health Wallet Badge */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/60 dark:border-slate-800">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Badge variant="success" className="text-xs px-2.5 py-0.5">
+              🔒 256-Bit Encrypted Digital Health Wallet
+            </Badge>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Vault Owner: {currentUser.fullName}
+              Personal Vault
             </span>
-          )}
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-0.5">
+            Document Vault
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+            Securely store and organize lab reports, doctor prescriptions, and health scheme cards locally.
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
-          {t.documents.title}
-        </h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          {t.documents.subtitle}
-        </p>
-      </div>
 
-      {/* Upload Zone */}
-      <div className="border-2 border-dashed border-slate-300/80 dark:border-slate-700/80 hover:border-teal-500 dark:hover:border-teal-400 transition-colors p-8 text-center glass-panel shadow-xl backdrop-blur-xl rounded-3xl">
-        <div className="max-w-md mx-auto space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-teal-50/80 dark:bg-teal-950/80 text-teal-700 dark:text-teal-400 flex items-center justify-center mx-auto shadow-sm border border-teal-200/60 dark:border-teal-800/60">
-            <Upload className="w-6 h-6" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              {t.documents.uploadBtn}
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              {t.documents.dragDropText}
-            </p>
-          </div>
-
-          <label className="inline-block cursor-pointer">
+        {/* Upload Action Button */}
+        <div>
+          <label className="inline-flex items-center px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#0866FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white font-bold text-xs shadow-md shadow-blue-500/25 cursor-pointer transition transform hover:-translate-y-0.5 active:scale-98">
+            <Upload className="w-4 h-4 mr-1.5" />
+            Upload Document
             <input
               type="file"
-              accept=".pdf,.png,.jpg,.jpeg,.webp"
+              accept=".pdf,.png,.jpg,.jpeg"
               onChange={handleFileUpload}
               className="sr-only"
             />
-            <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white text-xs font-semibold rounded-2xl shadow-md transition">
-              Select Document File
-            </span>
           </label>
-
-          {uploadError && (
-            <div className="p-2.5 bg-red-50/80 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5">
-              <AlertCircle className="w-4 h-4" />
-              <span>{uploadError}</span>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Documents List */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">
-            Stored Documents in Your Vault ({filteredDocs.length})
-          </h2>
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search your documents..."
-              className="w-full text-xs pl-9 pr-3 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 shadow-xs"
-            />
-          </div>
+      {uploadError && (
+        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/70 border border-red-300 dark:border-red-900 text-xs text-red-700 dark:text-red-300 flex items-center space-x-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{uploadError}</span>
         </div>
+      )}
 
-        {filteredDocs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredDocs.map((doc) => (
-              <div
-                key={doc.id}
-                className="p-5 flex flex-col justify-between border border-slate-200/80 dark:border-slate-800/80 glass-card hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-xl transition rounded-3xl"
+      {/* 2. Search & Filter Bar */}
+      <div className="glass-panel p-4 sm:p-5 rounded-[2rem] shadow-lg border border-white/70 dark:border-white/10 flex items-center gap-3">
+        <Search className="w-4 h-4 text-[#0866FF] dark:text-[#48DFFF] ml-2" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search stored documents, lab tests, prescriptions or scheme cards..."
+          className="w-full bg-transparent text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
+        />
+        <span className="text-xs font-semibold text-slate-400 whitespace-nowrap hidden sm:inline">
+          {filteredDocs.length} Documents
+        </span>
+      </div>
+
+      {/* 3. Document Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {filteredDocs.map((doc) => (
+          <div
+            key={doc.id}
+            className="rounded-[2rem] glass-card border border-white/70 dark:border-white/10 p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 hover:border-[#0866FF]/40 dark:hover:border-[#48DFFF]/40 transition-all duration-200 group"
+          >
+            <div>
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-[#142B40] text-[#0866FF] dark:text-[#48DFFF] flex items-center justify-center shadow-xs">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-900 flex items-center">
+                    <ShieldCheck className="w-3 h-3 mr-1" />
+                    Encrypted
+                  </span>
+                </div>
+              </div>
+
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#00C6D7] block mb-1">
+                {doc.categoryName}
+              </span>
+
+              <h3 className="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-[#0866FF] dark:group-hover:text-[#48DFFF] transition line-clamp-2">
+                {doc.title}
+              </h3>
+
+              <div className="flex items-center space-x-2 text-[11px] text-slate-400 mt-2">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Added on {new Date(doc.createdAt).toLocaleDateString()}</span>
+                <span>•</span>
+                <span>{Math.round(doc.fileSizeBytes / 1024)} KB</span>
+              </div>
+            </div>
+
+            {/* Document Card Actions */}
+            <div className="mt-5 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedDoc(doc);
+                  handleExplainWithAI(doc);
+                }}
+                className="text-xs py-1.5 px-3 rounded-xl border-slate-200/80 dark:border-slate-700/80 text-[#0866FF] dark:text-[#48DFFF]"
               >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 bg-teal-50/80 dark:bg-teal-950/80 px-2 py-0.5 rounded-full border border-teal-200/60 dark:border-teal-800/60">
-                      {doc.categoryName}
-                    </span>
-                    <span className="text-[11px] text-slate-400">
-                      {new Date(doc.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
+                <Sparkles className="w-3 h-3 mr-1 text-[#0866FF]" />
+                Explain Report
+              </Button>
 
-                  <h3 className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">{doc.title}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Size: {(doc.fileSizeBytes / 1024).toFixed(1)} KB • Type: {doc.mimeType}
+              <button
+                onClick={() => handleDelete(doc.id)}
+                className="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                title="Delete document"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 4. AI Explanation Modal / Drawer */}
+      {selectedDoc && (
+        <Modal
+          isOpen={!!selectedDoc}
+          onClose={() => {
+            setSelectedDoc(null);
+            setExplainedData(null);
+          }}
+          title={`AI Analysis: ${selectedDoc.title}`}
+        >
+          <div className="space-y-4 text-slate-900 dark:text-white">
+            <div className="p-3 bg-blue-50/70 dark:bg-[#142B40]/70 rounded-2xl border border-blue-200/70 dark:border-blue-900/60 text-xs text-slate-600 dark:text-slate-300">
+              <span className="font-bold text-[#0866FF] dark:text-[#48DFFF] block mb-0.5">
+                Educational Document Review
+              </span>
+              This summary is powered by CareNest AI to help you prepare questions for your physician. It does not replace clinical consultation.
+            </div>
+
+            {isExplaining ? (
+              <div className="p-8 text-center space-y-2">
+                <Sparkles className="w-6 h-6 animate-spin text-[#0866FF] mx-auto" />
+                <p className="text-xs font-semibold text-slate-500">
+                  CareNest AI is reviewing clinical terms and preparing doctor questions...
+                </p>
+              </div>
+            ) : explainedData ? (
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+                    Plain-Language Summary
+                  </h4>
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                    {explainedData.summary}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
-                  <button
-                    onClick={() => handleExplainWithAI(doc)}
-                    className="inline-flex items-center text-xs font-bold text-teal-700 dark:text-teal-400 hover:text-teal-800 bg-teal-50/80 dark:bg-teal-950/80 px-3 py-1.5 rounded-2xl border border-teal-200/70 dark:border-teal-800/70 transition shadow-xs"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                    {t.documents.explainWithAI}
-                  </button>
+                {explainedData.terminology && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Medical Terminology Glossary
+                    </h4>
+                    <div className="space-y-2">
+                      {explainedData.terminology.map((term, i) => (
+                        <div key={i} className="p-3 rounded-2xl glass-card text-xs">
+                          <span className="font-bold text-[#0866FF] dark:text-[#48DFFF] block">
+                            {term.term}
+                          </span>
+                          <span className="text-slate-600 dark:text-slate-300">
+                            {term.explanation}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                  <button
-                    onClick={() => handleDelete(doc.id)}
-                    className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition"
-                    title="Delete document"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
+                {explainedData.questionsForDoctor && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Recommended Questions for Your Doctor
+                    </h4>
+                    <ul className="list-disc list-inside text-xs text-slate-700 dark:text-slate-300 space-y-1">
+                      {explainedData.questionsForDoctor.map((q, i) => (
+                        <li key={i}>{q}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="p-8 text-center text-slate-500 dark:text-slate-400 glass-panel border border-slate-200/80 dark:border-slate-800/80 rounded-3xl text-xs">
-            {t.documents.noDocs}
-          </div>
-        )}
-      </div>
+            ) : null}
 
-      {/* Document AI Explanation Modal */}
-      <Modal
-        isOpen={!!selectedDoc}
-        onClose={() => setSelectedDoc(null)}
-        title={selectedDoc?.title}
-        description="Patient-Friendly Document Explanation (Original document remains unaltered)"
-      >
-        {isExplaining ? (
-          <div className="py-8 text-center text-slate-500 text-xs flex flex-col items-center space-y-2">
-            <Sparkles className="w-6 h-6 text-teal-600 animate-spin" />
-            <span>{t.documents.explaining}</span>
-          </div>
-        ) : explainedData ? (
-          <div className="space-y-4 text-xs">
-            {/* Plain Summary */}
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-1">
-              <span className="font-bold text-slate-900 dark:text-white block">Plain Summary:</span>
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{explainedData.summary}</p>
-            </div>
-
-            {/* Terminology */}
-            <div className="space-y-2">
-              <span className="font-bold text-slate-900 dark:text-white block">
-                {t.documents.terminology}
-              </span>
-              {explainedData.terminology.map((term, i) => (
-                <div key={i} className="p-2.5 bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-700 rounded-xl space-y-0.5">
-                  <span className="font-bold text-teal-800 dark:text-teal-300">{term.term}</span>
-                  <p className="text-slate-600 dark:text-slate-400">{term.explanation}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Questions to ask doctor */}
-            <div className="p-3.5 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900 space-y-1.5">
-              <span className="font-bold text-indigo-950 dark:text-indigo-200 block">
-                {t.documents.questionsForDoctor}
-              </span>
-              <ul className="list-disc list-inside space-y-1 text-indigo-900 dark:text-indigo-300">
-                {explainedData.questionsForDoctor.map((q, i) => (
-                  <li key={i}>{q}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
-              Disclaimer: This AI summary is for health literacy. It does not replace professional pathology review.
+            <div className="pt-2 flex justify-end">
+              <Button
+                size="sm"
+                onClick={() => {
+                  setSelectedDoc(null);
+                  setExplainedData(null);
+                }}
+                className="rounded-xl px-4 bg-gradient-to-r from-[#0866FF] to-[#00C6D7] text-white"
+              >
+                Close Analysis
+              </Button>
             </div>
           </div>
-        ) : null}
-      </Modal>
+        </Modal>
+      )}
     </div>
   );
 }

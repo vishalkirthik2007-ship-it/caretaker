@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Users,
   UserPlus,
@@ -10,6 +11,7 @@ import {
   Phone,
   Calendar,
   Check,
+  ArrowLeft,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { repository } from '@/lib/data/repository';
@@ -67,59 +69,74 @@ export default function FamilyPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <Badge variant="default">Family Care Coordination</Badge>
+            <Link
+              href="/dashboard"
+              className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-carenest-primary flex items-center transition"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+              Dashboard
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="text-xs text-carenest-primary font-bold">CareNest Network</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-            {t.nav.family}
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
+            Family Care Circle
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Coordinate navigation journeys and records for dependents, parents, and loved ones with explicit privacy controls.
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Coordinate hospital journeys, appointments, and medical vaults for dependents, elders, and loved ones.
           </p>
         </div>
 
-        <Button onClick={() => setIsModalOpen(true)} size="sm">
+        <Button
+          onClick={() => setIsModalOpen(true)}
+          size="sm"
+          className="btn-gradient-carenest rounded-2xl shadow-md flex items-center space-x-2"
+        >
           <UserPlus className="w-4 h-4 mr-1.5" />
-          Add Family Member
+          <span>Add Family Member</span>
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {familyMembers.map((member) => (
-          <Card key={member.id} className="p-6 space-y-4 hover:border-slate-300 transition">
+          <Card
+            key={member.id}
+            className="p-6 space-y-4 border-white/60 dark:border-white/10 bg-white/85 dark:bg-[#10283B]/90 backdrop-blur-xl shadow-lg rounded-3xl hover:border-carenest-primary/40 transition"
+          >
             <div className="flex items-start justify-between">
               <div>
-                <Badge variant="outline" className="text-xs">
+                <Badge className="bg-carenest-primary/10 text-carenest-primary dark:text-cyan-300 border-carenest-primary/20 text-xs font-bold">
                   {member.relationship}
                 </Badge>
-                <h3 className="text-lg font-bold text-slate-900 mt-1">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1.5">
                   {member.fullName}
                 </h3>
               </div>
               <button
                 onClick={() => handleDeleteProfile(member.id)}
-                className="text-slate-400 hover:text-red-500 p-1"
+                className="text-slate-400 hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-500/10 transition"
                 title="Remove profile"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="text-xs text-slate-600 space-y-2 pt-2 border-t border-slate-100">
+            <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2 pt-3 border-t border-slate-100 dark:border-white/10">
               {member.emergencyContact && (
                 <div className="flex items-center space-x-2">
                   <Phone className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Emergency Contact: {member.emergencyContact}</span>
+                  <span>Emergency: {member.emergencyContact}</span>
                 </div>
               )}
 
               <div className="flex items-center space-x-4 pt-1">
-                <span className="flex items-center text-emerald-700 font-semibold text-[11px]">
+                <span className="flex items-center text-emerald-600 dark:text-emerald-400 font-semibold text-[11px]">
                   <Check className="w-3.5 h-3.5 mr-1" />
                   Navigation Permitted
                 </span>
-                <span className="flex items-center text-teal-700 font-semibold text-[11px]">
+                <span className="flex items-center text-carenest-primary dark:text-cyan-300 font-semibold text-[11px]">
                   <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                  Record Isolation Active
+                  Vault Isolated
                 </span>
               </div>
             </div>
@@ -136,7 +153,7 @@ export default function FamilyPage() {
       >
         <form onSubmit={handleCreateProfile} className="space-y-4 text-xs">
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
               Full Legal Name
             </label>
             <input
@@ -144,19 +161,19 @@ export default function FamilyPage() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="E.g. Maya Patel"
-              className="w-full px-3 py-2 border rounded-xl"
+              placeholder="e.g. Ramesh Kumar"
+              className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-white/10 rounded-2xl bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:border-carenest-primary focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
               Relationship
             </label>
             <select
               value={relationship}
               onChange={(e) => setRelationship(e.target.value as any)}
-              className="w-full px-3 py-2 border rounded-xl bg-white"
+              className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-white/10 rounded-2xl bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:border-carenest-primary focus:outline-none"
             >
               <option value="Child">Child</option>
               <option value="Parent">Parent</option>
@@ -167,23 +184,23 @@ export default function FamilyPage() {
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">
+            <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
               Emergency Contact Phone
             </label>
             <input
               type="tel"
               value={emergencyContact}
               onChange={(e) => setEmergencyContact(e.target.value)}
-              placeholder="+1 (555) 000-0000"
-              className="w-full px-3 py-2 border rounded-xl"
+              placeholder="+91 98765 43210"
+              className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-white/10 rounded-2xl bg-white dark:bg-[#071827] text-slate-900 dark:text-white focus:border-carenest-primary focus:outline-none"
             />
           </div>
 
           <div className="pt-2 flex justify-end space-x-2">
-            <Button variant="secondary" size="sm" onClick={() => setIsModalOpen(false)}>
+            <Button variant="secondary" size="sm" onClick={() => setIsModalOpen(false)} className="rounded-xl">
               Cancel
             </Button>
-            <Button type="submit" size="sm">
+            <Button type="submit" size="sm" className="btn-gradient-carenest rounded-xl">
               Save Member Profile
             </Button>
           </div>

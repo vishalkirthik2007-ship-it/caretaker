@@ -19,11 +19,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        'bg-gradient-to-r from-[#0066FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white focus-visible:ring-[#0066FF] shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30',
+        'bg-gradient-to-r from-[#0866FF] to-[#00C6D7] hover:from-[#0052cc] hover:to-[#00acc1] text-white focus-visible:ring-[#0866FF] shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 active:scale-[0.98]',
       secondary:
-        'bg-blue-50/80 dark:bg-slate-800/80 text-[#0066FF] dark:text-[#42D9FF] hover:bg-blue-100/90 dark:hover:bg-slate-750 border border-blue-200/60 dark:border-slate-700/60',
+        'bg-blue-50/80 dark:bg-[#10283B]/80 text-[#0866FF] dark:text-[#48DFFF] hover:bg-blue-100/90 dark:hover:bg-[#142B40] border border-blue-200/60 dark:border-[#48DFFF]/20 backdrop-blur-md',
       outline:
-        'border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md text-slate-800 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-750 focus-visible:ring-[#0066FF]',
+        'border border-slate-200/80 dark:border-slate-700/80 bg-white/75 dark:bg-[#10283B]/70 backdrop-blur-md text-slate-800 dark:text-slate-200 hover:bg-white dark:hover:bg-[#142B40] focus-visible:ring-[#0866FF]',
       ghost:
         'text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white',
       destructive:
