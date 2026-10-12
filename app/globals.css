@@ -48,6 +48,45 @@
   --ring: 185 100% 48%;
 }
 
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+html.dark,
+.dark {
+  color-scheme: dark;
+}
+
+/* Refined Modern Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+.dark ::-webkit-scrollbar-thumb,
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(0, 198, 215, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover,
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 198, 215, 0.55);
+}
+
 body {
   font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   color: hsl(var(--foreground));
