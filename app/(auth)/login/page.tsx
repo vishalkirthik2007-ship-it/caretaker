@@ -350,7 +350,7 @@ export default function LoginPage() {
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10 flex-1 flex flex-col justify-between">
         
         {/* UPPER ROW: LEFT BRANDING + CENTER LOGIN CARD + RIGHT FEATURES */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center flex-1 my-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start flex-1 my-auto">
 
           {/* --------------------------------------------------------------------- */}
           {/* 3. LEFT-SIDE CARENEST BRANDING                                        */}
@@ -411,7 +411,7 @@ export default function LoginPage() {
           {/* --------------------------------------------------------------------- */}
           <div className="lg:col-span-5 flex justify-center order-2 my-3 lg:my-0">
             <div
-              className={`w-full max-w-[490px] rounded-[32px] sm:rounded-[36px] p-5 sm:p-7 md:p-8 max-h-[86vh] overflow-y-auto pr-2 scrollbar-thin transition-all duration-500 shadow-2xl relative backdrop-blur-2xl ${
+              className={`w-full max-w-[490px] rounded-[32px] sm:rounded-[36px] p-5 sm:p-7 md:p-8 transition-all duration-500 shadow-2xl relative backdrop-blur-2xl ${
                 isDark
                   ? 'bg-[#0a1e38]/50 border border-cyan-400/25 shadow-black/60 text-white'
                   : 'bg-white/50 border border-white/80 shadow-slate-900/15 text-[#102033]'
