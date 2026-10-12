@@ -264,7 +264,7 @@ export default function LoginPage() {
   const isDark = theme === 'dark';
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-between overflow-x-hidden font-sans select-none">
+    <div className="relative min-h-screen lg:h-screen w-full flex flex-col justify-between overflow-x-hidden lg:overflow-hidden font-sans select-none">
       
       {/* ========================================================================= */}
       {/* 1. FULL-SCREEN CINEMATIC MOUNTAIN BACKGROUND                              */}
@@ -347,15 +347,15 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {/* MAIN CONTAINER: THREE-ZONE BALANCED LAYOUT                                */}
       {/* ========================================================================= */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10 flex-1 flex flex-col justify-between">
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-4 sm:py-6 lg:py-6 flex-1 flex flex-col justify-between min-h-0">
         
         {/* UPPER ROW: LEFT BRANDING + CENTER LOGIN CARD + RIGHT FEATURES */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start flex-1 my-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center flex-1 my-auto min-h-0">
 
           {/* --------------------------------------------------------------------- */}
           {/* 3. LEFT-SIDE CARENEST BRANDING                                        */}
           {/* --------------------------------------------------------------------- */}
-          <div className="lg:col-span-4 flex flex-col justify-between self-stretch py-4 lg:py-6 order-1">
+          <div className="lg:col-span-4 flex flex-col justify-between self-stretch py-2 lg:py-4 order-1 min-h-0">
             {/* Logo & Tagline */}
             <div className="space-y-2">
               <div className="flex items-center space-x-3">
@@ -409,9 +409,9 @@ export default function LoginPage() {
           {/* --------------------------------------------------------------------- */}
           {/* 6. CENTRAL LOGIN CARD — THE PRIMARY FLOATING BUBBLE                   */}
           {/* --------------------------------------------------------------------- */}
-          <div className="lg:col-span-5 flex justify-center order-2 my-3 lg:my-0">
+          <div className="lg:col-span-5 flex justify-center order-2 my-2 lg:my-0 min-h-0">
             <div
-              className={`w-full max-w-[490px] rounded-[32px] sm:rounded-[36px] p-5 sm:p-7 md:p-8 transition-all duration-500 shadow-2xl relative backdrop-blur-2xl ${
+              className={`w-full max-w-[490px] rounded-[32px] sm:rounded-[36px] p-5 sm:p-7 md:p-8 max-h-[82vh] sm:max-h-[85vh] overflow-y-auto carenest-form-scrollbar pr-3 sm:pr-4 md:pr-5 transition-all duration-500 shadow-2xl relative backdrop-blur-2xl ${
                 isDark
                   ? 'bg-[#0a1e38]/50 border border-cyan-400/25 shadow-black/60 text-white'
                   : 'bg-white/50 border border-white/80 shadow-slate-900/15 text-[#102033]'

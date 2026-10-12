@@ -24,6 +24,14 @@
   --input: 214 32% 91%;
   --ring: 217 100% 51.6%;
   --radius: 1.25rem;
+
+  /* CareNest Form Custom Scrollbar Palette */
+  --carenest-sb-track: rgba(220, 235, 250, 0.45);
+  --carenest-sb-thumb-top: #0084FF;
+  --carenest-sb-thumb-bottom: #00C6D7;
+  --carenest-sb-thumb-hover-top: #0066FF;
+  --carenest-sb-thumb-hover-bottom: #39DDF5;
+  --carenest-sb-glow: rgba(0, 198, 215, 0.5);
 }
 
 .dark {
@@ -46,6 +54,14 @@
   --border: 207 45% 20%;
   --input: 207 45% 20%;
   --ring: 185 100% 48%;
+
+  /* CareNest Form Custom Scrollbar Palette */
+  --carenest-sb-track: rgba(11, 27, 48, 0.7);
+  --carenest-sb-thumb-top: #39DDF5;
+  --carenest-sb-thumb-bottom: #168BC4;
+  --carenest-sb-thumb-hover-top: #5de5fa;
+  --carenest-sb-thumb-hover-bottom: #229ddc;
+  --carenest-sb-glow: rgba(57, 221, 245, 0.65);
 }
 
 html {
@@ -58,7 +74,49 @@ html.dark,
   color-scheme: dark;
 }
 
-/* Refined Modern Scrollbar Styling */
+/* ========================================================================= */
+/* CareNest Central Form Scrollbar                                           */
+/* Custom-tailored to blend with dark navy glassmorphism & cyan highlights   */
+/* ========================================================================= */
+.carenest-form-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--carenest-sb-thumb-top) var(--carenest-sb-track);
+  -webkit-overflow-scrolling: touch;
+}
+
+.carenest-form-scrollbar::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.carenest-form-scrollbar::-webkit-scrollbar-track {
+  background: var(--carenest-sb-track);
+  border-radius: 9999px;
+  margin: 16px 0;
+}
+
+.carenest-form-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--carenest-sb-thumb-top) 0%, var(--carenest-sb-thumb-bottom) 100%);
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+}
+
+.carenest-form-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--carenest-sb-thumb-hover-top) 0%, var(--carenest-sb-thumb-hover-bottom) 100%);
+  box-shadow: 0 0 10px var(--carenest-sb-glow), 0 0 4px rgba(0, 198, 215, 0.4);
+}
+
+.carenest-form-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #82ecfc 0%, #29aef5 100%);
+  box-shadow: 0 0 14px var(--carenest-sb-glow);
+}
+
+.carenest-form-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Refined Modern Window Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
